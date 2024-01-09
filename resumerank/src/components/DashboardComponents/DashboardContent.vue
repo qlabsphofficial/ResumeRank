@@ -1,13 +1,13 @@
 <template>
     <div id="container">
         <h1>Dashboard</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+        <p>Your Command Center for Data Insights.</p>
 
         <div id="dashboard-info-container">
             <div class="dashboard-info">
                 <div class="dashboard-icon"></div>
                 <div class="dashboard-info-detail">
-                    <h4>5</h4>
+                    <h4>0</h4>
                     <p>Profile Views</p>
                 </div>
             </div>
@@ -15,16 +15,16 @@
             <div class="dashboard-info">
                 <div class="dashboard-icon"></div>
                 <div class="dashboard-info-detail">
-                    <h4>5</h4>
-                    <p>Profile Views</p>
+                    <h4>0</h4>
+                    <p>Notifications</p>
                 </div>
             </div>
 
             <div class="dashboard-info">
                 <div class="dashboard-icon"></div>
                 <div class="dashboard-info-detail">
-                    <h4>5</h4>
-                    <p>Profile Views</p>
+                    <h4>0</h4>
+                    <p>Active Proposals</p>
                 </div>
             </div>
         </div>
@@ -60,13 +60,7 @@
                 <h2>Recent Notifications</h2>
 
                 <div id="all-notifs">
-                    <p>Sample Notification</p>
-                    <p>Sample Notification</p>
-                    <p>Sample Notification</p>
-                    <p>Sample Notification</p>
-                    <p>Sample Notification</p>
-                    <p>Sample Notification</p>
-                    <p>Sample Notification</p>
+                    <h5>No notifications.</h5>
                 </div>
             </div>
         </div>
@@ -157,10 +151,12 @@ export default {
 
 #all-notifs {
     height: 75%;
-    width: 100%;
+    width: 90%;
     overflow-y: scroll;
     margin-top: 3%;
     padding: 2%;
+    padding-left: 8%;
+    padding-right: 8%;
     border-radius: 15px;
     box-shadow: 2px 2px 2px 2px #AEAEAE;
     overflow-y: scroll;

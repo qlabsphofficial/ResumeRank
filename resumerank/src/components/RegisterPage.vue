@@ -13,6 +13,9 @@
                     <h4>Password</h4>
                     <input type="password" placeholder="Enter your password..." v-model="password">
 
+                    <h4>Confirm Password</h4>
+                    <input type="password" placeholder="Confirm your password..." v-model="confirm">
+
                     <h4>First Name</h4>
                     <input type="text" placeholder="Enter your first name..." v-model="first_name">
 
@@ -55,10 +58,54 @@
   <script>
   export default {
     name: 'RegisterPage',
+    methods: {
+      async register(){
+            // const response = await fetch('http://127.0.0.1:8000/register', {
+            const response = await fetch('https://resumerank.onrender.com/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'username': this.username,
+                    'password': this.password,
+                    'confirm': this.confirm,
+                    'firstname': this.first_name,
+                    'middlename': this.middle_name,
+                    'lastname': this.last_name,
+                    'contact_no': this.contact,
+                    'email': this.email,
+                    'address': this.address
+                }),
+            })
+
+            if(response.ok){
+                const responseData = await response.json();
+                console.log(responseData.response);
+
+                if (responseData.response == 'Registration successful.'){
+                    this.$router.push('/login');
+                }
+                else {
+                    console.log('Failed');
+                }
+            }
+            else {
+                console.log(`Request failed with status ${response.status}`);
+            }
+        }
+    },
     data() {
       return {
         username: '',
-        password: ''
+        password: '',
+        confirm: '',
+        first_name: '',
+        middle_name: '',
+        last_name: '',
+        email: '',
+        contact: '',
+        address: ''
       }
     }
   }

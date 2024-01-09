@@ -33,6 +33,9 @@
 <script>
 export default {
     name: 'ProfilePage',
+    methods: {
+
+    },
     data (){
 
     }

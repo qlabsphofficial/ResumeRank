@@ -15,7 +15,6 @@ class User(Base):
     email = Column(String)
     contact_no = Column(String)
     address = Column(String)
-    user_type = Column(Boolean)
 
     educations = relationship('Education', back_populates='user')
     trainings = relationship('Training', back_populates='user')

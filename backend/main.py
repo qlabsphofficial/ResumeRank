@@ -29,7 +29,6 @@ class UserModel(BaseModel):
     email: str
     contact_no : str
     address : str
-    user_type : bool
 
 
 class EducationModel(BaseModel):
@@ -63,7 +62,7 @@ class ExperienceModel(BaseModel):
 async def login(username: str, password: str, db: Session = Depends(get_database)):
     try:
         existing_user = db.query(User).filter(User.username == username).first()
-
+        
         if existing_user:
             if existing_user.password == password:
                 return { 'response': 'Login successful.', 'status_code': 200 }
@@ -88,7 +87,6 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             new_user.email = user.email
             new_user.contact_no = user.contact_no
             new_user.address = user.address
-            new_user.user_type = user.user_type
             db.add(new_user)
             db.commit()
 
