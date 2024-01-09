@@ -18,13 +18,13 @@
 
             <h4>My Information</h4>
             <div id="all-info">
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
+                <p>Sample Info</p>
+                <p>Sample Info</p>
+                <p>Sample Info</p>
+                <p>Sample Info</p>
+                <p>Sample Info</p>
+                <p>Sample Info</p>
+                <p>Sample Info</p>
             </div>
         </div>
     </div>

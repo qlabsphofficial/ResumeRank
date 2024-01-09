@@ -28,6 +28,7 @@ class JobPosting(Base):
     date_posted = Column(DateTime, server_default=func.now())
     post_status = Column(Boolean)
 
+    application = relationship('JobApplication', back_populates='job_posting')
 
 class Resume(Base):
     __tablename__ = 'resumes'
@@ -52,3 +53,15 @@ class Resume(Base):
     ref_3 = Column(String)
 
     user = relationship('User', back_populates='resume')
+    job_application = relationship('JobApplication', back_populates='applicant')
+
+
+class JobApplication(Base):
+    __tablename__ = 'job_applications'
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    resume = Column(Integer, ForeignKey('resumes.id'))
+    job = Column(Integer, ForeignKey('jobs.id'))
+
+    applicant = relationship('Resume', back_populates='job_application')
+    job_posting = relationship('JobPosting', back_populates='application')

@@ -4,7 +4,7 @@
             <a @click="changeComponent('DashboardContent')" class="nav-link">Dashboard</a>
             <a @click="changeComponent('NotificationPage')" class="nav-link">Notifications</a>
             <a @click="changeComponent('ProfilePage')" class="nav-link">Profile</a>
-            <a @click="changeComponent('NotificationPage')" class="nav-link">My Resume</a>
+            <a @click="changeComponent('ResumePage')" class="nav-link">My Resume</a>
             <a @click="changeComponent('JobPostings')" class="nav-link">Job Postings</a>
 
             <a @click="this.$router.push('/login')" class="nav-link" id="sign-out">Sign Out</a>
@@ -23,6 +23,7 @@ import DashboardContent from './DashboardComponents/DashboardContent.vue';
 import NotificationPage from './DashboardComponents/NotificationPage.vue';
 import ProfilePage from './DashboardComponents/ProfilePage.vue';
 import JobPostings from './DashboardComponents/JobPostings.vue';
+import ResumePage from './DashboardComponents/ResumePage.vue';
 
 export default {
     name: 'DashboardPage',
@@ -31,7 +32,8 @@ export default {
         DashboardContent,
         NotificationPage,
         ProfilePage,
-        JobPostings
+        JobPostings,
+        ResumePage
     },
     methods: {
         changeComponent(componentName){

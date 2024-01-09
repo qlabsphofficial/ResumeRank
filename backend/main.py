@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
 from pydantic import BaseModel
-from models import User, JobPosting, Resume
+from models import User, JobPosting, Resume, JobApplication
 # import datetime as dt
 from datetime import datetime
 
@@ -43,10 +43,10 @@ class JobPostingModel(BaseModel):
     title: str
     job_title: str
     description: str
-    post_status: str
+    post_status: bool
 
 class ResumeModel(BaseModel):
-    resume_owner: str
+    resume_owner: int
     ed_1: str
     ed_2: str
     ed_3: str
@@ -126,6 +126,76 @@ async def retrieve_dashboard_data(user_id: int, db: Session = Depends(get_databa
         return { 'response': 'Error retrieving data.', 'status_code': 400 }
     
 
+@app.post('/submit_resume')
+async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)):
+    try:
+        existing_resume = db.query(Resume).filter(Resume.resume_owner == resume.resume_owner).first()
+
+        if not existing_resume:
+            new_resume = Resume()
+            new_resume.resume_owner = resume.resume_owner
+            new_resume.ed_1 = resume.ed_1
+            new_resume.ed_2 = resume.ed_2
+            new_resume.ed_3 = resume.ed_3
+            new_resume.training_1 = resume.training_1
+            new_resume.training_2 = resume.training_2
+            new_resume.training_3 = resume.training_3
+            new_resume.achievement_1 = resume.achievement_1
+            new_resume.achievement_2 = resume.achievement_2
+            new_resume.achievement_3 = resume.achievement_3
+            new_resume.experience_1 = resume.experience_1
+            new_resume.experience_2 = resume.experience_2
+            new_resume.experience_3 = resume.experience_3
+            new_resume.summary = resume.summary
+            new_resume.ref_1 = resume.ref_1
+            new_resume.ref_2 = resume.ref_2
+            new_resume.ref_3 = resume.ref_3
+
+            db.add(new_resume)
+        else:
+            existing_resume.resume_owner = resume.resume_owner
+            existing_resume.ed_1 = resume.ed_1
+            existing_resume.ed_2 = resume.ed_2
+            existing_resume.ed_3 = resume.ed_3
+            existing_resume.training_1 = resume.training_1
+            existing_resume.training_2 = resume.training_2
+            existing_resume.training_3 = resume.training_3
+            existing_resume.achievement_1 = resume.achievement_1
+            existing_resume.achievement_2 = resume.achievement_2
+            existing_resume.achievement_3 = resume.achievement_3
+            existing_resume.experience_1 = resume.experience_1
+            existing_resume.experience_2 = resume.experience_2
+            existing_resume.experience_3 = resume.experience_3
+            existing_resume.summary = resume.summary
+            existing_resume.ref_1 = resume.ref_1
+            existing_resume.ref_2 = resume.ref_2
+            existing_resume.ref_3 = resume.ref_3
+            
+        db.commit()
+
+        return { 'response': 'resume submitted', 'status_code': 200 }
+    except:
+        return { 'response': 'Error retrieving data.', 'status_code': 400 }
+
+
+@app.get('/show_resumes')
+async def show_resumes(db: Session = Depends(get_database)):
+    try:
+        all_resumes = db.query(Resume).all()
+        return { 'response': 'resumes retrieved', 'resumes': all_resumes, 'status_code': 200 }
+    except:
+        return { 'response': 'resumes Retrieval Failed', 'status_code': 200 }
+    
+
+@app.get('/retrieve_resume_data')
+async def retrieve_resume_data(user_id: int, db: Session = Depends(get_database)):
+    try:
+        resume = db.query(Resume).filter(Resume.resume_owner == user_id).first()
+        return { 'response': 'resume retrieved', 'resume': resume, 'status_code': 200 }
+    except:
+        return { 'response': 'resume Retrieval Failed', 'status_code': 200 }
+
+
 @app.post('/create_job_posting')
 async def create_job_posting(job: JobPostingModel, db: Session = Depends(get_database)):
     try:
@@ -154,6 +224,24 @@ async def show_jobs(db: Session = Depends(get_database)):
 @app.post('/apply_to_job')
 async def apply_to_job(user_id: int, job_id: int, db: Session = Depends(get_database)):
     try:
+        job_id = db.query(JobPosting).filter(JobPosting.id == job_id).first()
+        resume = db.query(Resume).filter(Resume.resume_owner == user_id).first()
+
+        new_application = JobApplication()
+        new_application.resume = job_id.id
+        new_application.job = resume.id
+
+        db.add(new_application)
+        db.commit()
         return { 'response': 'applied to job', 'status_code': 200 }
     except:
         return { 'response': 'Error retrieving data.', 'status_code': 400 }
+
+
+@app.get('/show_applications')
+async def show_applications(db: Session = Depends(get_database)):
+    try:
+        all_applications = db.query(JobApplication).all()
+        return { 'response': 'applications retrieved', 'applications': all_applications, 'status_code': 200 }
+    except:
+        return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
