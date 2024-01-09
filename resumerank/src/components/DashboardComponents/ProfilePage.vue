@@ -11,8 +11,8 @@
                 </div>
 
                 <div id="profile-main-text">
-                    <h2>Sample Username</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <h2>{{ user_data.firstname }} {{ user_data.middlename }} {{ user_data.lastname }}</h2>
+                    <p>{{ user_data.email }}</p>
                 </div>
             </div>
 
@@ -33,6 +33,9 @@
 <script>
 export default {
     name: 'ProfilePage',
+    props: {
+        user_data: {}
+    },
     methods: {
 
     },

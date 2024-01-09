@@ -113,6 +113,19 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             return { 'response': 'User already exists.', 'status_code': 403 }
     except:
         return { 'response': 'Registration failed.', 'status_code': 400 }
+    
+
+@app.get('/retrieve_user_data')
+async def retrieve_dashboard_data(user_id: int, db: Session = Depends(get_database)):
+    try:
+        user = db.query(User).filter(User.id == user_id).first()
+
+        payload = {}
+        payload.update({ 'user_data': user })
+
+        return { 'payload': payload, 'status_code': 200 }
+    except:
+        return { 'response': 'Error retrieving data.', 'status_code': 400 }
 
 
 @app.post('/create_education')

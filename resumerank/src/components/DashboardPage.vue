@@ -12,7 +12,7 @@
 
         <div id="main-content">
             <div id="main-content-container">
-                <component :is="currentComponent"></component>
+                <component :is="currentComponent" :user_data="this.user_data" />
             </div>
         </div>
     </div>
@@ -34,11 +34,25 @@ export default {
     methods: {
         changeComponent(componentName){
             this.currentComponent = componentName;
+        },
+
+        async retrieve_dashboard_data(){
+            const response = await fetch(`https://resumerank.onrender.com/retrieve_dashboard_data?user_id=${this.user_id}`);
+            const data = await response.json();
+
+            if (!response.ok){
+                console.log('Failed.');
+            }
+            else{
+                this.user_data = data.payload.user_data;
+                console.log(this.user_data);
+            }            
         }
     },
     data (){
         return {
-            currentComponent: ProfilePage
+            currentComponent: ProfilePage,
+            user_data: []
         }
     },
     mounted(){
