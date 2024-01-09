@@ -4,7 +4,13 @@
         <p>{{ job.date_posted }}</p>
         <p id="description">{{ job.description }}</p>
 
-        
+        <h2>Top Applicants</h2>
+        <div id="top-applicants">
+            <div v-for="top_applicant in top_applicants" :key="top_applicant">
+                <h3>{{ top_applicant.firstname }} {{ top_applicant.middlename }} {{ top_applicant.lastname }}</h3>
+                <p>{{ top_applicant.email }} - {{ top_applicant.contact }}</p>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -23,15 +29,14 @@ export default {
                 console.log('Failed.');
             }
             else{
-                console.log(data.all_applications);
-                console.log(data.analysis);
-                console.log(data.job);
+                console.log(this.top_applicants);
+                this.top_applicants = data.analysis;
             }            
         },
     },
     data (){
         return {
-
+            top_applicants: []
         }
     },
     mounted(){
@@ -68,5 +73,14 @@ button:hover {
     border: 1px solid black;
     background-color: transparent;
     color: black;
+}
+
+h2 {
+    margin-top: 5%;
+}
+
+#top-applicants {
+    height: 50%;
+    width: 100%;
 }
 </style>
