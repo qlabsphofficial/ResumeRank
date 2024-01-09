@@ -12,7 +12,7 @@
 
         <div id="main-content">
             <div id="main-content-container">
-                <component :is="currentComponent" :user_data="this.user_data" />
+                <component :is="currentComponent" :job="this.childData" :user_data="this.user_data" @send-job-data="handleJobData" />
             </div>
         </div>
     </div>
@@ -24,6 +24,7 @@ import NotificationPage from './DashboardComponents/NotificationPage.vue';
 import ProfilePage from './DashboardComponents/ProfilePage.vue';
 import JobPostings from './DashboardComponents/JobPostings.vue';
 import ResumePage from './DashboardComponents/ResumePage.vue';
+import JobDetails from './DashboardComponents/JobDetails.vue';
 
 export default {
     name: 'DashboardPage',
@@ -33,7 +34,8 @@ export default {
         NotificationPage,
         ProfilePage,
         JobPostings,
-        ResumePage
+        ResumePage,
+        JobDetails
     },
     methods: {
         changeComponent(componentName){
@@ -51,12 +53,19 @@ export default {
                 this.user_data = data.payload.user_data;
                 console.log(this.user_data);
             }            
+        },
+
+        handleJobData(data){
+            this.childData = data.job_data;
+            console.log(this.childData);
+            this.currentComponent = JobDetails;
         }
     },
     data (){
         return {
             currentComponent: ProfilePage,
-            user_data: []
+            user_data: [],
+            childData: {}
         }
     },
     mounted(){

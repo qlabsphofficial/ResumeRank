@@ -4,7 +4,7 @@
 
         <div id="jobs">
             <div id="all-jobs">
-                <div class="job" v-for="job in all_jobs" :key="job">
+                <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
                     <h2>{{ job.job_title }}</h2>
                     <p>{{ job.date_posted }}</p>
                     <p>{{ job.description }}</p>
@@ -29,6 +29,9 @@ export default {
                 console.log(data.jobs);
                 this.all_jobs = data.jobs;
             }            
+        },
+        sendDataToParent(job){
+            this.$emit('send-job-data', { job_data: job });
         }
     },
     data (){

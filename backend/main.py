@@ -228,8 +228,8 @@ async def apply_to_job(user_id: int, job_id: int, db: Session = Depends(get_data
         resume = db.query(Resume).filter(Resume.resume_owner == user_id).first()
 
         new_application = JobApplication()
-        new_application.resume = job_id.id
-        new_application.job = resume.id
+        new_application.resume = resume.id
+        new_application.job = job_id.id
 
         db.add(new_application)
         db.commit()
@@ -243,5 +243,48 @@ async def show_applications(db: Session = Depends(get_database)):
     try:
         all_applications = db.query(JobApplication).all()
         return { 'response': 'applications retrieved', 'applications': all_applications, 'status_code': 200 }
+    except:
+        return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
+    
+
+@app.get('/analyze_resumes')
+async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
+    try:
+        job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
+        all_applications = db.query(JobApplication).filter(JobApplication.job == job_id).all()
+
+        for application in all_applications:
+            resume = db.query(Resume).filter(Resume.id == application.resume).all()
+            print('Resume details')
+            print(resume.training_1)
+            print(resume.training_2)
+            print(resume.training_3)
+            print(resume.achievement_1)
+            print(resume.achievement_2)
+            print(resume.achievement_3)
+            print(resume.experience_1)
+            print(resume.experience_2)
+            print(resume.experience_3)
+            print(resume.summary)
+
+            text_analysis = ''
+            
+
+            text_analysis += f' {resume.training_1}'
+            text_analysis += f' {resume.training_2}'
+            text_analysis += f' {resume.training_3}'
+            text_analysis += f' {resume.achievement_1}'
+            text_analysis += f' {resume.achievement_2}'
+            text_analysis += f' {resume.achievement_3}'
+            text_analysis += f' {resume.experience_1}'
+            text_analysis += f' {resume.experience_2}'
+            text_analysis += f' {resume.experience_3}'
+            text_analysis += f' {resume.summary}'
+
+            print(text_analysis)
+
+        analysis = []
+
+        return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': analysis, 'status_code': 200 }
     except:
         return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
