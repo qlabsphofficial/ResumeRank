@@ -74,7 +74,7 @@ async def login(username: str, password: str, db: Session = Depends(get_database
         
         if existing_user:
             if existing_user.password == password:
-                return { 'response': 'Login successful.', 'status_code': 200 }
+                return { 'response': 'Login successful.', 'user_data': existing_user, 'status_code': 200 }
             else:
                 return { 'response': 'Login failed.', 'status_code': 403 }
     except:

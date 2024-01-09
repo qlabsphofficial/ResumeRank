@@ -40,7 +40,7 @@
                 </div>
 
                 <div id="button-container">
-                    <button>Register</button>
+                    <button @click="register()">Register</button>
                     <p @click="this.$router.push('/login')">Already a user? Sign in.</p>
                 </div>
             </div>
@@ -60,39 +60,39 @@
     name: 'RegisterPage',
     methods: {
       async register(){
-            // const response = await fetch('http://127.0.0.1:8000/register', {
-            const response = await fetch('https://resumerank.onrender.com/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    'username': this.username,
-                    'password': this.password,
-                    'confirm': this.confirm,
-                    'firstname': this.first_name,
-                    'middlename': this.middle_name,
-                    'lastname': this.last_name,
-                    'contact_no': this.contact,
-                    'email': this.email,
-                    'address': this.address
-                }),
-            })
+          // const response = await fetch('http://127.0.0.1:8000/register', {
+          const response = await fetch('https://resumerank.onrender.com/register', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  'username': this.username,
+                  'password': this.password,
+                  'confirm': this.confirm,
+                  'firstname': this.first_name,
+                  'middlename': this.middle_name,
+                  'lastname': this.last_name,
+                  'contact_no': this.contact,
+                  'email': this.email,
+                  'address': this.address
+              }),
+          })
 
-            if(response.ok){
-                const responseData = await response.json();
-                console.log(responseData.response);
+          if(response.ok){
+              const responseData = await response.json();
+              console.log(responseData.response);
 
-                if (responseData.response == 'Registration successful.'){
-                    this.$router.push('/login');
-                }
-                else {
-                    console.log('Failed');
-                }
-            }
-            else {
-                console.log(`Request failed with status ${response.status}`);
-            }
+              if (responseData.response == 'Registration successful.'){
+                  this.$router.push('/login');
+              }
+              else {
+                  console.log('Failed');
+              }
+          }
+          else {
+              console.log(`Request failed with status ${response.status}`);
+          }
         }
     },
     data() {

@@ -25,6 +25,7 @@ import ProfilePage from './DashboardComponents/ProfilePage.vue';
 
 export default {
     name: 'DashboardPage',
+    props: ['user_id'],
     components: {
         DashboardContent,
         NotificationPage,
