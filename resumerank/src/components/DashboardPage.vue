@@ -5,7 +5,7 @@
             <a @click="changeComponent('NotificationPage')" class="nav-link">Notifications</a>
             <a @click="changeComponent('ProfilePage')" class="nav-link">Profile</a>
             <a @click="changeComponent('NotificationPage')" class="nav-link">My Resume</a>
-            <a @click="changeComponent('NotificationPage')" class="nav-link">Job Postings</a>
+            <a @click="changeComponent('JobPostings')" class="nav-link">Job Postings</a>
 
             <a @click="this.$router.push('/login')" class="nav-link" id="sign-out">Sign Out</a>
         </div>
@@ -22,6 +22,7 @@
 import DashboardContent from './DashboardComponents/DashboardContent.vue';
 import NotificationPage from './DashboardComponents/NotificationPage.vue';
 import ProfilePage from './DashboardComponents/ProfilePage.vue';
+import JobPostings from './DashboardComponents/JobPostings.vue';
 
 export default {
     name: 'DashboardPage',
@@ -29,7 +30,8 @@ export default {
     components: {
         DashboardContent,
         NotificationPage,
-        ProfilePage
+        ProfilePage,
+        JobPostings
     },
     methods: {
         changeComponent(componentName){
@@ -37,7 +39,7 @@ export default {
         },
 
         async retrieve_dashboard_data(){
-            const response = await fetch(`https://resumerank.onrender.com/retrieve_dashboard_data?user_id=${this.user_id}`);
+            const response = await fetch(`https://resumerank.onrender.com/retrieve_user_data?user_id=${this.user_id}`);
             const data = await response.json();
 
             if (!response.ok){
@@ -57,6 +59,7 @@ export default {
     },
     mounted(){
         this.changeComponent('DashboardContent');
+        this.retrieve_dashboard_data();
     }
 }
 </script>

@@ -1,7 +1,6 @@
 <template>
     <div id="container">
-        <h1>Notifications</h1>
-        <p>Alerts at a Glance: Your Notification Nexus.</p>
+        <h1>Job Postings</h1>
 
         <div id="notifications">
             <h2>Recent Notifications</h2>

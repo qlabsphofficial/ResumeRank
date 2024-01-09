@@ -11,8 +11,8 @@
                 </div>
 
                 <div id="profile-main-text">
-                    <h2>{{ user_data.firstname }} {{ user_data.middlename }} {{ user_data.lastname }}</h2>
-                    <p>{{ user_data.email }}</p>
+                    <h2>{{ this.user_data.firstname }} {{ this.user_data.middlename }} {{ this.user_data.lastname }}</h2>
+                    <p>{{ this.user_data.email }}</p>
                 </div>
             </div>
 

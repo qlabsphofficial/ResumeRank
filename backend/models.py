@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, Float, String, DateTime, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, Float, String, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -16,73 +16,39 @@ class User(Base):
     contact_no = Column(String)
     address = Column(String)
 
-    educations = relationship('Education', back_populates='user')
-    trainings = relationship('Training', back_populates='user')
-    experiences = relationship('Experience', back_populates='user')
+    resume = relationship('Resume', back_populates='user')
 
-    
-class Education(Base):
-    __tablename__ = 'educations'
-    
-    id = Column(Integer, autoincrement=True, primary_key=True)
-    school = Column(String)
-    degree = Column(String)
-    start_date = Column(DateTime)
-    end_date = Column(DateTime)
-    description = Column(String)
-    user_id = Column(Integer, ForeignKey('users.id'))
+class JobPosting(Base):
+    __tablename__ = 'jobs'
 
-    user = relationship('User', back_populates='educations')
-
-
-class Training(Base):
-    __tablename__ = 'trainings'
-    
-    id = Column(Integer, autoincrement=True, primary_key=True)
-    training = Column(String)
-    date = Column(DateTime)
-    organizer = Column(String)
-    description = Column(String)
-    user_id = Column(Integer, ForeignKey('users.id'))
-
-    user = relationship('User', back_populates='trainings')
-
-
-# For clarification
-# class Achievements(Base):
-#     __tablename__ = 'users'
-    
-#     id = Column(Integer, autoincrement=True, primary_key=True)
-#     school = Column(String)
-    
-
-class Experience(Base):
-    __tablename__ = 'experiences'
-    
     id = Column(Integer, autoincrement=True, primary_key=True)
     title = Column(String)
-    company = Column(String)
-    current_working = Column(Boolean)
-    start_date = Column(DateTime)
-    end_date = Column(DateTime)
+    job_title = Column(String)
     description = Column(String)
-    user_id = Column(Integer, ForeignKey('users.id'))
-
-    user = relationship('User', back_populates='experiences')
-
-
-# For clarification
-# class About(Base):
-#     __tablename__ = 'users'
-    
-#     id = Column(Integer, autoincrement=True, primary_key=True)
-#     title = Column(String)
+    date_posted = Column(DateTime, server_default=func.now())
+    post_status = Column(Boolean)
 
 
-# For clarification
-# class References(Base):
-#     __tablename__ = 'users'
-    
-#     id = Column(Integer, autoincrement=True, primary_key=True)
-#     school = Column(String)
-    
+class Resume(Base):
+    __tablename__ = 'resumes'
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    resume_owner = Column(Integer, ForeignKey('users.id'))
+    ed_1 = Column(String)
+    ed_2 = Column(String)
+    ed_3 = Column(String)
+    training_1 = Column(String)
+    training_2 = Column(String)
+    training_3 = Column(String)
+    achievement_1 = Column(String)
+    achievement_2 = Column(String)
+    achievement_3 = Column(String)
+    experience_1 = Column(String)
+    experience_2 = Column(String)
+    experience_3 = Column(String)
+    summary = Column(String)
+    ref_1 = Column(String)
+    ref_2 = Column(String)
+    ref_3 = Column(String)
+
+    user = relationship('User', back_populates='resume')

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
 from pydantic import BaseModel
-from models import User, Education, Training, Experience
+from models import User, JobPosting, Resume
 # import datetime as dt
 from datetime import datetime
 
@@ -39,32 +39,31 @@ class UserModel(BaseModel):
     contact_no : str
     address : str
 
+class JobPostingModel(BaseModel):
+    title: str
+    job_title: str
+    description: str
+    date_posted: str
+    post_status: str
 
-class EducationModel(BaseModel):
-    school : str
-    degree : str
-    start_date : str
-    end_date : str
-    description : str
-    user_id : int
-
-
-class TrainingModel(BaseModel):
-    training : str
-    date : str
-    organizer : str
-    description : str
-    user_id : int
-
-
-class ExperienceModel(BaseModel):
-    title : str
-    company : str
-    current_working : bool
-    start_date : str
-    end_date : str
-    description : str
-    user_id : int
+class ResumeModel(BaseModel):
+    resume_owner: str
+    ed_1: str
+    ed_2: str
+    ed_3: str
+    training_1: str
+    training_2: str
+    training_3: str
+    achievement_1: str
+    achievement_2: str
+    achievement_3: str
+    experience_1: str
+    experience_2: str
+    experience_3: str
+    summary: str
+    ref_1: str
+    ref_2: str
+    ref_3: str
 
 
 @app.get('/show_users')
@@ -126,68 +125,36 @@ async def retrieve_dashboard_data(user_id: int, db: Session = Depends(get_databa
         return { 'payload': payload, 'status_code': 200 }
     except:
         return { 'response': 'Error retrieving data.', 'status_code': 400 }
+    
 
-
-@app.post('/create_education')
-async def create_education(education: EducationModel, db: Session = Depends(get_database)):
+@app.post('/create_job_posting')
+async def create_job_posting(job: JobPostingModel, db: Session = Depends(get_database)):
     try:
-        start_date = datetime.strptime(education.start_date, "%Y-%m-%d")
-        end_date = datetime.strptime(education.end_date, "%Y-%m-%d")
+        new_job = JobPosting()
+        new_job.job_title = job.job_title
+        new_job.description = job.description
+        new_job.post_status = job.post_status
 
-        new_education = Education()
-        new_education.school = education.school
-        new_education.degree = education.degree
-        new_education.start_date = start_date
-        new_education.end_date = end_date
-        new_education.description = education.description
-        new_education.user_id = int(education.user_id)
-
-        db.add(new_education)
+        db.add(new_job)
         db.commit()
-        
-        return { 'response': 'Record saved sucessfully!', 'status_code': 200 }
+
+        return { 'response': 'job created', 'status_code': 200 }
     except:
-        return { 'response': 'Failed to save record', 'status_code': 403 }
+        return { 'response': 'Error retrieving data.', 'status_code': 400 }
+    
 
-
-@app.post('/create_training')
-async def create_training(training: TrainingModel, db: Session = Depends(get_database)):
+@app.get('/show_jobs')
+async def show_jobs(db: Session = Depends(get_database)):
     try:
-        date = datetime.strptime(training.date, "%Y-%m-%d")
-
-        new_training = Training()
-        new_training.training = training.training
-        new_training.date = date
-        new_training.organizer = training.organizer
-        new_training.description = training.description
-        new_training.user_id = int(training.user_id)
-
-        db.add(new_training)
-        db.commit()
-        
-        return { 'response': 'Record saved sucessfully!', 'status_code': 200 }
+        all_jobs = db.query(JobPosting).all()
+        return { 'response': 'jobs retrieved', 'jobs': all_jobs, 'status_code': 200 }
     except:
-        return { 'response': 'Failed to save record', 'status_code': 403 }
+        return { 'response': 'User Retrieval Failed', 'status_code': 200 }
+    
 
-
-@app.post('/create_experience')
-async def create_experience(experience: ExperienceModel, db: Session = Depends(get_database)):
+@app.post('/apply_to_job')
+async def apply_to_job(user_id: int, job_id: int, db: Session = Depends(get_database)):
     try:
-        start_date = datetime.strptime(experience.start_date, "%Y-%m-%d")
-        end_date = datetime.strptime(experience.end_date, "%Y-%m-%d")
-
-        new_experience = Experience()
-        new_experience.title = experience.title
-        new_experience.company = experience.company
-        new_experience.current_working = experience.current_working
-        new_experience.start_date = start_date
-        new_experience.end_date = end_date
-        new_experience.description = experience.description
-        new_experience.user_id = int(experience.user_id)
-
-        db.add(new_experience)
-        db.commit()
-        
-        return { 'response': 'Record saved sucessfully!', 'status_code': 200 }
+        return { 'response': 'applied to job', 'status_code': 200 }
     except:
-        return { 'response': 'Failed to save record', 'status_code': 403 }
+        return { 'response': 'Error retrieving data.', 'status_code': 400 }
