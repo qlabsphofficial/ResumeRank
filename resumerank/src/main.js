@@ -3,6 +3,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import LoginPage from './components/LoginPage.vue';
 import RegisterPage from './components/RegisterPage.vue';
+import DashboardPage from './components/DashboardPage.vue';
 
 // Create the Vue app instance
 const app = createApp(App);
@@ -13,6 +14,7 @@ const router = createRouter({
   routes: [
     { path: '/login', component: LoginPage },
     { path: '/register', component: RegisterPage },
+    { path: '/dashboard', component: DashboardPage }
   ],
 });
 

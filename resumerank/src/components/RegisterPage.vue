@@ -38,6 +38,7 @@
 
                 <div id="button-container">
                     <button>Register</button>
+                    <p @click="this.$router.push('/login')">Already a user? Sign in.</p>
                 </div>
             </div>
 
@@ -73,6 +74,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #EBEBEB;
   
     h1, h4 {
       color: #2984CE;
@@ -98,6 +100,9 @@
     flex-grow: 1;
     padding: 2%;
     text-align: left;
+    background-color: white;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
   }
   
   #right-section {
@@ -153,7 +158,7 @@
 #forgot-section {
     width: 100%;
     text-align: right;
-    margin-bottom: 7.5%;
+    margin-bottom: 5%;
 }
   
 #button-container {

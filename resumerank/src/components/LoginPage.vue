@@ -21,7 +21,7 @@
           </div>
 
           <div id="button-container">
-            <button>Login</button>
+            <button @click="login()">Login</button>
             <p @click="this.$router.push('/register')">Not registered yet? Sign up here.</p>
           </div>
         </div>
@@ -39,6 +39,11 @@
 <script>
 export default {
   name: 'LoginPage',
+  methods: {
+    login(){
+      this.$router.push('/dashboard')
+    }
+  },
   data() {
     return {
       username: '',
@@ -58,6 +63,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #EBEBEB;
 
   h1, h4 {
     color: #2984CE;
@@ -83,6 +89,9 @@ export default {
   flex-grow: 1;
   padding: 2%;
   text-align: left;
+  background-color: white;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
 }
 
 #right-section {
