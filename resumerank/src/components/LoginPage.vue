@@ -49,10 +49,13 @@ export default {
           }
           });
 
+          console.log('test works');
+
           if (response.ok) {
               const responseData = await response.json();
 
               if (responseData && responseData.response === 'Login successful.') {
+                  console.log('im here')
                   this.$router.push({ name: 'dashboard', params: { user_id: responseData.user_data.id } });
               } else {
                   this.message = 'LOGIN FAILED.';
