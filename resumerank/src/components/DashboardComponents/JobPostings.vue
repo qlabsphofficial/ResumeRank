@@ -7,7 +7,6 @@
                 <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
                     <h2>{{ job.job_title }}</h2>
                     <p>{{ job.date_posted }}</p>
-                    <p>{{ job.description }}</p>
                 </div>
             </div>
         </div>

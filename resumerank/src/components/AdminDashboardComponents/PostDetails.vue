@@ -48,7 +48,7 @@ export default {
 }
 
 #description {
-    margin-top: 15%;
+    margin-top: 5%;
 }
 
 button {
