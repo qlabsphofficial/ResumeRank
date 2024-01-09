@@ -43,7 +43,6 @@ class JobPostingModel(BaseModel):
     title: str
     job_title: str
     description: str
-    date_posted: str
     post_status: str
 
 class ResumeModel(BaseModel):
