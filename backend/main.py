@@ -249,26 +249,15 @@ async def show_applications(db: Session = Depends(get_database)):
 
 @app.get('/analyze_resumes')
 async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
-    try:
+    # try:
         job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
         all_applications = db.query(JobApplication).filter(JobApplication.job == job_id).all()
 
-        for application in all_applications:
-            resume = db.query(Resume).filter(Resume.id == application.resume).all()
-            print('Resume details')
-            print(resume.training_1)
-            print(resume.training_2)
-            print(resume.training_3)
-            print(resume.achievement_1)
-            print(resume.achievement_2)
-            print(resume.achievement_3)
-            print(resume.experience_1)
-            print(resume.experience_2)
-            print(resume.experience_3)
-            print(resume.summary)
+        top_applicants = []
 
+        for application in all_applications:
+            resume = db.query(Resume).join(User).filter(Resume.id == application.resume).filter(User.id == Resume.resume_owner).first()
             text_analysis = ''
-            
 
             text_analysis += f' {resume.training_1}'
             text_analysis += f' {resume.training_2}'
@@ -280,11 +269,19 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
             text_analysis += f' {resume.experience_2}'
             text_analysis += f' {resume.experience_3}'
             text_analysis += f' {resume.summary}'
+            
+            job_desc = job.description.split()
+            resume_text = text_analysis.split()
 
-            print(text_analysis)
+            common_words = set(job_desc) & set(resume_text)
+            matching_word_count = len(common_words)
 
-        analysis = []
+            if matching_word_count > 1:
+                applicant = db.query(User).filter(User.id == resume.resume_owner).first()
+                print(applicant.__dict__)
+                
+                top_applicants.append(applicant)
 
-        return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': analysis, 'status_code': 200 }
-    except:
-        return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
+        return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': top_applicants, 'status_code': 200 }
+    # except:
+    #     return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
