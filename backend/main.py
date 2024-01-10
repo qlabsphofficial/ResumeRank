@@ -106,6 +106,30 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             db.add(new_user)
             db.commit()
 
+            newly_added = db.query(User).filter(User.username == user.username).first()
+
+            new_resume = Resume()
+            new_resume.resume_owner = newly_added.id
+            new_resume.ed_1 = ''
+            new_resume.ed_2 = ''
+            new_resume.ed_3 = ''
+            new_resume.training_1 = ''
+            new_resume.training_2 = ''
+            new_resume.training_3 = ''
+            new_resume.achievement_1 = ''
+            new_resume.achievement_2 = ''
+            new_resume.achievement_3 = ''
+            new_resume.experience_1 = ''
+            new_resume.experience_2 = ''
+            new_resume.experience_3 = ''
+            new_resume.summary = ''
+            new_resume.ref_1 = ''
+            new_resume.ref_2 = ''
+            new_resume.ref_3 = ''
+            db.add(new_resume)
+            db.commit()
+            
+
             return { 'response': 'Registration successful.', 'status_code': 200 }
         else:
             return { 'response': 'User already exists.', 'status_code': 403 }
@@ -191,32 +215,6 @@ async def show_resumes(db: Session = Depends(get_database)):
 async def retrieve_resume_data(user_id: int, db: Session = Depends(get_database)):
     try:
         resume = db.query(Resume).filter(Resume.resume_owner == user_id).first()
-
-        if resume is None:
-            new_resume = Resume()
-            new_resume.resume_owner = user_id
-            new_resume.ed_1 = ''
-            new_resume.ed_2 = ''
-            new_resume.ed_3 = ''
-            new_resume.training_1 = ''
-            new_resume.training_2 = ''
-            new_resume.training_3 = ''
-            new_resume.achievement_1 = ''
-            new_resume.achievement_2 = ''
-            new_resume.achievement_3 = ''
-            new_resume.experience_1 = ''
-            new_resume.experience_2 = ''
-            new_resume.experience_3 = ''
-            new_resume.summary = ''
-            new_resume.ref_1 = ''
-            new_resume.ref_2 = ''
-            new_resume.ref_3 = ''
-
-            db.add(new_resume)
-            db.commit(new_resume)
-
-            resume = new_resume
-
         return { 'response': 'resume retrieved', 'resume': resume, 'status_code': 200 }
     except:
         return { 'response': 'resume Retrieval Failed', 'status_code': 200 }
