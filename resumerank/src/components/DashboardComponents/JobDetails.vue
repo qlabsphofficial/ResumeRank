@@ -1,6 +1,6 @@
 <template>
     <div id="container">
-        <h1>{{ job.job_title }}</h1>
+        <h1>{{ page_title }}</h1>
         <p>{{ job.date_posted }}</p>
         <p id="description">{{ job.description }}</p>
 
@@ -31,13 +31,13 @@ export default {
 
                 if (response.ok) {
                     const responseData = await response.json();
+                    console.log(responseData.response);
 
-                    if (responseData && responseData.response === 'Login successful.') {
-                        console.log('im here')
-                        this.$router.push({ name: 'dashboard', params: { user_id: responseData.user_data.id } });
+                    if (responseData && responseData.response === 'applied to job') {
+                        this.page_title = 'Application Successful.';
+                        setTimeout(() => { this.page_title = this.job.job_title }, 2000);
                     } else {
-                        this.message = 'LOGIN FAILED.';
-                        setTimeout(() => { this.message = 'LOGIN'}, 2000);
+                        console.log('Error');
                     }
                 } else {
                     console.log('Login Failed. Status:', response.status);
@@ -49,8 +49,11 @@ export default {
     },
     data (){
         return {
-
+            page_title: ''
         }
+    },
+    mounted() {
+        this.page_title = this.job.job_title;
     }
 }
 </script>
