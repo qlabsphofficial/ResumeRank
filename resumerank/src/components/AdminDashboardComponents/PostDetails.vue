@@ -22,7 +22,7 @@ export default {
     },
     methods: {
         async get_analysis(){
-            const response = await fetch(`http://127.0.0.1:8000/analyze_resumes?job_id=${this.job.id}`);
+            const response = await fetch(`https://resumerank.onrender.com/analyze_resumes?job_id=${this.job.id}`);
             const data = await response.json();
 
             if (!response.ok){

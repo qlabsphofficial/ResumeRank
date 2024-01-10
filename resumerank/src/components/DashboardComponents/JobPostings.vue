@@ -18,7 +18,7 @@ export default {
     name: 'JobPostings',
     methods: {
         async retrieve_data(){
-            const response = await fetch(`http://127.0.0.1:8000/show_jobs`);
+            const response = await fetch(`https://resumerank.onrender.com/show_jobs`);
             const data = await response.json();
 
             if (!response.ok){

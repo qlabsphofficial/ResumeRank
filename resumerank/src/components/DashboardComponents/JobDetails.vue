@@ -20,7 +20,7 @@ export default {
     methods: {
         async apply() {
             try {
-                const response = await fetch(`http://127.0.0.1:8000/apply_to_job?user_id=${this.user_data.id}&job_id=${this.job.id}`, {
+                const response = await fetch(`https://resumerank.onrender.com/apply_to_job?user_id=${this.user_data.id}&job_id=${this.job.id}`, {
                 method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
