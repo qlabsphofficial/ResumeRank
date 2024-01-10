@@ -95,6 +95,7 @@ export default {
                 console.log('Failed.');
             }
             else{
+                console.log(data.resume);
                 this.ed1 = data.resume.ed_1
                 this.ed2 = data.resume.ed_2
                 this.ed3 = data.resume.ed_3
