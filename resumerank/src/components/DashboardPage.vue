@@ -43,7 +43,7 @@ export default {
         },
 
         async retrieve_dashboard_data(){
-            const response = await fetch(`https://resumerank.onrender.com/retrieve_user_data?user_id=${this.user_id}`);
+            const response = await fetch(`http://127.0.0.1:8000/retrieve_user_data?user_id=${this.user_id}`);
             const data = await response.json();
 
             if (!response.ok){

@@ -300,12 +300,15 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
             common_words = set(job_desc) & set(resume_text)
             matching_word_count = len(common_words)
 
-            if matching_word_count > 1:
+            if matching_word_count > 10:
                 applicant = db.query(User).filter(User.id == resume.resume_owner).first()
                 print(applicant.__dict__)
                 
-                top_applicants.append(applicant)
+                top_applicants.append({'applicant': applicant, 'applicant_resume': resume, 'matches': matching_word_count })
 
-        return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': top_applicants, 'status_code': 200 }
+
+        sorted_top_applicants = sorted(top_applicants, key=lambda x: x['matches'], reverse=True)
+        print(sorted_top_applicants)
+        return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': sorted_top_applicants, 'status_code': 200 }
     # except:
     #     return { 'response': 'applications Retrieval Failed', 'status_code': 200 }

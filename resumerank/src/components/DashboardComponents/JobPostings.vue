@@ -26,7 +26,7 @@ export default {
     name: 'JobPostings',
     methods: {
         async retrieve_data(){
-            const response = await fetch(`https://resumerank.onrender.com/show_jobs`);
+            const response = await fetch(`http://127.0.0.1:8000/show_jobs`);
             const data = await response.json();
 
             if (!response.ok){
@@ -73,14 +73,27 @@ export default {
     overflow-y: scroll;
 }
 
+#jobs::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 15px;
+    background-color: #EEE;
+    scroll-behavior: smooth;
+}
+
+#jobs::-webkit-scrollbar-thumb {
+    background-color: #2984CE;
+    border-radius: 15px;
+}
+
 #all-jobs {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .job {
     height: 30vh;
-    width: 33%;
+    width: 30%;
     margin: 1%;
     padding-bottom: 5%;
     box-shadow: 2px 2px 2px 2px #AEAEAE;

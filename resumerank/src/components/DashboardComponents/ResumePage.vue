@@ -110,7 +110,7 @@ export default {
     },
     methods: {
         async submit_resume(){
-          const response = await fetch('https://resumerank.onrender.com/submit_resume', {
+          const response = await fetch('http://127.0.0.1:8000/submit_resume', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ export default {
         },
 
         async retrieve_resume_data(){
-            const response = await fetch(`https://resumerank.onrender.com/retrieve_resume_data?user_id=${this.user_data.id}`);
+            const response = await fetch(`http://127.0.0.1:8000/retrieve_resume_data?user_id=${this.user_data.id}`);
             const data = await response.json();
 
             if (!response.ok){

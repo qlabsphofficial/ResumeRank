@@ -20,30 +20,30 @@
             <div id="all-info">
                 <h5>Education</h5>
                 <div class="info">
-                    <p>Primary: Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
-                    <p>Secondary: Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
-                    <p>College / University: Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>Primary - {{ this.ed1 }}</p>
+                    <p>Secondary - {{ this.ed2 }}</p>
+                    <p>College / University - {{ this.ed3 }}</p>
                 </div>
 
                 <h5>Trainings</h5>
                 <div class="info">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>Training / Certification - {{ this.tr1 }}</p>
+                    <p>Training / Certification - {{ this.tr2 }}</p>
+                    <p>Training / Certification - {{ this.tr3 }}</p>
                 </div>
 
                 <h5>Achievements</h5>
                 <div class="info">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>Achievement - {{ this.ac1 }}</p>
+                    <p>Achievement - {{ this.ac2 }}</p>
+                    <p>Achievement - {{ this.ac3 }}</p>
                 </div>
 
                 <h5>Experience</h5>
                 <div class="info">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>Experience - {{ this.exp1 }}</p>
+                    <p>Experience - {{ this.exp2 }}</p>
+                    <p>Experience - {{ this.exp3 }}</p>
                 </div>
             </div>
         </div>
@@ -57,11 +57,49 @@ export default {
         user_data: {}
     },
     methods: {
+        async retrieve_resume_data(){
+            const response = await fetch(`http://127.0.0.1:8000/retrieve_resume_data?user_id=${this.user_data.id}`);
+            const data = await response.json();
 
+            if (!response.ok){
+                console.log('Failed.');
+            }
+            else{
+                console.log(data.resume);
+                this.ed1 = data.resume.ed_1
+                this.ed2 = data.resume.ed_2
+                this.ed3 = data.resume.ed_3
+                this.tr1 = data.resume.training_1
+                this.tr2 = data.resume.training_2
+                this.tr3 = data.resume.training_3
+                this.ac1 = data.resume.achievement_1
+                this.ac2 = data.resume.achievement_2
+                this.ac3 = data.resume.achievement_3
+                this.exp1 = data.resume.experience_1
+                this.exp2 = data.resume.experience_2
+                this.exp3 = data.resume.experience_3
+            }            
+        }
     },
     data (){
-
-    }
+        return {
+            ed1: '',
+            ed2: '',
+            ed3: '',
+            tr1: '',
+            tr2: '',
+            tr3: '',
+            ac1: '',
+            ac2: '',
+            ac3: '',
+            exp1: '',
+            exp2: '',
+            exp3: '',
+        }
+    },
+    mounted() {
+        this.retrieve_resume_data();
+    },
 }
 </script>
 

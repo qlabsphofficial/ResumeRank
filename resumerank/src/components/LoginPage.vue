@@ -42,7 +42,7 @@ export default {
   methods: {
     async login() {
       try {
-          const response = await fetch(`https://resumerank.onrender.com/login?username=${this.username}&password=${this.password}`, {
+          const response = await fetch(`http://127.0.0.1:8000/login?username=${this.username}&password=${this.password}`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',

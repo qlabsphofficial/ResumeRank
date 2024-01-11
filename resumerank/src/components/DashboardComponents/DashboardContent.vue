@@ -34,24 +34,9 @@
                 <h2>Available Job Postings</h2>
 
                 <div id="all-jobs">
-                    <div class="job">
-                        <h4>Sample Job Posting</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
-                    </div>
-
-                    <div class="job">
-                        <h4>Sample Job Posting</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
-                    </div>
-
-                    <div class="job">
-                        <h4>Sample Job Posting</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
-                    </div>
-
-                    <div class="job">
-                        <h4>Sample Job Posting</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
+                        <h4>{{ job.job_title }}</h4>
+                        <p>{{ job.description.slice(0, 80) }}...</p>
                     </div>
                 </div>
             </div>
@@ -70,9 +55,31 @@
 <script>
 export default {
     name: 'DashboardContent',
-    data (){
+    methods: {
+        async retrieve_data(){
+            const response = await fetch(`http://127.0.0.1:8000/show_jobs`);
+            const data = await response.json();
 
-    }
+            if (!response.ok){
+                console.log('Failed.');
+            }
+            else{
+                console.log(data.jobs);
+                this.all_jobs = data.jobs;
+            }            
+        },
+        sendDataToParent(job){
+            this.$emit('send-job-data', { job_data: job });
+        }
+    },
+    data (){
+        return {
+            all_jobs: []
+        }
+    },
+    mounted() {
+        this.retrieve_data();
+    },
 }
 </script>
 
@@ -141,6 +148,16 @@ export default {
     border-radius: 15px;
     box-shadow: 2px 2px 2px 2px #AEAEAE;
     overflow-y: scroll;
+    background-color: white;
+}
+
+.job {
+    margin-top: 5%;
+    margin-bottom: 5%;
+
+    h4, p {
+        line-height: 0;
+    }
 }
 
 #notifications {
@@ -160,6 +177,7 @@ export default {
     border-radius: 15px;
     box-shadow: 2px 2px 2px 2px #AEAEAE;
     overflow-y: scroll;
+    background-color: white;
 }
 
 #all-notifs::-webkit-scrollbar, #all-jobs::-webkit-scrollbar {
