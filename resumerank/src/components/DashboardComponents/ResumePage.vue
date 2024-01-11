@@ -1,35 +1,101 @@
 <template>
     <div id="container">
         <h1>{{ title }}</h1>
+        <p>Please enter your resume details below.</p>
 
         <div id="resume-fillup">
             <h3>Education</h3>
-            <input type="text" placeholder="Enter your primary school..." v-model="this.ed1">
-            <input type="text" placeholder="Enter your secondary school..." v-model="this.ed2">
-            <input type="text" placeholder="Enter your college / university..." v-model="this.ed3">
+            <div class="user-info-form">
+                <div class="info-form">
+                    <h5>Primary School Attended</h5>
+                    <input type="text" placeholder="Enter your primary school..." v-model="this.ed1">
+                </div>
+
+                <div class="info-form">
+                    <h5>Secondary School / High School Attended</h5>
+                    <input type="text" placeholder="Enter your secondary school..." v-model="this.ed2">
+                </div>
+
+                <div class="info-form">
+                    <h5>College / University Attended</h5>
+                    <input type="text" placeholder="Enter your college / university..." v-model="this.ed3">
+                </div>
+            </div>
 
             <h3>Trainings</h3>
-            <input type="text" placeholder="Enter training received..." v-model="this.tr1">
-            <input type="text" placeholder="Enter training received..." v-model="this.tr2">
-            <input type="text" placeholder="Enter training received..." v-model="this.tr3">
+            <div class="user-info-form">
+                <div class="info-form">
+                    <h5>Training / Seminar Attended</h5>
+                    <input type="text" placeholder="Enter training received..." v-model="this.tr1">
+                </div>
+
+                <div class="info-form">
+                    <h5>Training / Seminar Attended</h5>
+                    <input type="text" placeholder="Enter training received..." v-model="this.tr2">
+                </div>
+
+                <div class="info-form">
+                    <h5>Training / Seminar Attended</h5>
+                    <input type="text" placeholder="Enter training received..." v-model="this.tr3">
+                </div>
+            </div>
 
             <h3>Achievements</h3>
-            <input type="text" placeholder="Enter an achievement..." v-model="this.ac1">
-            <input type="text" placeholder="Enter an achievement..." v-model="this.ac2">
-            <input type="text" placeholder="Enter an achievement..." v-model="this.ac3">
+            <div class="user-info-form">
+                <div class="info-form">
+                    <h5>Achievement</h5>
+                    <input type="text" placeholder="Enter an achievement..." v-model="this.ac1">
+                </div>
 
+                <div class="info-form">
+                    <h5>Achievement</h5>
+                    <input type="text" placeholder="Enter an achievement..." v-model="this.ac2">
+                </div>
+
+                <div class="info-form">
+                    <h5>Achievement</h5>
+                    <input type="text" placeholder="Enter an achievement..." v-model="this.ac3">
+                </div>
+            </div>
+            
             <h3>Experience</h3>
-            <input type="text" placeholder="Enter your past experience..." v-model="this.exp1">
-            <input type="text" placeholder="Enter your past experience..." v-model="this.exp2">
-            <input type="text" placeholder="Enter your past experience..." v-model="this.exp3">
+            <div class="user-info-form">
+                <div class="info-form">
+                    <h5>Work Experience</h5>
+                    <input type="text" placeholder="Enter your past work experience..." v-model="this.exp1">
+                </div>
+
+                <div class="info-form">
+                    <h5>Work Experience</h5>
+                    <input type="text" placeholder="Enter your past work experience..." v-model="this.exp2">
+                </div>
+
+                <div class="info-form">
+                    <h5>Work Experience</h5>
+                    <input type="text" placeholder="Enter your past work experience..." v-model="this.exp3">
+                </div>
+            </div>
 
             <h3>About</h3>
-            <input type="text" placeholder="Tell us about yourself..." v-model="this.summary">
+            <textarea rows="20" cols="130" placeholder="Tell us about yourself..." v-model="this.summary"></textarea>
 
             <h3>Reference</h3>
-            <input type="text" placeholder="Enter a character reference..." v-model="this.cr1">
-            <input type="text" placeholder="Enter a character reference..." v-model="this.cr2">
-            <input type="text" placeholder="Enter a character reference..." v-model="this.cr3">
+            <div class="user-info-form">
+                <div class="info-form">
+                    <h5>Character Reference</h5>
+                    <input type="text" placeholder="Enter a character reference..." v-model="this.cr1">
+                </div>
+
+                <div class="info-form">
+                    <h5>Character Reference</h5>
+                    <input type="text" placeholder="Enter a character reference..." v-model="this.cr2">
+                </div>
+
+                <div class="info-form">
+                    <h5>Character Reference</h5>
+                    <input type="text" placeholder="Enter a character reference..." v-model="this.cr3">
+                </div>
+            </div>
 
             <button @click="submit_resume()">Save</button>
         </div>
@@ -147,6 +213,10 @@ export default {
     height: 100%;
     width: 100%;
     text-align: left;
+
+    h1 {
+        line-height: 0;
+    }
 }
 
 #notifications {
@@ -157,19 +227,67 @@ export default {
 
 #resume-fillup {
     height: 80%;
-    margin-top: 1%;
     padding: 2%;
+    margin-top: 3%;
     border-radius: 15px;
     overflow-y: scroll;
+
+    h3 {
+        font-weight: bold;
+        color: #2984CE;
+    }
 }
 
-input {
-    display: block;
-    height: 5vh;
-    width: 40%;
-    margin-top: 3%;
-    margin-bottom: 3%;
+#resume-fillup::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 15px;
+    background-color: #EEE;
+    scroll-behavior: smooth;
 }
+
+#resume-fillup::-webkit-scrollbar-thumb {
+    background-color: #2984CE;
+    border-radius: 15px;
+}
+
+.user-info-form {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5%;
+
+    input {
+        display: block;
+        height: 5vh;
+        width: 100%;
+        margin: 1%;
+        background-color: transparent;
+        border: none;
+        border-bottom: 1px solid black;
+    }
+
+    input:focus {
+        outline: none;
+    }
+}
+
+
+.info-form {
+    width: 27%;
+    margin-left: 2%;
+    margin-right: 2%;
+
+    h5 {
+        line-height: 0;
+        color: #2984CE;
+    }
+}
+
+textarea {
+    padding: 2%;
+    resize: none;
+    margin-bottom: 5%;
+}
+
 
 button {
     background-color: black;
@@ -181,5 +299,11 @@ button {
     margin-bottom: 3%;
     transition: 0.4s;
     font-weight: bold;
+}
+
+button:hover {
+    color: black;
+    background-color: transparent;
+    border: 1px solid black;
 }
 </style>

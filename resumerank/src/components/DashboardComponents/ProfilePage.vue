@@ -18,13 +18,33 @@
 
             <h4>My Information</h4>
             <div id="all-info">
-                <p>Sample Info</p>
-                <p>Sample Info</p>
-                <p>Sample Info</p>
-                <p>Sample Info</p>
-                <p>Sample Info</p>
-                <p>Sample Info</p>
-                <p>Sample Info</p>
+                <h5>Education</h5>
+                <div class="info">
+                    <p>Primary: Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>Secondary: Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>College / University: Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                </div>
+
+                <h5>Trainings</h5>
+                <div class="info">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                </div>
+
+                <h5>Achievements</h5>
+                <div class="info">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                </div>
+
+                <h5>Experience</h5>
+                <div class="info">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -89,5 +109,22 @@ export default {
     width: 100px;
     border: 1px solid black;
     border-radius: 150px;
+}
+
+#all-info {
+    height: 60%;
+    overflow-y: scroll;
+}
+
+#all-info::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 15px;
+    background-color: #EEE;
+    scroll-behavior: smooth;
+}
+
+#all-info::-webkit-scrollbar-thumb {
+    background-color: #2984CE;
+    border-radius: 15px;
 }
 </style>

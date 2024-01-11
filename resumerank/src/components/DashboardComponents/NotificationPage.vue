@@ -7,13 +7,7 @@
             <h2>Recent Notifications</h2>
 
             <div id="all-notifs">
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
-                <p>Sample Notification</p>
+                <h3>No Notifications.</h3>
             </div>
         </div>
     </div>
@@ -49,5 +43,17 @@ export default {
     border-radius: 15px;
     box-shadow: 2px 2px 2px 2px #AEAEAE;
     overflow-y: scroll;
+}
+
+#all-notifs::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 15px;
+    background-color: #EEE;
+    scroll-behavior: smooth;
+}
+
+#all-notifs::-webkit-scrollbar-thumb {
+    background-color: #2984CE;
+    border-radius: 15px;
 }
 </style>

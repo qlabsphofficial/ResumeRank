@@ -17,6 +17,7 @@ class User(Base):
     address = Column(String)
 
     resume = relationship('Resume', back_populates='user')
+    owner_notifs = relationship('Notification', back_populates='notif_owner')
 
 class JobPosting(Base):
     __tablename__ = 'jobs'
@@ -65,3 +66,15 @@ class JobApplication(Base):
 
     applicant = relationship('Resume', back_populates='job_application')
     job_posting = relationship('JobPosting', back_populates='application')
+
+
+class Notification(Base):
+    __tablename__ = 'notifications'
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    date_posted = Column(DateTime, server_default=func.now())
+    message = Column(String)
+    sent_to = Column(Integer, ForeignKey('users.id'))
+
+    notif_owner = relationship('User', back_populates='owner_notifs')
+

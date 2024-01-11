@@ -5,8 +5,16 @@
         <div id="jobs">
             <div id="all-jobs">
                 <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
-                    <h2>{{ job.job_title }}</h2>
-                    <p>{{ job.date_posted }}</p>
+                    <div class="job-top-section">
+                        
+                    </div>
+
+                    <div class="job-bottom-section">
+                        <h3>{{ job.job_title }}</h3>
+                        <p>{{ job.date_posted.slice(0, 10) }}</p>
+
+                        <p class="description">{{ job.description.slice(0, 40) }}...</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,15 +79,38 @@ export default {
 }
 
 .job {
-    height: 15vh;
-    width: 27%;
+    height: 30vh;
+    width: 33%;
     margin: 1%;
+    padding-bottom: 5%;
     box-shadow: 2px 2px 2px 2px #AEAEAE;
     background-color: white;
     border-radius: 15px;
-    padding: 3%;
     transition: .4s;
+
+    h3 {
+        line-height: 0;
+    }
 }
+
+.job-top-section {
+    height: 60%;
+    width: 100%;
+    background-color: #2984CE;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.job-bottom-section {
+    height: 40%;
+    width: 88%;
+    padding: 5%;
+}
+
+.description {
+    margin-top: 3%;
+}
+
 .job:hover {
     margin-top: 0;
 }

@@ -1,7 +1,7 @@
 <template>
     <div id="container">
         <h1>{{ page_title }}</h1>
-        <p>{{ job.date_posted }}</p>
+        <p>{{ job.date_posted.replace('T', ' ') }}</p>
         <p id="description">{{ job.description }}</p>
 
         <div id="actions">
@@ -66,7 +66,7 @@ export default {
 }
 
 #description {
-    margin-top: 15%;
+    margin-top: 5%;
 }
 
 button {
