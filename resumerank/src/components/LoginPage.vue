@@ -50,12 +50,32 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+<<<<<<< Updated upstream
 }
 
 #login-container {
   height: 70%;
   width: 25%;
   padding: 2%;
+=======
+  background-color: #54ADE5;
+
+  h1 {
+    color: #54ADE5;
+  }
+}
+
+#login-form-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+#login-container {
+  display: flex;
+  height: 85%;
+  width: 80%;
+>>>>>>> Stashed changes
   border-radius: 15px;
   box-shadow: 2px 2px 2px 2px #DDD;
   text-align: left;
@@ -86,7 +106,11 @@ export default {
   text-align: center;
 
   button {
+<<<<<<< Updated upstream
     background-color: black;
+=======
+    background-color: #54ADE5;
+>>>>>>> Stashed changes
     color: white;
     border: 1px solid transparent;
     border-radius: 15px;
@@ -98,9 +122,26 @@ export default {
   }
 
   button:hover {
+<<<<<<< Updated upstream
     border: 1px solid black;
+=======
+    border: 1px solid #54ADE5;
+>>>>>>> Stashed changes
     background-color: transparent;
     color: black;
   }
 }
+<<<<<<< Updated upstream
+=======
+
+#sign-up-cta {
+  color: #54ADE5;
+  transition: .4s;
+}
+
+#sign-up-cta:hover {
+  color: black;
+  text-decoration: underline;
+}
+>>>>>>> Stashed changes
 </style>
