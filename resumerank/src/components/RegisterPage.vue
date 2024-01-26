@@ -121,7 +121,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #EBEBEB;
+    background-color: #2984CE;
   
     h1, h4 {
       color: #2984CE;
