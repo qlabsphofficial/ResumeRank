@@ -2,7 +2,11 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
 from pydantic import BaseModel
+<<<<<<< Updated upstream
 from models import User, Education, Training, Experience
+=======
+from models import User, JobPosting, Resume, JobApplication, Notification
+>>>>>>> Stashed changes
 # import datetime as dt
 from datetime import datetime
 
@@ -32,6 +36,7 @@ class UserModel(BaseModel):
     user_type : bool
 
 
+<<<<<<< Updated upstream
 class EducationModel(BaseModel):
     school : str
     degree : str
@@ -58,6 +63,25 @@ class ExperienceModel(BaseModel):
     description : str
     user_id : int
 
+=======
+class JobPostingID(BaseModel):
+    id: int
+
+
+class NotificationModel(BaseModel):
+    message : str
+    sent_to : int
+
+
+@app.get('/show_users')
+async def show_users(db: Session = Depends(get_database)):
+    try:
+        all_users = db.query(User).all()
+        return { 'response': 'User Retrieval Success', 'users': all_users, 'status_code': 200 }
+    except:
+        return { 'response': 'User Retrieval Failed', 'status_code': 200 }
+    
+>>>>>>> Stashed changes
 
 @app.post('/login')
 async def login(username: str, password: str, db: Session = Depends(get_database)):
@@ -121,10 +145,21 @@ async def create_education(education: EducationModel, db: Session = Depends(get_
         return { 'response': 'Failed to save record', 'status_code': 403 }
 
 
+<<<<<<< Updated upstream
 @app.post('/create_training')
 async def create_training(training: TrainingModel, db: Session = Depends(get_database)):
     try:
         date = datetime.strptime(training.date, "%Y-%m-%d")
+=======
+@app.get('/show_resumes')
+async def show_resumes(db: Session = Depends(get_database)):
+    # try:
+        all_resumes = db.query(Resume).all()
+        return { 'response': 'resumes retrieved', 'resumes': all_resumes, 'status_code': 200 }
+    # except:
+    #     return { 'response': 'resumes Retrieval Failed', 'status_code': 200 }
+    
+>>>>>>> Stashed changes
 
         new_training = Training()
         new_training.training = training.training
@@ -140,9 +175,28 @@ async def create_training(training: TrainingModel, db: Session = Depends(get_dat
     except:
         return { 'response': 'Failed to save record', 'status_code': 403 }
 
+<<<<<<< Updated upstream
 
 @app.post('/create_experience')
 async def create_experience(experience: ExperienceModel, db: Session = Depends(get_database)):
+=======
+@app.post('/delete_job_posting')
+async def delete_job_posting(job: JobPostingID, db: Session = Depends(get_database)):
+    try:
+        retrieved_job_posting = db.query(JobPosting).filter(JobPosting.id == job.id).first()
+        
+        if retrieved_job_posting:
+            db.delete(retrieved_job_posting)
+            db.commit()
+
+        return {'response': 'job posting deleted.'}
+    except:
+        return {'response': 'failed to job posting.'}
+
+
+@app.get('/show_jobs')
+async def show_jobs(db: Session = Depends(get_database)):
+>>>>>>> Stashed changes
     try:
         start_date = datetime.strptime(experience.start_date, "%Y-%m-%d")
         end_date = datetime.strptime(experience.end_date, "%Y-%m-%d")
@@ -161,4 +215,75 @@ async def create_experience(experience: ExperienceModel, db: Session = Depends(g
         
         return { 'response': 'Record saved sucessfully!', 'status_code': 200 }
     except:
+<<<<<<< Updated upstream
         return { 'response': 'Failed to save record', 'status_code': 403 }
+=======
+        return { 'response': 'Error retrieving data.', 'status_code': 400 }
+
+
+@app.get('/show_applications')
+async def show_applications(db: Session = Depends(get_database)):
+    try:
+        all_applications = db.query(JobApplication).all()
+        return { 'response': 'applications retrieved', 'applications': all_applications, 'status_code': 200 }
+    except:
+        return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
+    
+
+@app.get('/analyze_resumes')
+async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
+    # try:
+        job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
+        all_applications = db.query(JobApplication).filter(JobApplication.job == job_id).all()
+
+        top_applicants = []
+
+        for application in all_applications:
+            resume = db.query(Resume).join(User).filter(Resume.id == application.resume).filter(User.id == Resume.resume_owner).first()
+            text_analysis = ''
+
+            text_analysis += f' {resume.training_1}'
+            text_analysis += f' {resume.training_2}'
+            text_analysis += f' {resume.training_3}'
+            text_analysis += f' {resume.achievement_1}'
+            text_analysis += f' {resume.achievement_2}'
+            text_analysis += f' {resume.achievement_3}'
+            text_analysis += f' {resume.experience_1}'
+            text_analysis += f' {resume.experience_2}'
+            text_analysis += f' {resume.experience_3}'
+            text_analysis += f' {resume.summary}'
+            
+            job_desc = job.description.split()
+            resume_text = text_analysis.split()
+
+            common_words = set(job_desc) & set(resume_text)
+            matching_word_count = len(common_words)
+
+            if matching_word_count > 10:
+                applicant = db.query(User).filter(User.id == resume.resume_owner).first()
+                print(applicant.__dict__)
+                
+                top_applicants.append({'applicant': applicant, 'applicant_resume': resume, 'matches': matching_word_count })
+
+
+        sorted_top_applicants = sorted(top_applicants, key=lambda x: x['matches'], reverse=True)
+        print(sorted_top_applicants)
+        return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': sorted_top_applicants, 'status_code': 200 }
+    # except:
+    #     return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
+
+
+@app.post('/create_notification')
+async def create_notification(notification: NotificationModel, db: Session = Depends(get_database)):
+    try:
+        new_notification = Notification()
+        new_notification.message = notification.message
+        new_notification.sent_to = notification.sent_to
+
+        db.add(new_notification)
+        db.commit()
+
+        return { 'response': 'notification created', 'status_code': 200 }
+    except:
+        return { 'response': 'Error retrieving data.', 'status_code': 400 }
+>>>>>>> Stashed changes
