@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
 from pydantic import BaseModel
-from models import User, JobPosting, Resume, JobApplication
+from models import User, JobPosting, Resume, JobApplication, Notification
 # import datetime as dt
 from datetime import datetime
 
@@ -39,11 +39,14 @@ class UserModel(BaseModel):
     contact_no : str
     address : str
 
+
 class JobPostingModel(BaseModel):
     title: str
     job_title: str
     description: str
     post_status: bool
+    date_expired : str
+
 
 class ResumeModel(BaseModel):
     resume_owner: int
@@ -63,6 +66,15 @@ class ResumeModel(BaseModel):
     ref_1: str
     ref_2: str
     ref_3: str
+
+
+class JobPostingID(BaseModel):
+    id: int
+
+
+class NotificationModel(BaseModel):
+    message : str
+    sent_to : int
 
 
 @app.get('/show_users')
@@ -223,10 +235,13 @@ async def retrieve_resume_data(user_id: int, db: Session = Depends(get_database)
 @app.post('/create_job_posting')
 async def create_job_posting(job: JobPostingModel, db: Session = Depends(get_database)):
     try:
+        date_expired = datetime.strptime(job.date_expired, "%Y-%m-%d")
+        
         new_job = JobPosting()
         new_job.job_title = job.job_title
         new_job.description = job.description
         new_job.post_status = job.post_status
+        new_job.date_expired = date_expired
 
         db.add(new_job)
         db.commit()
@@ -234,6 +249,20 @@ async def create_job_posting(job: JobPostingModel, db: Session = Depends(get_dat
         return { 'response': 'job created', 'status_code': 200 }
     except:
         return { 'response': 'Error retrieving data.', 'status_code': 400 }
+    
+
+@app.post('/delete_job_posting')
+async def delete_job_posting(job: JobPostingID, db: Session = Depends(get_database)):
+    try:
+        retrieved_job_posting = db.query(JobPosting).filter(JobPosting.id == job.id).first()
+        
+        if retrieved_job_posting:
+            db.delete(retrieved_job_posting)
+            db.commit()
+
+        return {'response': 'job posting deleted.'}
+    except:
+        return {'response': 'failed to job posting.'}
     
 
 @app.get('/show_jobs')
@@ -312,3 +341,29 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
         return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': sorted_top_applicants, 'status_code': 200 }
     # except:
     #     return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
+
+
+@app.post('/create_notification')
+async def create_notification(notification: NotificationModel, db: Session = Depends(get_database)):
+    try:
+        new_notification = Notification()
+        new_notification.message = notification.message
+        new_notification.sent_to = notification.sent_to
+
+        db.add(new_notification)
+        db.commit()
+
+        return { 'response': 'notification created', 'status_code': 200 }
+    except:
+        return { 'response': 'Error retrieving data.', 'status_code': 400 }
+    
+
+@app.get('/show_notifications')
+async def get_notifications(id: int, db: Session = Depends(get_database)):
+    try:
+        all_notifications = db.query(Notification).filter(Notification.sent_to == id).all()
+
+        return {'response': 'retrieval complete.', 'notifications': all_notifications}
+    except:
+        print('Retrieval failed.')
+        return {'response': 'retrieval failed.', 'notifications': all_notifications}

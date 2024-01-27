@@ -17,6 +17,8 @@ class User(Base):
     address = Column(String)
 
     resume = relationship('Resume', back_populates='user')
+    experiences = relationship('Experience', back_populates='user')
+    certifications = relationship('Certification', back_populates='user')
     owner_notifs = relationship('Notification', back_populates='notif_owner')
 
 class JobPosting(Base):
@@ -28,6 +30,8 @@ class JobPosting(Base):
     description = Column(String)
     date_posted = Column(DateTime, server_default=func.now())
     post_status = Column(Boolean)
+    date_expired = Column(DateTime)
+    
 
     application = relationship('JobApplication', back_populates='job_posting')
 
@@ -55,6 +59,26 @@ class Resume(Base):
 
     user = relationship('User', back_populates='resume')
     job_application = relationship('JobApplication', back_populates='applicant')
+
+
+class Experience(Base):
+    __tablename__ = 'experiences'
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    job_title = Column(String)
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    user = relationship('User', back_populates='experiences')
+
+
+class Certification(Base):
+    __tablename__ = 'certifications'
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    certificate_title = Column(String)
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    user = relationship('User', back_populates='certifications')
 
 
 class JobApplication(Base):
