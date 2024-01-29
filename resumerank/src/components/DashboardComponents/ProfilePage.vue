@@ -4,46 +4,67 @@
         <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
 
         <div id="profile-container">
-            <div id="profile-main-details">
-                <div id="profile-edit">
-                    <div id="profile-pic"></div>
-                    <button>Edit Profile</button>
+            <div id="left-panel">
+                <div id="profile-main-details">
+                    <div id="profile-edit">
+                        <div id="profile-pic"></div>
+                    </div>
+
+                    <div id="profile-main-text">
+                        <h2>{{ this.user_data.firstname }} {{ this.user_data.middlename }} {{ this.user_data.lastname }}</h2>
+                        <p>{{ this.user_data.email }}</p>
+                        <button>Edit Profile</button>
+                    </div>
                 </div>
 
-                <div id="profile-main-text">
-                    <h2>{{ this.user_data.firstname }} {{ this.user_data.middlename }} {{ this.user_data.lastname }}</h2>
-                    <p>{{ this.user_data.email }}</p>
+                <div id="profile-info">
+                    <label for="">First Name</label>
+                    <input type="text" placeholder="Test">
+
+                    <label for="">Middle Name</label>
+                    <input type="text" placeholder="Test">
+
+                    <label for="">Last Name</label>
+                    <input type="text" placeholder="Test">
+
+                    <label for="">Username</label>
+                    <input type="text" placeholder="Test">
+
+                    <label for="">Password</label>
+                    <input type="text" placeholder="Test">
                 </div>
             </div>
 
-            <h4>My Information</h4>
-            <div id="all-info">
-                <h5>Education</h5>
-                <div class="info">
-                    <p>Primary - {{ this.ed1 }}</p>
-                    <p>Secondary - {{ this.ed2 }}</p>
-                    <p>College / University - {{ this.ed3 }}</p>
-                </div>
+            <div id="right-panel">
+                <h4>My Information</h4>
+                <div id="all-info">
+                    <h5>Education</h5>
+                    <div class="info">
+                        <p>Primary - {{ this.ed1 }}</p>
+                        <p>Secondary - {{ this.ed2 }}</p>
+                        <p>College / University - {{ this.ed3 }}</p>
+                    </div>
 
-                <h5>Trainings</h5>
-                <div class="info">
-                    <p>Training / Certification - {{ this.tr1 }}</p>
-                    <p>Training / Certification - {{ this.tr2 }}</p>
-                    <p>Training / Certification - {{ this.tr3 }}</p>
-                </div>
+                    <h5>Trainings</h5>
+                    <div class="info">
+                        <p>Training / Certification - {{ this.tr1 }}</p>
+                        <p>Training / Certification - {{ this.tr2 }}</p>
+                        <p>Training / Certification - {{ this.tr3 }}</p>
+                    </div>
 
-                <h5>Achievements</h5>
-                <div class="info">
-                    <p>Achievement - {{ this.ac1 }}</p>
-                    <p>Achievement - {{ this.ac2 }}</p>
-                    <p>Achievement - {{ this.ac3 }}</p>
-                </div>
+                    <h5>Achievements</h5>
+                    <div class="info">
+                        <p>Achievement - {{ this.ac1 }}</p>
+                        <p>Achievement - {{ this.ac2 }}</p>
+                        <p>Achievement - {{ this.ac3 }}</p>
+                    </div>
 
-                <h5>Experience</h5>
-                <div class="info">
-                    <p>Experience - {{ this.exp1 }}</p>
-                    <p>Experience - {{ this.exp2 }}</p>
-                    <p>Experience - {{ this.exp3 }}</p>
+                    <h5>Experience</h5>
+                    <div class="info">
+                        <p>Experience - {{ this.exp1 }}</p>
+                        <p>Experience - {{ this.exp2 }}</p>
+                        <p>Experience - {{ this.exp3 }}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -111,9 +132,11 @@ export default {
 }
 
 #profile-container {
-    height: 70%;
+    height: 85%;
     width: 100%;
     margin-top: 3%;
+    display: flex;
+    flex-direction: row;
 }
 
 #profile-main-details {
@@ -142,6 +165,30 @@ export default {
     }
 }
 
+#profile-main-text {
+    margin-left: 15%;
+    width: 80%;
+}
+
+#profile-info {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    input {
+        width: 95%;
+    }
+}
+
+#left-panel {
+    height: 90%;
+    width: 40%;
+}
+
+#right-panel {
+    height: 90%;
+}
+
 #profile-pic {
     height: 100px;
     width: 100px;
@@ -150,7 +197,7 @@ export default {
 }
 
 #all-info {
-    height: 60%;
+    height: 90%;
     overflow-y: scroll;
 }
 

@@ -28,7 +28,7 @@
                     <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
                         <div class="job-info">
                             <h4>{{ job.job_title }}</h4>
-                            <p>{{ job.date_posted }}</p>
+                            <p>{{ job.date_posted.slice(0, 10) }}</p>
                         </div>
                         <p>{{ job.description.slice(0, 80) }}...</p>
                     </div>
@@ -149,6 +149,13 @@ export default {
     padding: 1%;
     border-radius: 15px;
     box-shadow: 2px 2px 2px #AEAEAE;
+}
+
+.job-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 }
 
 #notifications {

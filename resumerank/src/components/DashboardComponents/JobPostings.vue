@@ -1,6 +1,7 @@
 <template>
     <div id="container">
         <h1>Job Postings</h1>
+        <p>Listed below are the active job postings.</p>
 
         <div id="jobs">
             <div id="all-jobs">

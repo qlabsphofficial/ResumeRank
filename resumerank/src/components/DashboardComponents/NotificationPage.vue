@@ -39,9 +39,6 @@ export default {
     height: 96%;
     width: 96%;
     margin-top: 1%;
-    padding: 2%;
-    border-radius: 15px;
-    box-shadow: 2px 2px 2px 2px #AEAEAE;
     overflow-y: scroll;
 }
 
@@ -53,7 +50,7 @@ export default {
 }
 
 #all-notifs::-webkit-scrollbar-thumb {
-    background-color: #2984CE;
+    background-color: #B8C3C6;
     border-radius: 15px;
 }
 </style>
