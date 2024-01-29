@@ -3,8 +3,10 @@
       <div id="login-container">
         <div id="login-form-container">
             <div id="left-section">
-                <h1>Register</h1>
-                <p>Registration Page</p>
+                <div id="left-section-header">
+                  <img src="@/assets/icons/ResumeRankLogo3.png" height="10%" width="10%">
+                  <h1>ResumeRank</h1>
+                </div>
 
                 <div id="login-form">
                     <h4>Username</h4>
@@ -46,9 +48,7 @@
             </div>
 
             <div id="right-section">
-                <img src="@/assets/logo1.png" height="50%" width="50%">
-                <h1>ResumeRank</h1>
-                <p>Your Journey, Your Story, Your Success – ResumeRank Guides the Way.</p>
+              <img src="@/assets/icons/register-icon.jpg" height="100%" width="100%">
             </div>
         </div>
       </div>
@@ -136,8 +136,10 @@
   
   #login-container {
     display: flex;
-    height: 80%;
+    height: 70%;
     width: 65%;
+    padding: 5%;
+    background-color: white;
     border-radius: 15px;
     box-shadow: 2px 2px 2px 2px #DDD;
   }
@@ -145,11 +147,22 @@
   #left-section {
     flex: 45%;
     flex-grow: 1;
-    padding: 2%;
     text-align: left;
     background-color: white;
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
+  }
+
+  #left-section-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+      color: black;
+      font-size: 20pt;
+    }
   }
   
   #right-section {
@@ -157,20 +170,13 @@
     flex-grow: 1;
     text-align: center;
     color: white;
-    background-color: #2984CE;
+    background-color: white;
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
     padding: 2%;
+    display: flex;
     align-items: center;
     justify-content: center;
-  
-    h1 {
-      color: white;
-    }
-  
-    img {
-      margin-top: 7.5%;
-    }
   }
   
 #login-form {
@@ -181,12 +187,14 @@
     overflow-y: scroll;
   
     input {
-        margin-bottom: 5%;
-        width: 90%;
-        border: none;
-        border-bottom: 1px solid #333;
-        padding: 1%;
-        box-sizing: border-box; /* Ensure consistent box sizing */
+      margin-bottom: 5%;
+      height: 5vh;
+      width: 90%;
+      border: none;
+      border-radius: 15px;
+      background-color: #DCE5EA;
+      padding: 2%;
+      box-sizing: border-box; /* Ensure consistent box sizing */
     }
 }
 
@@ -205,7 +213,16 @@
 #forgot-section {
     width: 100%;
     text-align: right;
-    margin-bottom: 5%;
+    margin-bottom: 10%;
+
+    a {
+      text-decoration: none;
+      color: black;
+    }
+
+    a:visited {
+      color: black;
+    }
 }
   
 #button-container {
@@ -213,21 +230,21 @@
     text-align: center;
   
     button {
-      background-color: black;
+      background-color: #6FBEE7;
       color: white;
       border: 1px solid transparent;
       border-radius: 15px;
       height: 5vh;
-      width: 40%;
+      width: 90%;
       margin-bottom: 3%;
       transition: 0.4s;
       font-weight: bold;
-}
-  
-button:hover {
-      border: 1px solid black;
+    }
+
+    button:hover {
+      border: 1px solid #6FBEE7;
       background-color: transparent;
-      color: black;
+      color: #6FBEE7;
     }
 }
 </style>

@@ -104,7 +104,7 @@ export default {
 #login-container {
   display: flex;
   height: 80%;
-  width: 65%;
+  width: 75%;
   border-radius: 15px;
   box-shadow: 2px 2px 2px 2px #DDD;
 }

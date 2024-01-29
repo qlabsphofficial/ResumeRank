@@ -1,11 +1,38 @@
 <template>
     <div id="main-container">
         <div id="navbar">
-            <a @click="changeComponent('DashboardContent')" class="nav-link">Dashboard</a>
-            <a @click="changeComponent('NotificationPage')" class="nav-link">Notifications</a>
-            <a @click="changeComponent('ProfilePage')" class="nav-link">Profile</a>
-            <a @click="changeComponent('ResumePage')" class="nav-link">My Resume</a>
-            <a @click="changeComponent('JobPostings')" class="nav-link">Job Postings</a>
+            <div id="navbar-header">
+                <img src="@/assets/icons/ResumeRankLogo2_Inverted.png" height="25%" width="40%">
+                <h2>ResumeRank</h2>
+            </div>
+
+            <div id="nav-links">
+                <div class="link">
+                    <img src="@/assets/icons/icons8-home-24.png" height="30px" width="30px">
+                    <a @click="changeComponent('DashboardContent')" class="nav-link">Dashboard</a>
+                </div>
+
+                <div class="link">
+                    <img src="@/assets/icons/icons8-notification-48.png" height="30px" width="30px">
+                    <a @click="changeComponent('NotificationPage')" class="nav-link">Notifications</a>
+                </div>
+
+                <div class="link">
+                    <img src="@/assets/icons/icons8-person-24.png" height="30px" width="30px">
+                    <a @click="changeComponent('ProfilePage')" class="nav-link">Profile</a>
+                </div>
+
+                
+                <div class="link">
+                    <img src="@/assets/icons/icons8-edit-file-24.png" height="30px" width="30px">
+                    <a @click="changeComponent('ResumePage')" class="nav-link">My Resume</a>
+                </div>
+
+                <div class="link">
+                    <img src="@/assets/icons/icons8-briefcase-48.png" height="30px" width="30px">
+                    <a @click="changeComponent('JobPostings')" class="nav-link">Job Postings</a>
+                </div>
+            </div>
 
             <a @click="this.$router.push('/login')" class="nav-link" id="sign-out">Sign Out</a>
         </div>
@@ -93,7 +120,7 @@ export default {
     color: white;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     text-align: left;
 
@@ -106,6 +133,35 @@ export default {
     }
 }
 
+#navbar-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#nav-links {
+    width: 75%;
+    padding-left: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.link {
+    margin-top: 2%;
+    margin-bottom: 2%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    img {
+        margin-right: 5%;
+    }
+}
+
 #main-content {
     height: 100%;
     width: 80%;
@@ -115,11 +171,12 @@ export default {
 }
 
 #main-content-container {
-    height: 75%;
+    height: 78%;
     width: 85%;
     padding: 5%;
-    background-color: #F5F5F5;
-    border-radius: 15px;
+    padding-top: 2%;
+    background-color: white;
+    border-radius: 25px;
     box-shadow: 2px 2px 2px #AEAEAE;
 }
 </style>

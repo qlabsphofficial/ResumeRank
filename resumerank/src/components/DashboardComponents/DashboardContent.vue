@@ -1,7 +1,6 @@
 <template>
     <div id="container">
         <h1>Dashboard</h1>
-        <p>Your Command Center for Data Insights.</p>
 
         <div id="dashboard-info-container">
             <div class="dashboard-info">
@@ -19,14 +18,6 @@
                     <p>Notifications</p>
                 </div>
             </div>
-
-            <div class="dashboard-info">
-                <div class="dashboard-icon"></div>
-                <div class="dashboard-info-detail">
-                    <h4>0</h4>
-                    <p>Active Proposals</p>
-                </div>
-            </div>
         </div>
 
         <div id="dashboard-news">
@@ -35,7 +26,10 @@
 
                 <div id="all-jobs">
                     <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
-                        <h4>{{ job.job_title }}</h4>
+                        <div class="job-info">
+                            <h4>{{ job.job_title }}</h4>
+                            <p>{{ job.date_posted }}</p>
+                        </div>
                         <p>{{ job.description.slice(0, 80) }}...</p>
                     </div>
                 </div>
@@ -95,7 +89,7 @@ export default {
     flex-direction: row;
     height: 10vh;
     width: 100%;
-    margin-top: 5%;
+    margin-top: 3%;
 }
 
 .dashboard-info {
@@ -104,8 +98,8 @@ export default {
     margin-left: 2%;
     margin-right: 2%;
     padding: 2%;
-    background-color: black;
-    border-radius: 15px;
+    background-color: #3B6EA5;
+    border-radius: 75px;
     box-shadow: 2px 2px 2px #AEAEAE;
     display: flex;
     flex-direction: row;
@@ -128,7 +122,7 @@ export default {
 }
 
 #dashboard-news {
-    height: 50%;
+    height: 70%;
     width: 100%;
     margin-top: 7.5%;
     display: flex;
@@ -145,19 +139,16 @@ export default {
     width: 100%;
     margin-top: 3%;
     padding: 2%;
-    border-radius: 15px;
-    box-shadow: 2px 2px 2px 2px #AEAEAE;
     overflow-y: scroll;
-    background-color: white;
 }
 
 .job {
-    margin-top: 5%;
-    margin-bottom: 5%;
-
-    h4, p {
-        line-height: 0;
-    }
+    background-color: #EDF3F3;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    padding: 1%;
+    border-radius: 15px;
+    box-shadow: 2px 2px 2px #AEAEAE;
 }
 
 #notifications {
@@ -174,10 +165,7 @@ export default {
     padding: 2%;
     padding-left: 8%;
     padding-right: 8%;
-    border-radius: 15px;
-    box-shadow: 2px 2px 2px 2px #AEAEAE;
     overflow-y: scroll;
-    background-color: white;
 }
 
 #all-notifs::-webkit-scrollbar, #all-jobs::-webkit-scrollbar {
@@ -188,7 +176,7 @@ export default {
 }
 
 #all-notifs::-webkit-scrollbar-thumb, #all-jobs::-webkit-scrollbar-thumb {
-    background-color: #2984CE;
+    background-color: #B8C3C6;
     border-radius: 15px;
 }
 </style>
