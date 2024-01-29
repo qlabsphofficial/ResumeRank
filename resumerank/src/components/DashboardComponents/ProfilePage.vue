@@ -176,7 +176,15 @@ export default {
     width: 100%;
 
     input {
-        width: 95%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        height: 4vh;
+        width: 90%;
+        border: none;
+        border-radius: 15px;
+        background-color: #DCE5EA;
+        padding: 2%;
+        box-sizing: border-box; /* Ensure consistent box sizing */
     }
 }
 
