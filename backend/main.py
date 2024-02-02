@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
@@ -6,6 +6,13 @@ from pydantic import BaseModel
 from models import User, JobPosting, Resume, JobApplication, Notification
 # import datetime as dt
 from datetime import datetime
+from fastapi.responses import FileResponse
+import os
+from random import randint
+
+
+IMAGEDIR = "images/"
+
 
 app = FastAPI()
 
@@ -38,6 +45,13 @@ class UserModel(BaseModel):
     email: str
     contact_no : str
     address : str
+
+
+class ProfileModel(BaseModel):
+    username: str = Form(...)
+    firstname : str = Form(...)
+    lastname : str = Form(...)
+    profile_picture: UploadFile = Form(...)
 
 
 class JobPostingModel(BaseModel):
@@ -115,6 +129,7 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             new_user.email = user.email
             new_user.contact_no = user.contact_no
             new_user.address = user.address
+            new_user.profile_picture = ''
             db.add(new_user)
             db.commit()
 
@@ -141,13 +156,42 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             db.add(new_resume)
             db.commit()
             
-
             return { 'response': 'Registration successful.', 'status_code': 200 }
         else:
             return { 'response': 'User already exists.', 'status_code': 403 }
     except:
         return { 'response': 'Registration failed.', 'status_code': 400 }
     
+
+@app.post('/edit_profile')
+async def edit_profile(form_data: ProfileModel = Depends(), db: Session = Depends(get_database)):
+    try:
+        # existing_user = db.query(User).filter(User.username == profile.username).first()
+
+        file_path = f"{IMAGEDIR}{form_data.profile_picture.filename}"
+
+        with open(file_path, "wb") as f:
+            contents = await form_data.profile_picture.read()
+            f.write(contents)
+
+        existing_user = db.query(User).filter(User.username == form_data.username).first()
+        if existing_user:
+            existing_user.firstname = form_data.firstname
+            existing_user.lastname = form_data.lastname
+            existing_user.profile_picture = form_data.profile_picture.filename
+            db.commit()
+
+        # return {"filename": form_data.profile_picture.filename}
+        
+        # Update user profile information
+        
+        return { 'response': 'Update profile successful.', 'status_code': 200 }
+
+        # else:
+        #     return { 'response': 'User already exists.', 'status_code': 403 }
+    except:
+        return { 'response': 'update profile failed.', 'status_code': 400 }
+
 
 @app.get('/retrieve_user_data')
 async def retrieve_dashboard_data(user_id: int, db: Session = Depends(get_database)):
@@ -160,8 +204,8 @@ async def retrieve_dashboard_data(user_id: int, db: Session = Depends(get_databa
         return { 'payload': payload, 'status_code': 200 }
     except:
         return { 'response': 'Error retrieving data.', 'status_code': 400 }
-    
 
+    
 @app.post('/submit_resume')
 async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)):
     try:

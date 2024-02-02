@@ -15,6 +15,7 @@ class User(Base):
     email = Column(String)
     contact_no = Column(String)
     address = Column(String)
+    profile_picture = Column(String)
 
     resume = relationship('Resume', back_populates='user')
     experiences = relationship('Experience', back_populates='user')
