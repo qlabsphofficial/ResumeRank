@@ -3,12 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
 from pydantic import BaseModel
-from models import User, JobPosting, Resume, JobApplication, Notification
+from models import User, JobPosting, Resume, JobApplication, Notification, Experience
 # import datetime as dt
 from datetime import datetime
 from fastapi.responses import FileResponse
 import os
-from random import randint
 
 
 IMAGEDIR = "images/"
@@ -73,9 +72,7 @@ class ResumeModel(BaseModel):
     achievement_1: str
     achievement_2: str
     achievement_3: str
-    experience_1: str
-    experience_2: str
-    experience_3: str
+    experiences : list[str]
     summary: str
     ref_1: str
     ref_2: str
@@ -146,9 +143,6 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             new_resume.achievement_1 = ''
             new_resume.achievement_2 = ''
             new_resume.achievement_3 = ''
-            new_resume.experience_1 = ''
-            new_resume.experience_2 = ''
-            new_resume.experience_3 = ''
             new_resume.summary = ''
             new_resume.ref_1 = ''
             new_resume.ref_2 = ''
@@ -178,17 +172,10 @@ async def edit_profile(form_data: ProfileModel = Depends(), db: Session = Depend
         if existing_user:
             existing_user.firstname = form_data.firstname
             existing_user.lastname = form_data.lastname
-            existing_user.profile_picture = form_data.profile_picture.filename
+            existing_user.profile_picture = f"{IMAGEDIR}{form_data.profile_picture.filename}"
             db.commit()
-
-        # return {"filename": form_data.profile_picture.filename}
-        
-        # Update user profile information
-        
+            
         return { 'response': 'Update profile successful.', 'status_code': 200 }
-
-        # else:
-        #     return { 'response': 'User already exists.', 'status_code': 403 }
     except:
         return { 'response': 'update profile failed.', 'status_code': 400 }
 
@@ -223,15 +210,17 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
             new_resume.achievement_1 = resume.achievement_1
             new_resume.achievement_2 = resume.achievement_2
             new_resume.achievement_3 = resume.achievement_3
-            new_resume.experience_1 = resume.experience_1
-            new_resume.experience_2 = resume.experience_2
-            new_resume.experience_3 = resume.experience_3
+            # new_resume.experience_1 = resume.experience_1
+            # new_resume.experience_2 = resume.experience_2
+            # new_resume.experience_3 = resume.experience_3
             new_resume.summary = resume.summary
             new_resume.ref_1 = resume.ref_1
             new_resume.ref_2 = resume.ref_2
             new_resume.ref_3 = resume.ref_3
 
             db.add(new_resume)
+            db.commit()
+
         else:
             existing_resume.resume_owner = resume.resume_owner
             existing_resume.ed_1 = resume.ed_1
@@ -243,15 +232,21 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
             existing_resume.achievement_1 = resume.achievement_1
             existing_resume.achievement_2 = resume.achievement_2
             existing_resume.achievement_3 = resume.achievement_3
-            existing_resume.experience_1 = resume.experience_1
-            existing_resume.experience_2 = resume.experience_2
-            existing_resume.experience_3 = resume.experience_3
+            # existing_resume.experience_1 = resume.experience_1
+            # existing_resume.experience_2 = resume.experience_2
+            # existing_resume.experience_3 = resume.experience_3
             existing_resume.summary = resume.summary
             existing_resume.ref_1 = resume.ref_1
             existing_resume.ref_2 = resume.ref_2
             existing_resume.ref_3 = resume.ref_3
-            
-        db.commit()
+            db.commit()
+
+        # for exp in resume.experiences:
+        #     new_experience = Experience()
+        #     new_experience.job_title = exp.job_title
+        #     new_experience.resume_id = resume.resume_owner
+        #     db.add(new_experience)
+        # db.commit()
 
         return { 'response': 'resume submitted', 'status_code': 200 }
     except:

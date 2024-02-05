@@ -18,9 +18,8 @@ class User(Base):
     profile_picture = Column(String)
 
     resume = relationship('Resume', back_populates='user')
-    experiences = relationship('Experience', back_populates='user')
-    certifications = relationship('Certification', back_populates='user')
     owner_notifs = relationship('Notification', back_populates='notif_owner')
+
 
 class JobPosting(Base):
     __tablename__ = 'jobs'
@@ -50,16 +49,18 @@ class Resume(Base):
     achievement_1 = Column(String)
     achievement_2 = Column(String)
     achievement_3 = Column(String)
-    experience_1 = Column(String)
-    experience_2 = Column(String)
-    experience_3 = Column(String)
+    # experience_1 = Column(String)
+    # experience_2 = Column(String)
+    # experience_3 = Column(String)
     summary = Column(String)
     ref_1 = Column(String)
     ref_2 = Column(String)
     ref_3 = Column(String)
 
+    # certifications = relationship('Certification', back_populates='user')
     user = relationship('User', back_populates='resume')
     job_application = relationship('JobApplication', back_populates='applicant')
+    experiences = relationship('Experience', back_populates='resume')
 
 
 class Experience(Base):
@@ -67,9 +68,9 @@ class Experience(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     job_title = Column(String)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    resume_id = Column(Integer, ForeignKey("resumes.id"))
 
-    user = relationship('User', back_populates='experiences')
+    resume = relationship('Resume', back_populates='experiences')
 
 
 class Certification(Base):
@@ -79,7 +80,7 @@ class Certification(Base):
     certificate_title = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"))
 
-    user = relationship('User', back_populates='certifications')
+    # user = relationship('User', back_populates='certifications')
 
 
 class JobApplication(Base):
