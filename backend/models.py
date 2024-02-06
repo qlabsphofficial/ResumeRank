@@ -68,6 +68,8 @@ class Experience(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     job_title = Column(String)
+    company = Column(String)
+    tenure = Column(String)
     resume_id = Column(Integer, ForeignKey("resumes.id"))
 
     resume = relationship('Resume', back_populates='experiences')

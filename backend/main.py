@@ -61,6 +61,13 @@ class JobPostingModel(BaseModel):
     date_expired : str
 
 
+class ExperienceModel(BaseModel):
+    job_title: str
+    company: str
+    date_start: str
+    date_end: str
+    
+
 class ResumeModel(BaseModel):
     resume_owner: int
     ed_1: str
@@ -72,7 +79,7 @@ class ResumeModel(BaseModel):
     achievement_1: str
     achievement_2: str
     achievement_3: str
-    experiences : list[str]
+    experiences : list[ExperienceModel]
     summary: str
     ref_1: str
     ref_2: str
@@ -210,14 +217,10 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
             new_resume.achievement_1 = resume.achievement_1
             new_resume.achievement_2 = resume.achievement_2
             new_resume.achievement_3 = resume.achievement_3
-            # new_resume.experience_1 = resume.experience_1
-            # new_resume.experience_2 = resume.experience_2
-            # new_resume.experience_3 = resume.experience_3
             new_resume.summary = resume.summary
             new_resume.ref_1 = resume.ref_1
             new_resume.ref_2 = resume.ref_2
             new_resume.ref_3 = resume.ref_3
-
             db.add(new_resume)
             db.commit()
 
@@ -232,21 +235,29 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
             existing_resume.achievement_1 = resume.achievement_1
             existing_resume.achievement_2 = resume.achievement_2
             existing_resume.achievement_3 = resume.achievement_3
-            # existing_resume.experience_1 = resume.experience_1
-            # existing_resume.experience_2 = resume.experience_2
-            # existing_resume.experience_3 = resume.experience_3
             existing_resume.summary = resume.summary
             existing_resume.ref_1 = resume.ref_1
             existing_resume.ref_2 = resume.ref_2
             existing_resume.ref_3 = resume.ref_3
             db.commit()
 
-        # for exp in resume.experiences:
-        #     new_experience = Experience()
-        #     new_experience.job_title = exp.job_title
-        #     new_experience.resume_id = resume.resume_owner
-        #     db.add(new_experience)
-        # db.commit()
+        for exp in resume.experiences:
+            existing_experience = db.query(Experience).filter(Experience.resume_id == resume.resume_owner, Experience.job_title == exp.job_title, Experience.company == exp.company).first()
+
+            if not existing_experience:
+                new_experience = Experience()
+                new_experience.job_title=exp.job_title
+                new_experience.company=exp.company
+                new_experience.tenure=exp.date_start
+                new_experience.resume_id=resume.resume_owner
+                db.add(new_experience)
+                db.commit()
+
+            else:
+                existing_experience.job_title = exp.job_title
+                existing_experience.company = exp.company
+                existing_experience.tenure = exp.date_start
+                db.commit()
 
         return { 'response': 'resume submitted', 'status_code': 200 }
     except:
