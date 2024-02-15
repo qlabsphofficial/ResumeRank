@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
 from pydantic import BaseModel
-from models import User, JobPosting, Resume, JobApplication, Notification, Experience
+from models import User, JobPosting, Resume, JobApplication, Notification, Experience, Certification
 # import datetime as dt
 from datetime import datetime
 from fastapi.responses import FileResponse
@@ -66,6 +66,13 @@ class ExperienceModel(BaseModel):
     company: str
     date_start: str
     date_end: str
+
+
+class CertificationModel(BaseModel):
+    title: str = Form(...)
+    date: str = Form(...)
+    attachment : UploadFile = Form(...)
+    user_id : int = Form(...)
     
 
 class ResumeModel(BaseModel):
@@ -73,12 +80,13 @@ class ResumeModel(BaseModel):
     ed_1: str
     ed_2: str
     ed_3: str
-    training_1: str
-    training_2: str
-    training_3: str
-    achievement_1: str
-    achievement_2: str
-    achievement_3: str
+    # training_1: str
+    # training_2: str
+    # training_3: str
+    # achievement_1: str
+    # achievement_2: str
+    # achievement_3: str
+    certifications : list[CertificationModel]
     experiences : list[ExperienceModel]
     summary: str
     ref_1: str
@@ -144,12 +152,12 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             new_resume.ed_1 = ''
             new_resume.ed_2 = ''
             new_resume.ed_3 = ''
-            new_resume.training_1 = ''
-            new_resume.training_2 = ''
-            new_resume.training_3 = ''
-            new_resume.achievement_1 = ''
-            new_resume.achievement_2 = ''
-            new_resume.achievement_3 = ''
+            # new_resume.training_1 = ''
+            # new_resume.training_2 = ''
+            # new_resume.training_3 = ''
+            # new_resume.achievement_1 = ''
+            # new_resume.achievement_2 = ''
+            # new_resume.achievement_3 = ''
             new_resume.summary = ''
             new_resume.ref_1 = ''
             new_resume.ref_2 = ''
@@ -211,12 +219,12 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
             new_resume.ed_1 = resume.ed_1
             new_resume.ed_2 = resume.ed_2
             new_resume.ed_3 = resume.ed_3
-            new_resume.training_1 = resume.training_1
-            new_resume.training_2 = resume.training_2
-            new_resume.training_3 = resume.training_3
-            new_resume.achievement_1 = resume.achievement_1
-            new_resume.achievement_2 = resume.achievement_2
-            new_resume.achievement_3 = resume.achievement_3
+            # new_resume.training_1 = resume.training_1
+            # new_resume.training_2 = resume.training_2
+            # new_resume.training_3 = resume.training_3
+            # new_resume.achievement_1 = resume.achievement_1
+            # new_resume.achievement_2 = resume.achievement_2
+            # new_resume.achievement_3 = resume.achievement_3
             new_resume.summary = resume.summary
             new_resume.ref_1 = resume.ref_1
             new_resume.ref_2 = resume.ref_2
@@ -229,12 +237,12 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
             existing_resume.ed_1 = resume.ed_1
             existing_resume.ed_2 = resume.ed_2
             existing_resume.ed_3 = resume.ed_3
-            existing_resume.training_1 = resume.training_1
-            existing_resume.training_2 = resume.training_2
-            existing_resume.training_3 = resume.training_3
-            existing_resume.achievement_1 = resume.achievement_1
-            existing_resume.achievement_2 = resume.achievement_2
-            existing_resume.achievement_3 = resume.achievement_3
+            # existing_resume.training_1 = resume.training_1
+            # existing_resume.training_2 = resume.training_2
+            # existing_resume.training_3 = resume.training_3
+            # existing_resume.achievement_1 = resume.achievement_1
+            # existing_resume.achievement_2 = resume.achievement_2
+            # existing_resume.achievement_3 = resume.achievement_3
             existing_resume.summary = resume.summary
             existing_resume.ref_1 = resume.ref_1
             existing_resume.ref_2 = resume.ref_2
@@ -251,13 +259,12 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
                 new_experience.tenure=exp.date_start
                 new_experience.resume_id=resume.resume_owner
                 db.add(new_experience)
-                db.commit()
 
-            else:
-                existing_experience.job_title = exp.job_title
-                existing_experience.company = exp.company
-                existing_experience.tenure = exp.date_start
-                db.commit()
+            # else:
+            #     existing_experience.job_title = exp.job_title
+            #     existing_experience.company = exp.company
+            #     existing_experience.tenure = exp.date_start
+            db.commit()
 
         return { 'response': 'resume submitted', 'status_code': 200 }
     except:

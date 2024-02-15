@@ -43,12 +43,12 @@ class Resume(Base):
     ed_1 = Column(String)
     ed_2 = Column(String)
     ed_3 = Column(String)
-    training_1 = Column(String)
-    training_2 = Column(String)
-    training_3 = Column(String)
-    achievement_1 = Column(String)
-    achievement_2 = Column(String)
-    achievement_3 = Column(String)
+    # training_1 = Column(String)
+    # training_2 = Column(String)
+    # training_3 = Column(String)
+    # achievement_1 = Column(String)
+    # achievement_2 = Column(String)
+    # achievement_3 = Column(String)
     # experience_1 = Column(String)
     # experience_2 = Column(String)
     # experience_3 = Column(String)
@@ -57,10 +57,11 @@ class Resume(Base):
     ref_2 = Column(String)
     ref_3 = Column(String)
 
-    # certifications = relationship('Certification', back_populates='user')
+    
     user = relationship('User', back_populates='resume')
     job_application = relationship('JobApplication', back_populates='applicant')
     experiences = relationship('Experience', back_populates='resume')
+    certifications = relationship('Certification', back_populates='resume')
 
 
 class Experience(Base):
@@ -79,10 +80,12 @@ class Certification(Base):
     __tablename__ = 'certifications'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    certificate_title = Column(String)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    title = Column(String)
+    date = Column(String)
+    attachment = Column(String)
+    user_id = Column(Integer, ForeignKey("resumes.id"))
 
-    # user = relationship('User', back_populates='certifications')
+    resume = relationship('Resume', back_populates='certifications')
 
 
 class JobApplication(Base):
