@@ -43,15 +43,6 @@ class Resume(Base):
     ed_1 = Column(String)
     ed_2 = Column(String)
     ed_3 = Column(String)
-    # training_1 = Column(String)
-    # training_2 = Column(String)
-    # training_3 = Column(String)
-    # achievement_1 = Column(String)
-    # achievement_2 = Column(String)
-    # achievement_3 = Column(String)
-    # experience_1 = Column(String)
-    # experience_2 = Column(String)
-    # experience_3 = Column(String)
     summary = Column(String)
     ref_1 = Column(String)
     ref_2 = Column(String)
@@ -81,9 +72,10 @@ class Certification(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     title = Column(String)
+    training_center = Column(String)
     date = Column(String)
     attachment = Column(String)
-    user_id = Column(Integer, ForeignKey("resumes.id"))
+    resume_id = Column(Integer, ForeignKey("resumes.id"))
 
     resume = relationship('Resume', back_populates='certifications')
 

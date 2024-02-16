@@ -11,7 +11,7 @@ import os
 
 
 IMAGEDIR = "images/"
-
+FILESDIR = "files/"
 
 app = FastAPI()
 
@@ -69,10 +69,10 @@ class ExperienceModel(BaseModel):
 
 
 class CertificationModel(BaseModel):
-    title: str = Form(...)
-    date: str = Form(...)
-    attachment : UploadFile = Form(...)
-    user_id : int = Form(...)
+    title: str
+    training_center : str
+    date: str
+    attachment : str
     
 
 class ResumeModel(BaseModel):
@@ -80,12 +80,6 @@ class ResumeModel(BaseModel):
     ed_1: str
     ed_2: str
     ed_3: str
-    # training_1: str
-    # training_2: str
-    # training_3: str
-    # achievement_1: str
-    # achievement_2: str
-    # achievement_3: str
     certifications : list[CertificationModel]
     experiences : list[ExperienceModel]
     summary: str
@@ -152,12 +146,6 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             new_resume.ed_1 = ''
             new_resume.ed_2 = ''
             new_resume.ed_3 = ''
-            # new_resume.training_1 = ''
-            # new_resume.training_2 = ''
-            # new_resume.training_3 = ''
-            # new_resume.achievement_1 = ''
-            # new_resume.achievement_2 = ''
-            # new_resume.achievement_3 = ''
             new_resume.summary = ''
             new_resume.ref_1 = ''
             new_resume.ref_2 = ''
@@ -204,6 +192,7 @@ async def retrieve_dashboard_data(user_id: int, db: Session = Depends(get_databa
         payload.update({ 'user_data': user })
 
         return { 'payload': payload, 'status_code': 200 }
+        
     except:
         return { 'response': 'Error retrieving data.', 'status_code': 400 }
 
@@ -219,12 +208,6 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
             new_resume.ed_1 = resume.ed_1
             new_resume.ed_2 = resume.ed_2
             new_resume.ed_3 = resume.ed_3
-            # new_resume.training_1 = resume.training_1
-            # new_resume.training_2 = resume.training_2
-            # new_resume.training_3 = resume.training_3
-            # new_resume.achievement_1 = resume.achievement_1
-            # new_resume.achievement_2 = resume.achievement_2
-            # new_resume.achievement_3 = resume.achievement_3
             new_resume.summary = resume.summary
             new_resume.ref_1 = resume.ref_1
             new_resume.ref_2 = resume.ref_2
@@ -237,12 +220,6 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
             existing_resume.ed_1 = resume.ed_1
             existing_resume.ed_2 = resume.ed_2
             existing_resume.ed_3 = resume.ed_3
-            # existing_resume.training_1 = resume.training_1
-            # existing_resume.training_2 = resume.training_2
-            # existing_resume.training_3 = resume.training_3
-            # existing_resume.achievement_1 = resume.achievement_1
-            # existing_resume.achievement_2 = resume.achievement_2
-            # existing_resume.achievement_3 = resume.achievement_3
             existing_resume.summary = resume.summary
             existing_resume.ref_1 = resume.ref_1
             existing_resume.ref_2 = resume.ref_2
@@ -259,12 +236,21 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
                 new_experience.tenure=exp.date_start
                 new_experience.resume_id=resume.resume_owner
                 db.add(new_experience)
-
-            # else:
-            #     existing_experience.job_title = exp.job_title
-            #     existing_experience.company = exp.company
-            #     existing_experience.tenure = exp.date_start
             db.commit()
+
+        for certs in resume.certifications:
+            existing_certification = db.query(Certification).filter(Certification.resume_id == resume.resume_owner, Certification.title == certs.title, Certification.training_center == certs.training_center).first()
+
+            if not existing_certification:
+                new_certification = Certification()
+                new_certification.title=certs.title
+                new_certification.date=certs.date
+                new_certification.attachment= f"{FILESDIR}{certs.attachment}"
+                new_certification.training_center= certs.training_center
+                new_certification.resume_id=resume.resume_owner
+                db.add(new_certification)
+            db.commit()
+
 
         return { 'response': 'resume submitted', 'status_code': 200 }
     except:
