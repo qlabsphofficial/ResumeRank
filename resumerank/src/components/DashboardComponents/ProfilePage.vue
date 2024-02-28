@@ -173,11 +173,12 @@ export default {
 #profile-info {
     display: flex;
     flex-direction: column;
+    height: 40%;
     width: 100%;
 
     input {
         margin-top: 1%;
-        margin-bottom: 5%;
+        margin-bottom: 3%;
         height: 4vh;
         width: 90%;
         border: none;
@@ -195,6 +196,7 @@ export default {
 
 #right-panel {
     height: 90%;
+    width: 60%;
 }
 
 #profile-pic {
