@@ -22,58 +22,14 @@
                 </div>
             </div>
 
-            <h3>Trainings</h3>
+            <h3>Certifications</h3>
             <div class="user-info-form">
-                <div class="info-form">
-                    <h5>Training / Seminar Attended</h5>
-                    <input type="text" placeholder="Enter training received..." v-model="this.tr1">
-                </div>
-
-                <div class="info-form">
-                    <h5>Training / Seminar Attended</h5>
-                    <input type="text" placeholder="Enter training received..." v-model="this.tr2">
-                </div>
-
-                <div class="info-form">
-                    <h5>Training / Seminar Attended</h5>
-                    <input type="text" placeholder="Enter training received..." v-model="this.tr3">
-                </div>
-            </div>
-
-            <h3>Achievements</h3>
-            <div class="user-info-form">
-                <div class="info-form">
-                    <h5>Achievement</h5>
-                    <input type="text" placeholder="Enter an achievement..." v-model="this.ac1">
-                </div>
-
-                <div class="info-form">
-                    <h5>Achievement</h5>
-                    <input type="text" placeholder="Enter an achievement..." v-model="this.ac2">
-                </div>
-
-                <div class="info-form">
-                    <h5>Achievement</h5>
-                    <input type="text" placeholder="Enter an achievement..." v-model="this.ac3">
-                </div>
+                <button @click="openCertModal()">Add Certification</button>
             </div>
             
             <h3>Experience</h3>
             <div class="user-info-form">
-                <div class="info-form">
-                    <h5>Work Experience</h5>
-                    <input type="text" placeholder="Enter your past work experience..." v-model="this.exp1">
-                </div>
-
-                <div class="info-form">
-                    <h5>Work Experience</h5>
-                    <input type="text" placeholder="Enter your past work experience..." v-model="this.exp2">
-                </div>
-
-                <div class="info-form">
-                    <h5>Work Experience</h5>
-                    <input type="text" placeholder="Enter your past work experience..." v-model="this.exp3">
-                </div>
+                <button @click="openWorkModal()">Add Experience</button>
             </div>
 
             <h3>About</h3>
@@ -99,6 +55,51 @@
 
             <button @click="submit_resume()">Save</button>
         </div>
+
+
+        <div id="modal-container" v-if="modalOpen">
+            <div id="certification-modal" v-if="certModalOpen">
+                <h1>Add Certification</h1>
+
+                <h5>Certification</h5>
+                <input type="text" placeholder="Enter certification name..." id="cert-title" v-model="certTitle">
+
+                <h5>Training Center</h5>
+                <input type="text" placeholder="Enter training center name..." id="cert-title" v-model="certLocation">
+
+                <h5>Date Issued</h5>
+                <input type="date" placeholder="Enter issued date..." id="cert-title" v-model="certIssuedDate">
+
+                <h5>Upload File</h5>
+                <input type="file" placeholder="Upload certification proof..." id="cert-title">
+
+                <div class="buttons">
+                    <button>Add Certification</button>
+                    <button @click="closeCertModal()">Cancel</button>
+                </div>
+            </div>
+
+            <div id="work-modal" v-if="workModalOpen">
+                <h1>Add Work Experience</h1>
+
+                <h5>Job Title</h5>
+                <input type="text" placeholder="Enter certification name..." id="cert-title" v-model="jobTitle">
+
+                <h5>Company Name</h5>
+                <input type="text" placeholder="Enter training center name..." id="cert-title" v-model="jobCompany">
+
+                <h5>Start of Service</h5>
+                <input type="date" placeholder="Enter start date..." id="cert-title" v-model="jobYears">
+
+                <h5>End of Service</h5>
+                <input type="date" placeholder="Enter end date..." id="cert-title" v-model="jobYearEnd">
+
+                <div class="buttons">
+                    <button @click="addWorkExperience()">Add Work Experience</button>
+                    <button @click="closeWorkModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -110,31 +111,26 @@ export default {
     },
     methods: {
         async submit_resume(){
-          const response = await fetch('http://127.0.0.1:8000/submit_resume', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                'resume_owner': this.user_data.id,
-                'ed_1': this.ed1,
-                'ed_2': this.ed2,
-                'ed_3': this.ed3,
-                'training_1': this.tr1,
-                'training_2': this.tr2,
-                'training_3': this.tr3,
-                'achievement_1': this.ac1,
-                'achievement_2': this.ac2,
-                'achievement_3': this.ac3,
-                'experience_1': this.exp1,
-                'experience_2': this.exp2,
-                'experience_3': this.exp3,
-                'summary': this.summary,
-                'ref_1': this.cr1,
-                'ref_2': this.cr2,
-                'ref_3': this.cr3
-              }),
-          })
+            console.log(this.experiences);
+
+            const response = await fetch('http://127.0.0.1:8000/submit_resume', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'resume_owner': this.user_data.id,
+                    'ed_1': this.ed1,
+                    'ed_2': this.ed2,
+                    'ed_3': this.ed3,
+                    'summary': this.summary,
+                    'experiences': this.experiences,
+                    'certifications': this.certifications,
+                    'ref_1': '',
+                    'ref_2': '',
+                    'ref_3': ''
+                }),
+            })
 
           if(response.ok){
               const responseData = await response.json();
@@ -165,21 +161,55 @@ export default {
                 this.ed1 = data.resume.ed_1
                 this.ed2 = data.resume.ed_2
                 this.ed3 = data.resume.ed_3
-                this.tr1 = data.resume.training_1
-                this.tr2 = data.resume.training_2
-                this.tr3 = data.resume.training_3
-                this.ac1 = data.resume.achievement_1
-                this.ac2 = data.resume.achievement_2
-                this.ac3 = data.resume.achievement_3
-                this.exp1 = data.resume.experience_1
-                this.exp2 = data.resume.experience_2
-                this.exp3 = data.resume.experience_3
                 this.summary = data.resume.summary
                 this.cr1 = data.resume.ref_1
                 this.cr2 = data.resume.ref_2
                 this.cr3 = data.resume.ref_3
             }            
-        }
+        },
+
+        openCertModal() {
+            this.certModalOpen = true;
+            this.modalOpen = true;
+        },
+
+        closeCertModal(){
+            this.certModalOpen = false;
+            this.modalOpen = false;
+        },
+
+        addCertification() {
+            // let new_cert = {
+            //     'job_title': this.certTitle,
+            //     'company': this.certLocation,
+            //     'date_start': this.certIssuedDate,
+            //     'date_end': this.certIssuedEndDate
+            // }
+
+            // this.certifications.push(new_cert);
+        },
+
+        openWorkModal() {
+            this.workModalOpen = true;
+            this.modalOpen = true;
+        },
+
+        closeWorkModal(){
+            this.workModalOpen = false;
+            this.modalOpen = false;
+        },
+
+        addWorkExperience() {
+            let newWorkXp = {
+                'job_title': this.jobTitle,
+                'company': this.jobCompany,
+                'tenure_start': this.jobYears,
+                'tenure_end': this.jobYearEnd
+            }
+
+            console.log(newWorkXp);
+            this.experiences.push(newWorkXp);
+        },
     },
     data (){
         return {
@@ -187,19 +217,25 @@ export default {
             ed1: '',
             ed2: '',
             ed3: '',
-            tr1: '',
-            tr2: '',
-            tr3: '',
-            ac1: '',
-            ac2: '',
-            ac3: '',
-            exp1: '',
-            exp2: '',
-            exp3: '',
             summary: '',
-            cr1: '',
-            cr2: '',
-            cr3: ''
+
+            certTitle: '',
+            certLocation: '',
+            certIssuedDate: '',
+            
+            certFileUpload: '',
+
+            jobTitle: '',
+            jobCompany: '',
+            jobYears: '',
+            jobYearEnd: '',
+
+            certModalOpen: false,
+            workModalOpen: false,
+            modalOpen: false,
+
+            certifications: [],
+            experiences: [],
         }
     },
     created() {
@@ -305,5 +341,66 @@ button:hover {
     color: black;
     background-color: transparent;
     border: 1px solid black;
+}
+
+#modal-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba($color: #444444, $alpha: 0.4);
+    z-index: 10;
+}
+
+.buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 5%;
+
+    button {
+        width: 30%;
+        margin-right: 2%;
+    }
+}
+
+#certification-modal {
+    height: 50vh;
+    width: 40vw;
+    padding: 3%;
+    background-color: white;
+    border-radius: 15px;
+
+    h1 {
+        margin-bottom: 5%;
+    }
+
+    input {
+        height: 3vh;
+        width: 50%;
+    }
+}
+
+#work-modal {
+    height: 50vh;
+    width: 40vw;
+    padding: 3%;
+    background-color: white;
+    border-radius: 15px;
+
+    h1 {
+        margin-bottom: 5%;
+    }
+
+    input {
+        height: 3vh;
+        width: 50%;
+    }
 }
 </style>

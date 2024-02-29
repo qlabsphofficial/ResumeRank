@@ -64,8 +64,8 @@ class JobPostingModel(BaseModel):
 class ExperienceModel(BaseModel):
     job_title: str
     company: str
-    date_start: str
-    date_end: str
+    tenure_start: str
+    tenure_end: str
 
 
 class CertificationModel(BaseModel):
@@ -199,7 +199,7 @@ async def retrieve_dashboard_data(user_id: int, db: Session = Depends(get_databa
     
 @app.post('/submit_resume')
 async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)):
-    try:
+    # try:
         existing_resume = db.query(Resume).filter(Resume.resume_owner == resume.resume_owner).first()
 
         if not existing_resume:
@@ -233,7 +233,8 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
                 new_experience = Experience()
                 new_experience.job_title=exp.job_title
                 new_experience.company=exp.company
-                new_experience.tenure=exp.date_start
+                new_experience.tenure_start = datetime.strptime(exp.tenure_start, '%Y-%m-%d')
+                new_experience.tenure_end = datetime.strptime(exp.tenure_end, '%Y-%m-%d')
                 new_experience.resume_id=resume.resume_owner
                 db.add(new_experience)
             db.commit()
@@ -253,8 +254,8 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
 
 
         return { 'response': 'resume submitted', 'status_code': 200 }
-    except:
-        return { 'response': 'Error retrieving data.', 'status_code': 400 }
+    # except:
+    #     return { 'response': 'Error retrieving data.', 'status_code': 400 }
 
 
 @app.get('/show_resumes')

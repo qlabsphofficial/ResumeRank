@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, Float, String, DateTime, ForeignKey, func
+from sqlalchemy import Boolean, Column, Integer, Float, String, DateTime, ForeignKey, Date, func
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -61,7 +61,8 @@ class Experience(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
     job_title = Column(String)
     company = Column(String)
-    tenure = Column(String)
+    tenure_start = Column(Date)
+    tenure_end = Column(Date)
     resume_id = Column(Integer, ForeignKey("resumes.id"))
 
     resume = relationship('Resume', back_populates='experiences')
