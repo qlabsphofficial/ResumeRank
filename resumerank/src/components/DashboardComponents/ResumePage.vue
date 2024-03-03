@@ -24,11 +24,13 @@
 
             <h3>Certifications</h3>
             <div class="user-info-form">
+                <div id="certifications"></div>
                 <button @click="openCertModal()">Add Certification</button>
             </div>
             
             <h3>Experience</h3>
             <div class="user-info-form">
+                <div id="experiences"></div>
                 <button @click="openWorkModal()">Add Experience</button>
             </div>
 
@@ -71,10 +73,10 @@
                 <input type="date" placeholder="Enter issued date..." id="cert-title" v-model="certIssuedDate">
 
                 <h5>Upload File</h5>
-                <input type="file" placeholder="Upload certification proof..." id="cert-title">
+                <input type="file" placeholder="Upload certification proof..." id="cert-title" multiple="false" @change="handleFileUpload">
 
                 <div class="buttons">
-                    <button>Add Certification</button>
+                    <button @click="addCertification()">Add Certification</button>
                     <button @click="closeCertModal()">Cancel</button>
                 </div>
             </div>
@@ -111,7 +113,8 @@ export default {
     },
     methods: {
         async submit_resume(){
-            console.log(this.experiences);
+            console.log('Test')
+            console.log(this.certifications);
 
             const response = await fetch('http://127.0.0.1:8000/submit_resume', {
                 method: 'POST',
@@ -178,15 +181,23 @@ export default {
             this.modalOpen = false;
         },
 
-        addCertification() {
-            // let new_cert = {
-            //     'job_title': this.certTitle,
-            //     'company': this.certLocation,
-            //     'date_start': this.certIssuedDate,
-            //     'date_end': this.certIssuedEndDate
-            // }
+        handleFileUpload(event){
+            const files = event.target.files;
 
-            // this.certifications.push(new_cert);
+            for (let uploadedFile of files){
+                this.certFileUpload = uploadedFile;
+            }
+        },
+ 
+        addCertification() {
+            let new_cert = {
+                'title': this.certTitle,
+                'training_center': this.certLocation,
+                'date': this.certIssuedDate,
+                'attachment': this.certFileUpload
+            }
+            
+            this.certifications.push(new_cert);
         },
 
         openWorkModal() {
@@ -207,7 +218,6 @@ export default {
                 'tenure_end': this.jobYearEnd
             }
 
-            console.log(newWorkXp);
             this.experiences.push(newWorkXp);
         },
     },
@@ -222,8 +232,7 @@ export default {
             certTitle: '',
             certLocation: '',
             certIssuedDate: '',
-            
-            certFileUpload: '',
+            certFileUpload: null,
 
             jobTitle: '',
             jobCompany: '',
@@ -274,14 +283,14 @@ export default {
     }
 }
 
-#resume-fillup::-webkit-scrollbar {
+#work-modal::-webkit-scrollbar, #certification-modal::-webkit-scrollbar, #resume-fillup::-webkit-scrollbar {
     width: 8px;
     border-radius: 15px;
     background-color: #EEE;
     scroll-behavior: smooth;
 }
 
-#resume-fillup::-webkit-scrollbar-thumb {
+#work-modal::-webkit-scrollbar-thumb, #certification-modal::-webkit-scrollbar-thumb, #resume-fillup::-webkit-scrollbar-thumb {
     background-color: #2984CE;
     border-radius: 15px;
 }
@@ -376,6 +385,7 @@ button:hover {
     padding: 3%;
     background-color: white;
     border-radius: 15px;
+    overflow-y: scroll;
 
     h1 {
         margin-bottom: 5%;
@@ -393,6 +403,7 @@ button:hover {
     padding: 3%;
     background-color: white;
     border-radius: 15px;
+    overflow-y: scroll;
 
     h1 {
         margin-bottom: 5%;

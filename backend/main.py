@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
 from pydantic import BaseModel
+from typing import Optional, BinaryIO
 from models import User, JobPosting, Resume, JobApplication, Notification, Experience, Certification
 # import datetime as dt
 from datetime import datetime
@@ -80,7 +81,7 @@ class CertificationModel(BaseModel):
     title: str
     training_center : str
     date: str
-    attachment : str
+    attachment : UploadFile = Form(...)
 
     class Config:
         orm_mode = True
@@ -240,6 +241,7 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
             existing_resume.ref_3 = resume.ref_3
             db.commit()
 
+
         for exp in resume.experiences:
             existing_experience = db.query(Experience).filter(Experience.resume_id == resume.resume_owner, Experience.job_title == exp.job_title, Experience.company == exp.company).first()
 
@@ -251,7 +253,9 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
                 new_experience.tenure_end = datetime.strptime(exp.tenure_end, '%Y-%m-%d')
                 new_experience.resume_id=resume.resume_owner
                 db.add(new_experience)
+
             db.commit()
+
 
         for certs in resume.certifications:
             existing_certification = db.query(Certification).filter(Certification.resume_id == resume.resume_owner, Certification.title == certs.title, Certification.training_center == certs.training_center).first()
@@ -264,8 +268,8 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
                 new_certification.training_center= certs.training_center
                 new_certification.resume_id=resume.resume_owner
                 db.add(new_certification)
-            db.commit()
 
+            db.commit()
 
         return { 'response': 'resume submitted', 'status_code': 200 }
     # except:
@@ -285,8 +289,16 @@ async def show_resumes(db: Session = Depends(get_database)):
 async def retrieve_resume_data(user_id: int, db: Session = Depends(get_database)):
     try:
         resume = db.query(Resume).filter(Resume.resume_owner == user_id).first()
-        
-        return { 'response': 'resume retrieved', 'resume': resume, 'status_code': 200 }
+        experiences = db.query(Experience).filter(Experience.resume_id == resume.id).first()
+        certifications = db.query(Certification).filter(Certification.resume_id == resume.id).first()
+
+        return { 
+            'response': 'resume retrieved', 
+            'resume': resume, 
+            'experiences': experiences, 
+            'certifications': certifications, 
+            'status_code': 200
+        }
     except:
         return { 'response': 'resume Retrieval Failed', 'status_code': 200 }
 

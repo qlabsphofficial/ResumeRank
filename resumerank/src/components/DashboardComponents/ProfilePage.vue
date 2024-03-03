@@ -19,19 +19,19 @@
 
                 <div id="profile-info">
                     <label for="">First Name</label>
-                    <input type="text" placeholder="Test">
+                    <input type="text" placeholder="First name...">
 
                     <label for="">Middle Name</label>
-                    <input type="text" placeholder="Test">
+                    <input type="text" placeholder="Middle name...">
 
                     <label for="">Last Name</label>
-                    <input type="text" placeholder="Test">
+                    <input type="text" placeholder="Last name...">
 
                     <label for="">Username</label>
-                    <input type="text" placeholder="Test">
+                    <input type="text" placeholder="Username...">
 
                     <label for="">Password</label>
-                    <input type="text" placeholder="Test">
+                    <input type="text" placeholder="Password...">
                 </div>
             </div>
 
