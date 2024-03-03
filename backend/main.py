@@ -8,7 +8,9 @@ from models import User, JobPosting, Resume, JobApplication, Notification, Exper
 from datetime import datetime
 from fastapi.responses import FileResponse
 import os
-
+from docx import Document
+from docx.shared import Inches
+import tempfile
 
 IMAGEDIR = "images/"
 FILESDIR = "files/"
@@ -45,6 +47,9 @@ class UserModel(BaseModel):
     contact_no : str
     address : str
 
+    class Config:
+        orm_mode = True
+
 
 class ProfileModel(BaseModel):
     username: str = Form(...)
@@ -67,12 +72,18 @@ class ExperienceModel(BaseModel):
     tenure_start: str
     tenure_end: str
 
+    class Config:
+        orm_mode = True
+
 
 class CertificationModel(BaseModel):
     title: str
     training_center : str
     date: str
     attachment : str
+
+    class Config:
+        orm_mode = True
     
 
 class ResumeModel(BaseModel):
@@ -86,6 +97,9 @@ class ResumeModel(BaseModel):
     ref_1: str
     ref_2: str
     ref_3: str
+
+    class Config:
+        orm_mode = True
 
 
 class JobPostingID(BaseModel):
@@ -271,9 +285,57 @@ async def show_resumes(db: Session = Depends(get_database)):
 async def retrieve_resume_data(user_id: int, db: Session = Depends(get_database)):
     try:
         resume = db.query(Resume).filter(Resume.resume_owner == user_id).first()
+        
         return { 'response': 'resume retrieved', 'resume': resume, 'status_code': 200 }
     except:
         return { 'response': 'resume Retrieval Failed', 'status_code': 200 }
+
+
+@app.get('/export_resume_to_word')
+async def export_resume_to_word(user_id: int, db: Session = Depends(get_database)):
+    # try:
+        payload = {}
+        # resume = db.query(Resume).filter(Resume.resume_owner == user_id).first()
+        query = db.query(User, Resume, Experience, Certification).join(Resume, User.id == Resume.resume_owner).join(Experience, Resume.id == Experience.resume_id).join(Certification, Resume.id == Certification.resume_id).filter(User.id == user_id)
+        # Fetch the results
+        
+        user, resume, certification, experience = query.first()
+        # payload['resume_data'] = resume
+        # payload['experience_data'] = experience
+        # payload['certification_data'] = certification
+        # payload['user_data'] = user
+
+        return { 'response': 'resume retrieved', 'resume': payload, 'status_code': 200 }
+
+        doc = Document()
+        doc.add_heading(f'{user.firstname} {user.middlename} {user.lastname}', 1)
+        doc.add_paragraph(f'{user.email} • {user.contact_no} • @{user.firstname}.{user.lastname}')
+        # paragraph.space_after = docx.shared.Pt(12)
+        # doc.add_picture('images/text.jpeg')
+
+        doc.add_heading(f'SUMMARY', 1)
+        doc.add_paragraph(f'{resume.summary}')
+
+        doc.add_paragraph('WORK EXPERIENCE')
+
+        
+        doc.add_heading(f'Brand Strategist                                                                                                                 3/2022 - Present', 3)
+        doc.add_paragraph('Oscorp Internation')
+        doc.add_paragraph('• description')
+        doc.add_paragraph('• description')
+        doc.add_paragraph('• descrtipion')
+
+        # Save the document
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+            doc.save(tmp_file.name)
+            tmp_file_path = tmp_file.name
+
+        # Return the generated DOCX file as a downloadable attachment
+        return FileResponse(tmp_file_path, filename=f"test_resume.docx", media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+
+        
+    # except:
+    #     return { 'response': 'resume Retrieval Failed', 'status_code': 200 }
 
 
 @app.post('/create_job_posting')
@@ -304,7 +366,7 @@ async def delete_job_posting(job: JobPostingID, db: Session = Depends(get_databa
             db.delete(retrieved_job_posting)
             db.commit()
 
-        return {'response': 'job posting deleted.'}
+        return { 'response': 'job posting deleted.'}
     except:
         return {'response': 'failed to job posting.'}
     
