@@ -306,36 +306,28 @@ async def retrieve_resume_data(user_id: int, db: Session = Depends(get_database)
 @app.get('/export_resume_to_word')
 async def export_resume_to_word(user_id: int, db: Session = Depends(get_database)):
     # try:
-        payload = {}
-        # resume = db.query(Resume).filter(Resume.resume_owner == user_id).first()
-        query = db.query(User, Resume, Experience, Certification).join(Resume, User.id == Resume.resume_owner).join(Experience, Resume.id == Experience.resume_id).join(Certification, Resume.id == Certification.resume_id).filter(User.id == user_id)
-        # Fetch the results
-        
-        user, resume, certification, experience = query.first()
-        # payload['resume_data'] = resume
-        # payload['experience_data'] = experience
-        # payload['certification_data'] = certification
-        # payload['user_data'] = user
-
-        return { 'response': 'resume retrieved', 'resume': payload, 'status_code': 200 }
+        user, resume = db.query(User, Resume).join(Resume, User.id == Resume.resume_owner).filter(User.id == user_id).first()
+        experience = db.query(Experience).filter(Experience.resume_id == user_id).all()
+        certification = db.query(Certification).filter(Certification.resume_id == user_id).all()
 
         doc = Document()
         doc.add_heading(f'{user.firstname} {user.middlename} {user.lastname}', 1)
         doc.add_paragraph(f'{user.email} • {user.contact_no} • @{user.firstname}.{user.lastname}')
-        # paragraph.space_after = docx.shared.Pt(12)
-        # doc.add_picture('images/text.jpeg')
 
-        doc.add_heading(f'SUMMARY', 1)
+        doc.add_heading(f'SUMMARY', 2)
         doc.add_paragraph(f'{resume.summary}')
 
-        doc.add_paragraph('WORK EXPERIENCE')
+        doc.add_heading(f'WORK EXPERIENCE', 3)
 
+        for exp in experience:
+            doc.add_heading(f'{exp.job_title}                                                                                                                 {exp.tenure_start} - {exp.tenure_end}', 3)
+            doc.add_paragraph(f'{exp.company}')
+
+        doc.add_heading(f'CERTIFICATION', 3)
         
-        doc.add_heading(f'Brand Strategist                                                                                                                 3/2022 - Present', 3)
-        doc.add_paragraph('Oscorp Internation')
-        doc.add_paragraph('• description')
-        doc.add_paragraph('• description')
-        doc.add_paragraph('• descrtipion')
+        for certs in certification:
+            doc.add_heading(f'{certs.title}                                                                                                                                      {certs.date}', 3)
+            doc.add_paragraph(f'{certs.training_center}')
 
         # Save the document
         with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
@@ -343,7 +335,7 @@ async def export_resume_to_word(user_id: int, db: Session = Depends(get_database
             tmp_file_path = tmp_file.name
 
         # Return the generated DOCX file as a downloadable attachment
-        return FileResponse(tmp_file_path, filename=f"test_resume.docx", media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        return FileResponse(tmp_file_path, filename=f"Resume.docx", media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
 
         
     # except:
@@ -485,3 +477,17 @@ async def get_notifications(id: int, db: Session = Depends(get_database)):
     except:
         print('Retrieval failed.')
         return {'response': 'retrieval failed.', 'notifications': all_notifications}
+    
+
+@app.post('/delete_notifications')
+async def delete_notifications(notification_id: int, db: Session = Depends(get_database)):
+    try:
+        delete_notification = db.query(Notification).filter(Notification.id == notification_id).first()
+        
+        if delete_notification:
+            db.delete(delete_notification)
+            db.commit()
+
+        return { 'response': 'notification deleted.'}
+    except:
+        return {'response': 'failed to delete notification.'}
