@@ -415,38 +415,78 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
     # try:
         job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
         all_applications = db.query(JobApplication).filter(JobApplication.job == job_id).all()
+        job_desc = job.description.split()
 
         top_applicants = []
-
+        
         for application in all_applications:
             resume = db.query(Resume).join(User).filter(Resume.id == application.resume).filter(User.id == Resume.resume_owner).first()
-            text_analysis = ''
-
-            text_analysis += f' {resume.training_1}'
-            text_analysis += f' {resume.training_2}'
-            text_analysis += f' {resume.training_3}'
-            text_analysis += f' {resume.achievement_1}'
-            text_analysis += f' {resume.achievement_2}'
-            text_analysis += f' {resume.achievement_3}'
-            text_analysis += f' {resume.experience_1}'
-            text_analysis += f' {resume.experience_2}'
-            text_analysis += f' {resume.experience_3}'
-            text_analysis += f' {resume.summary}'
             
-            job_desc = job.description.split()
-            resume_text = text_analysis.split()
+            resume_analysis = ''
+            
+            current_points = 0
+
+            if resume.ed_1 and resume.ed_2 and resume.ed_3:
+                current_points += 50
+            elif resume.ed_1 and resume.ed_2 or resume.ed_1 and resume.ed_3 or resume.ed_2 and resume.ed_3:
+                current_points += 25
+            elif resume.ed_1 or resume.ed_2 or resume.ed_3:
+                current_points += 10
+
+            resume_analysis += f' {resume.summary}'
+
+            resume_text = resume_analysis.split()
 
             common_words = set(job_desc) & set(resume_text)
-            matching_word_count = len(common_words)
+            current_points += len(common_words)
 
-            if matching_word_count > 10:
+            experiences = db.query(Experience).filter(Experience.resume_id == resume.resume_owner).all()
+
+            for experience in experiences:
+                experience_analysis = ''
+
+                experience_analysis += f' {experience.job_title}'
+                experience_analysis += f' {experience.company}'
+
+                difference_in_years = experience.tenure_end - experience.tenure_start
+
+                if tenure_end.month < tenure_start.month or (tenure_end.month == tenure_start.month and tenure_end.day < tenure_start.day):
+                    difference_in_years -= 1
+
+                experience_text = experience_analysis.split()
+                common_words = set(job_desc) & set(experience_text)
+
+                if len(common_words) > 5:
+                    current_points += difference_in_years * 50
+                else:
+                    current_points += difference_in_years * 20
+                
+            certifications = db.query(Certification).filter(Certification.resume_id == resume.resume_owner).all()
+
+            for certification in certifications:
+                certification_analysis = ''
+
+                certification_analysis += f' {certification.title}'
+                certification_analysis += f' {certification.training_center}'
+
+                certification_text = certification_analysis.split()
+                common_words = set(job_desc) & set(certification_text)
+
+                if len(common_words) > 2:
+                    current_points += 50
+                else:
+                    current_points += 20
+                
+                if certification.attachment:
+                    current_points += 10
+
+            if current_points > 400:
                 applicant = db.query(User).filter(User.id == resume.resume_owner).first()
                 print(applicant.__dict__)
                 
-                top_applicants.append({'applicant': applicant, 'applicant_resume': resume, 'matches': matching_word_count })
+                top_applicants.append({'applicant': applicant, 'applicant_resume': resume, 'applicant_points': current_points })
 
-
-        sorted_top_applicants = sorted(top_applicants, key=lambda x: x['matches'], reverse=True)
+        sorted_top_applicants = sorted(top_applicants, key=lambda x: x['applicant_points'], reverse=True)
         print(sorted_top_applicants)
         return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': sorted_top_applicants, 'status_code': 200 }
     # except:
