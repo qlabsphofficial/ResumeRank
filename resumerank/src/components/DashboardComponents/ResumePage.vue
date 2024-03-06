@@ -23,14 +23,18 @@
             </div>
 
             <h3>Certifications</h3>
-            <div class="user-info-form">
-                <div id="certifications"></div>
+            <div class="credentials">
+                <div id="certifications">
+                    <h4 v-if="this.certifications.length == 0">No Certifications Included.</h4>
+                </div>
                 <button @click="openCertModal()">Add Certification</button>
             </div>
             
             <h3>Experience</h3>
-            <div class="user-info-form">
-                <div id="experiences"></div>
+            <div class="credentials">
+                <div id="experiences">
+                    <h4 v-if="this.experiences.length == 0">No Work Experience Included.</h4>
+                </div>
                 <button @click="openWorkModal()">Add Experience</button>
             </div>
 
@@ -113,7 +117,6 @@ export default {
     },
     methods: {
         async submit_resume(){
-            console.log('Test')
             console.log(this.certifications);
 
             const response = await fetch('http://127.0.0.1:8000/submit_resume', {
@@ -197,7 +200,23 @@ export default {
                 'attachment': this.certFileUpload
             }
             
+            let certificationDiv = document.createElement('div');
+            certificationDiv.classList.add('credential');
+
+            let certificationData = `
+                <h3>Title: ${new_cert.title}</h3>
+                <p>Training Center: ${new_cert.training_center}</p>
+                <p>Date Issued: ${new_cert.date}</p>
+                <button class="remove-credential-button">Remove Certification</button>
+            `;
+
+            certificationDiv.innerHTML = certificationData;
+
+            let certificationsSection = document.getElementById('certifications');
+            certificationsSection.appendChild(certificationDiv);
+
             this.certifications.push(new_cert);
+            this.closeCertModal()
         },
 
         openWorkModal() {
@@ -218,7 +237,24 @@ export default {
                 'tenure_end': this.jobYearEnd
             }
 
+            let newExperienceDiv = document.createElement('div');
+            newExperienceDiv.classList.add('credential');
+
+            let experienceData = `
+                <h3>Title: ${newWorkXp.job_title}</h3>
+                <p>Company: ${newWorkXp.company}</p>
+                <p>Tenure Start: ${newWorkXp.tenure_start}</p>
+                <p>Tenure End: ${newWorkXp.tenure_end}</p>
+                <button class="remove-credential-button">Remove Experience</button>
+            `;
+
+            newExperienceDiv.innerHTML = experienceData;
+
+            let experiencesSection = document.getElementById('experiences');
+            experiencesSection.appendChild(newExperienceDiv);
+
             this.experiences.push(newWorkXp);
+            this.closeWorkModal();
         },
     },
     data (){
@@ -253,7 +289,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #container {
     height: 100%;
     width: 100%;
@@ -268,6 +304,57 @@ export default {
     height: 70%;
     width: 100%;
     margin-top: 3%;
+}
+
+.credentials {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.credential {
+    height: 80%;
+    width: 50%;
+    padding: 3%;
+    border-radius: 15px;
+    box-shadow: 2px 2px 2px 2px #DFDFDF;
+    
+    .remove-credential-button {
+        width: 40%;
+        background-color: black;
+        color: white;
+        border: 1px solid transparent;
+        border-radius: 15px;
+        transition: .4s;
+    }
+
+    .remove-credential-button:hover {
+        border: 1px solid black;
+        background-color: transparent;
+        color: #444444;
+    }
+}
+
+#certifications {
+    height: 90%;
+    width: 100%;
+    margin-bottom: 3%;
+}
+
+.certification {
+    height: 30vh;
+    width: 15vw;
+    padding: 3%;
+    box-shadow: 2px 2px 2px #444444;
+    border: 1px solid black;
+    border-radius: 15px;
+}
+
+#experiences {
+    height: 90%;
+    width: 100%;
+    margin-bottom: 3%;
 }
 
 #resume-fillup {

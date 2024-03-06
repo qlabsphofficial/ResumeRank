@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
 from pydantic import BaseModel
-from typing import Optional, BinaryIO
+from typing import Optional, BinaryIO, List
 from models import User, JobPosting, Resume, JobApplication, Notification, Experience, Certification
 # import datetime as dt
 from datetime import datetime
@@ -92,8 +92,8 @@ class ResumeModel(BaseModel):
     ed_1: str
     ed_2: str
     ed_3: str
-    certifications : list[CertificationModel]
-    experiences : list[ExperienceModel]
+    certifications: Optional[List[CertificationModel]] = []
+    experiences: Optional[List[ExperienceModel]] = []
     summary: str
     ref_1: str
     ref_2: str
@@ -215,6 +215,7 @@ async def retrieve_dashboard_data(user_id: int, db: Session = Depends(get_databa
 @app.post('/submit_resume')
 async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)):
     # try:
+        print('Submission received')
         existing_resume = db.query(Resume).filter(Resume.resume_owner == resume.resume_owner).first()
 
         if not existing_resume:
@@ -421,7 +422,6 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
         
         for application in all_applications:
             resume = db.query(Resume).join(User).filter(Resume.id == application.resume).filter(User.id == Resume.resume_owner).first()
-            
             resume_analysis = ''
             
             current_points = 0
