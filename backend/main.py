@@ -433,7 +433,7 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
             elif resume.ed_1 or resume.ed_2 or resume.ed_3:
                 current_points += 10
 
-            resume_analysis += f' {resume.summary}'
+            resume_analysis += f'{resume.summary}'
 
             resume_text = resume_analysis.split()
 
@@ -445,18 +445,15 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
             for experience in experiences:
                 experience_analysis = ''
 
-                experience_analysis += f' {experience.job_title}'
-                experience_analysis += f' {experience.company}'
+                experience_analysis += f'{experience.job_title}'
+                # experience_analysis += f'{experience.company}'
 
-                difference_in_years = experience.tenure_end - experience.tenure_start
-
-                if tenure_end.month < tenure_start.month or (tenure_end.month == tenure_start.month and tenure_end.day < tenure_start.day):
-                    difference_in_years -= 1
+                difference_in_years = (experience.tenure_end - experience.tenure_start).days // 365
 
                 experience_text = experience_analysis.split()
                 common_words = set(job_desc) & set(experience_text)
 
-                if len(common_words) > 5:
+                if len(common_words) > 0:
                     current_points += difference_in_years * 50
                 else:
                     current_points += difference_in_years * 20
@@ -466,13 +463,13 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
             for certification in certifications:
                 certification_analysis = ''
 
-                certification_analysis += f' {certification.title}'
-                certification_analysis += f' {certification.training_center}'
+                certification_analysis += f'{certification.title}'
+                # certification_analysis += f'{certification.training_center}'
 
                 certification_text = certification_analysis.split()
                 common_words = set(job_desc) & set(certification_text)
 
-                if len(common_words) > 2:
+                if len(common_words) > 0:
                     current_points += 50
                 else:
                     current_points += 20
@@ -480,15 +477,21 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
                 if certification.attachment:
                     current_points += 10
 
-            if current_points > 400:
+            if current_points > 250:
                 applicant = db.query(User).filter(User.id == resume.resume_owner).first()
                 print(applicant.__dict__)
                 
                 top_applicants.append({'applicant': applicant, 'applicant_resume': resume, 'applicant_points': current_points })
 
         sorted_top_applicants = sorted(top_applicants, key=lambda x: x['applicant_points'], reverse=True)
-        print(sorted_top_applicants)
-        return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': sorted_top_applicants, 'status_code': 200 }
+        if sorted_top_applicants:
+            return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': sorted_top_applicants, 'status_code': 200 }
+        # If there are no top applicants, check if there are any applicants at all
+        elif all_applications:
+            return { 'response': 'no top applicants', 'job': job, 'all_applications': all_applications, 'status_code': 200 }
+        # If there are no applicants at all
+        else:
+            return { 'response': 'no applicants', 'job': job, 'status_code': 200 }
     # except:
     #     return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
 
