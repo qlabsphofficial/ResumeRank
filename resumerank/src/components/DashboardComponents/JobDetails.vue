@@ -2,7 +2,7 @@
     <div id="container">
         <h1>{{ page_title }}</h1>
         <p>{{ job.date_posted.replace('T', ' ') }}</p>
-        <p id="description">{{ job.description }}</p>
+        <p id="description">Date Posted: {{ job.description }}</p>
 
         <div id="actions">
             <button @click="apply()">Apply Now</button>
@@ -63,6 +63,9 @@ export default {
     height: 100%;
     width: 100%;
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #description {

@@ -45,25 +45,14 @@
                         <p>College / University - {{ this.ed3 }}</p>
                     </div>
 
-                    <h5>Trainings</h5>
+                    <h5>Certifications</h5>
                     <div class="info">
-                        <p>Training / Certification - {{ this.tr1 }}</p>
-                        <p>Training / Certification - {{ this.tr2 }}</p>
-                        <p>Training / Certification - {{ this.tr3 }}</p>
+                        <li v-for="certification of certifications" :key="certification">{{ certification.title }}</li>
                     </div>
 
-                    <h5>Achievements</h5>
+                    <h5>Experiences</h5>
                     <div class="info">
-                        <p>Achievement - {{ this.ac1 }}</p>
-                        <p>Achievement - {{ this.ac2 }}</p>
-                        <p>Achievement - {{ this.ac3 }}</p>
-                    </div>
-
-                    <h5>Experience</h5>
-                    <div class="info">
-                        <p>Experience - {{ this.exp1 }}</p>
-                        <p>Experience - {{ this.exp2 }}</p>
-                        <p>Experience - {{ this.exp3 }}</p>
+                        <li v-for="experience of experiences" :key="experience">{{ experience.job_title }}</li>
                     </div>
                 </div>
             </div>
@@ -87,18 +76,17 @@ export default {
             }
             else{
                 console.log(data.resume);
-                this.ed1 = data.resume.ed_1
-                this.ed2 = data.resume.ed_2
-                this.ed3 = data.resume.ed_3
-                this.tr1 = data.resume.training_1
-                this.tr2 = data.resume.training_2
-                this.tr3 = data.resume.training_3
-                this.ac1 = data.resume.achievement_1
-                this.ac2 = data.resume.achievement_2
-                this.ac3 = data.resume.achievement_3
-                this.exp1 = data.resume.experience_1
-                this.exp2 = data.resume.experience_2
-                this.exp3 = data.resume.experience_3
+                this.ed1 = data.resume.ed_1;
+                this.ed2 = data.resume.ed_2;
+                this.ed3 = data.resume.ed_3;
+                this.tr1 = data.resume.training_1;
+                this.tr2 = data.resume.training_2;
+                this.tr3 = data.resume.training_3;
+                this.certifications = data.certifications;
+                this.experiences = data.experiences;
+
+                console.log(data.certifications);
+                console.log(data.experiences);
             }            
         }
     },
@@ -110,12 +98,8 @@ export default {
             tr1: '',
             tr2: '',
             tr3: '',
-            ac1: '',
-            ac2: '',
-            ac3: '',
-            exp1: '',
-            exp2: '',
-            exp3: '',
+            certifications: [],
+            experiences: []
         }
     },
     mounted() {

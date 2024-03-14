@@ -13,7 +13,7 @@ const app = createApp(App);
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/login', component: LoginPage },
+    { path: '/', component: LoginPage },
     { path: '/register', component: RegisterPage },
     { path: '/dashboard/:user_id', component: DashboardPage, name: 'dashboard', props: true },
     { path: '/admin', component: AdminPage }

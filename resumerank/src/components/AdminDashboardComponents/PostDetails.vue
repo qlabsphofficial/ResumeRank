@@ -1,7 +1,7 @@
 <template>
     <div id="container">
         <h1>{{ job.job_title }}</h1>
-        <p>{{ job.date_posted }}</p>
+        <p>Date Posted: {{ job.date_posted }}</p>
         <p id="description">{{ job.description }}</p>
 
         <h2>Top Applicants</h2>
@@ -21,19 +21,48 @@
                             <li>College / University - {{ top_applicant.applicant_resume.ed_3 }}</li>
                         </div>
 
-                        <h5>Achievements</h5>
+                        <h5>Certifications</h5>
                         <div class="info">
-                            <li>{{ top_applicant.applicant_resume.achievement_1 }}</li>
-                            <li>{{ top_applicant.applicant_resume.achievement_2 }}</li>
-                            <li>{{ top_applicant.applicant_resume.achievement_3 }}</li>
+                            <li v-for="certification in top_applicant.certifications" :key="certification">{{ certification.title }}</li>
                         </div>
 
                         <h5>Experience</h5>
                         <div class="info">
-                            <li>{{ top_applicant.applicant_resume.experience_1 }}</li>
-                            <li>{{ top_applicant.applicant_resume.experience_2 }}</li>
-                            <li>{{ top_applicant.applicant_resume.experience_3 }}</li>
+                            <li v-for="experience in top_applicant.experiences" :key="experience">
+                                {{ experience.job_title }} ({{ experience.tenure_start }} to {{ experience.tenure_end }})
+                            </li>
                         </div>
+                    </div>
+
+                    <button class="contact-applicant-btn">Contact Applicant</button>
+                </div>
+            </div>
+        </div>
+
+        <h2>Applicants</h2>
+        <div id="applicants">
+            <div v-for="top_applicant in top_applicants" :key="top_applicant" class="applicant">
+                <h3>{{ top_applicant.applicant.firstname }} {{ top_applicant.applicant.middlename }} {{ top_applicant.applicant.lastname }}</h3>
+                <p class="contact-info">{{ top_applicant.applicant.email }} - {{ top_applicant.applicant.contact_no }}</p>
+
+                <div class="resume-details">
+                    <h5>Education</h5>
+                    <div class="info">
+                        <li>Primary - {{ top_applicant.applicant_resume.ed_1 }}</li>
+                        <li>Secondary - {{ top_applicant.applicant_resume.ed_2 }}</li>
+                        <li>College / University - {{ top_applicant.applicant_resume.ed_3 }}</li>
+                    </div>
+
+                    <h5>Certifications</h5>
+                    <div class="info">
+                        <li v-for="certification in top_applicant.certifications" :key="certification">{{ certification.title }}</li>
+                    </div>
+
+                    <h5>Experience</h5>
+                    <div class="info">
+                        <li v-for="experience in top_applicant.experiences" :key="experience">
+                            {{ experience.job_title }} ({{ experience.tenure_start }} to {{ experience.tenure_end }})
+                        </li>
                     </div>
                 </div>
             </div>
@@ -76,8 +105,10 @@ export default {
 <style scoped lang="scss">
 #container {
     height: 100%;
-    width: 100%;
+    width: 95%;
+    padding-right: 5%;
     text-align: left;
+    overflow-y: scroll;
 }
 
 #description {
@@ -107,8 +138,8 @@ h2 {
     margin-top: 5%;
 }
 
-#top-applicants {
-    height: 50%;
+#top-applicants, #applicants {
+    height: 100%;
     width: 100%;
 }
 
@@ -117,14 +148,14 @@ h2 {
     overflow-y: scroll;
 }
 
-#all-top-applicants::-webkit-scrollbar, #all-jobs::-webkit-scrollbar {
+#container::-webkit-scrollbar, #all-top-applicants::-webkit-scrollbar, #all-jobs::-webkit-scrollbar {
     width: 8px;
     border-radius: 15px;
     background-color: #EEE;
     scroll-behavior: smooth;
 }
 
-#all-top-applicants::-webkit-scrollbar-thumb, #all-jobs::-webkit-scrollbar-thumb {
+#container::-webkit-scrollbar-thumb, #all-top-applicants::-webkit-scrollbar-thumb, #all-jobs::-webkit-scrollbar-thumb {
     background-color: #2984CE;
     border-radius: 15px;
 }
@@ -145,11 +176,6 @@ h2 {
     h3 {
         line-height: 0;
     }
-}
-
-.applicant:hover {
-    color: white;
-    background-color: black;
 }
 
 .contact-info {

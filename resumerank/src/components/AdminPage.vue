@@ -1,10 +1,24 @@
 <template>
     <div id="main-container">
         <div id="navbar">
-            <a @click="changeComponent('AdminDashboard')" class="nav-link">Dashboard</a>
-            <a @click="changeComponent('JobPostings')" class="nav-link">Job Postings</a>
+            <div id="navbar-header">
+                <img src="@/assets/icons/ResumeRankLogo2_Inverted.png" height="25%" width="40%">
+                <h2>ResumeRank</h2>
+            </div>
 
-            <a @click="this.$router.push('/login')" class="nav-link" id="sign-out">Sign Out</a>
+            <div id="nav-links">
+                <div class="link">
+                    <img src="@/assets/icons/icons8-home-24.png" height="30px" width="30px">
+                    <a @click="changeComponent('AdminDashboard')" class="nav-link">Dashboard</a>
+                </div>
+
+                <div class="link">
+                    <img src="@/assets/icons/icons8-briefcase-48.png" height="30px" width="30px">
+                    <a @click="changeComponent('JobPostings')" class="nav-link">Job Postings</a>
+                </div>
+            </div>
+
+            <a @click="this.$router.push('/')" class="nav-link" id="sign-out">Sign Out</a>
         </div>
 
         <div id="main-content">
@@ -67,7 +81,7 @@ export default {
     color: white;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     text-align: left;
 
@@ -77,6 +91,35 @@ export default {
         margin-top: 5%;
         margin-bottom: 5%;
         text-align: left;
+    }
+}
+
+#navbar-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#nav-links {
+    width: 75%;
+    padding-left: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.link {
+    margin-top: 2%;
+    margin-bottom: 2%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    img {
+        margin-right: 5%;
     }
 }
 

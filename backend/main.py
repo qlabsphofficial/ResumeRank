@@ -290,8 +290,8 @@ async def show_resumes(db: Session = Depends(get_database)):
 async def retrieve_resume_data(user_id: int, db: Session = Depends(get_database)):
     try:
         resume = db.query(Resume).filter(Resume.resume_owner == user_id).first()
-        experiences = db.query(Experience).filter(Experience.resume_id == resume.id).first()
-        certifications = db.query(Certification).filter(Certification.resume_id == resume.id).first()
+        experiences = db.query(Experience).filter(Experience.resume_id == resume.id).all()
+        certifications = db.query(Certification).filter(Certification.resume_id == resume.id).all()
 
         return { 
             'response': 'resume retrieved', 
@@ -415,7 +415,10 @@ async def show_applications(db: Session = Depends(get_database)):
 async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
     # try:
         job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
-        all_applications = db.query(JobApplication).filter(JobApplication.job == job_id).all()
+        all_applications = db.query(JobApplication).join(Experience, JobApplication.resume == Experience.resume_id) \
+            .filter(JobApplication.job == job_id) \
+            .join(Certification, JobApplication.resume == Certification.resume_id).all()
+        
         job_desc = job.description.split()
 
         top_applicants = []
@@ -426,6 +429,7 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
             
             current_points = 0
 
+            # CHECK EDUCATIONAL ATTAINMENTS
             if resume.ed_1 and resume.ed_2 and resume.ed_3:
                 current_points += 50
             elif resume.ed_1 and resume.ed_2 or resume.ed_1 and resume.ed_3 or resume.ed_2 and resume.ed_3:
@@ -437,11 +441,14 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
 
             resume_text = resume_analysis.split()
 
+            # CHECK IF JOB DESCRIPTION MATCHES RESUME DESCRIPTION
             common_words = set(job_desc) & set(resume_text)
             current_points += len(common_words)
 
+            
+            # RATE APPLICANT BASED ON EXPERIENCE
             experiences = db.query(Experience).filter(Experience.resume_id == resume.resume_owner).all()
-
+            
             for experience in experiences:
                 experience_analysis = ''
 
@@ -457,7 +464,9 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
                     current_points += difference_in_years * 50
                 else:
                     current_points += difference_in_years * 20
-                
+
+            
+            # RATE APPLICANT BASED ON CERTIFICATIONS / ACHIEVEMENTS
             certifications = db.query(Certification).filter(Certification.resume_id == resume.resume_owner).all()
 
             for certification in certifications:
@@ -477,25 +486,38 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
                 if certification.attachment:
                     current_points += 10
 
+            # CHECK IF APPLICANT IS A TOP APPLICANT
             if current_points > 250:
                 applicant = db.query(User).filter(User.id == resume.resume_owner).first()
-                print(applicant.__dict__)
                 
-                top_applicants.append({'applicant': applicant, 'applicant_resume': resume, 'applicant_points': current_points })
+                top_applicants.append({
+                    'applicant': applicant, 
+                    'applicant_resume': resume, 
+                    'applicant_points': current_points, 
+                    'experiences': experiences, 
+                    'certifications': certifications 
+                })
+
 
         sorted_top_applicants = sorted(top_applicants, key=lambda x: x['applicant_points'], reverse=True)
+        
         if sorted_top_applicants:
             return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': sorted_top_applicants, 'status_code': 200 }
+        
         # If there are no top applicants, check if there are any applicants at all
         elif all_applications:
             return { 'response': 'no top applicants', 'job': job, 'all_applications': all_applications, 'status_code': 200 }
+        
         # If there are no applicants at all
         else:
             return { 'response': 'no applicants', 'job': job, 'status_code': 200 }
+        
     # except:
     #     return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
 
 
+
+# NOTIFICATION ENDPOINTS
 @app.post('/create_notification')
 async def create_notification(notification: NotificationModel, db: Session = Depends(get_database)):
     try:

@@ -34,7 +34,7 @@
                 </div>
             </div>
 
-            <a @click="this.$router.push('/login')" class="nav-link" id="sign-out">Sign Out</a>
+            <a @click="this.$router.push('/')" class="nav-link" id="sign-out">Sign Out</a>
         </div>
 
         <div id="main-content">

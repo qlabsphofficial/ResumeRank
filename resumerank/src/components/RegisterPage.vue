@@ -37,13 +37,9 @@
                     <input type="text" placeholder="Enter your address..." v-model="address">
                 </div>
 
-                <div id="forgot-section">
-                    <a href="">Forgot Password?</a>
-                </div>
-
                 <div id="button-container">
                     <button @click="register()">Register</button>
-                    <p @click="this.$router.push('/login')">Already a user? Sign in.</p>
+                    <p @click="this.$router.push('/')">Already a user? Sign in.</p>
                 </div>
             </div>
 
@@ -181,7 +177,7 @@
   
 #login-form {
     margin-top: 10%;
-    height: 50%;
+    height: 60%;
     width: 100%;
     margin-bottom: 5%;
     overflow-y: scroll;

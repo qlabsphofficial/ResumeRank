@@ -26,6 +26,13 @@
             <div class="credentials">
                 <div id="certifications">
                     <h4 v-if="this.certifications.length == 0">No Certifications Included.</h4>
+
+                    <div v-else v-for="certification of certifications" :key="certification" class="credential">
+                        <h3>{{ certification.title }}</h3>
+                        <p>Issued By: {{ certification.training_center }}</p>
+                        <p>Date Issued: {{ certification.date }}</p>
+                        <button class="remove-credential-button">Remove Certification</button>
+                    </div>
                 </div>
                 <button @click="openCertModal()">Add Certification</button>
             </div>
@@ -34,6 +41,13 @@
             <div class="credentials">
                 <div id="experiences">
                     <h4 v-if="this.experiences.length == 0">No Work Experience Included.</h4>
+                    
+                    <div v-else v-for="experience of experiences" :key="experience" class="credential">
+                        <h3>{{ experience.job_title }}</h3>
+                        <p>{{ experience.company }}</p>
+                        <p>Employment Duration: {{ experience.tenure_start }} to {{ experience.tenure_end }}</p>
+                        <button class="remove-credential-button">Remove Experience</button>
+                    </div>
                 </div>
                 <button @click="openWorkModal()">Add Experience</button>
             </div>
@@ -164,14 +178,16 @@ export default {
             }
             else{
                 console.log(data.resume);
-                this.ed1 = data.resume.ed_1
-                this.ed2 = data.resume.ed_2
-                this.ed3 = data.resume.ed_3
-                this.summary = data.resume.summary
-                this.cr1 = data.resume.ref_1
-                this.cr2 = data.resume.ref_2
-                this.cr3 = data.resume.ref_3
-            }            
+                this.ed1 = data.resume.ed_1;
+                this.ed2 = data.resume.ed_2;
+                this.ed3 = data.resume.ed_3;
+                this.summary = data.resume.summary;
+                this.cr1 = data.resume.ref_1;
+                this.cr2 = data.resume.ref_2;
+                this.cr3 = data.resume.ref_3;
+                this.certifications = data.certifications;
+                this.experiences = data.experiences;
+            }
         },
 
         openCertModal() {
@@ -204,8 +220,8 @@ export default {
             certificationDiv.classList.add('credential');
 
             let certificationData = `
-                <h3>Title: ${new_cert.title}</h3>
-                <p>Training Center: ${new_cert.training_center}</p>
+                <h3>${new_cert.title}</h3>
+                <p>${new_cert.training_center}</p>
                 <p>Date Issued: ${new_cert.date}</p>
                 <button class="remove-credential-button">Remove Certification</button>
             `;
@@ -316,6 +332,7 @@ export default {
 .credential {
     height: 80%;
     width: 50%;
+    margin-bottom: 2%;
     padding: 3%;
     border-radius: 15px;
     box-shadow: 2px 2px 2px 2px #DFDFDF;
