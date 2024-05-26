@@ -1,14 +1,5 @@
 <template>
     <div id="container">
-      <div id="register-modal-container" v-if="modal_visible">
-        <div id="register-modal">
-            <h1>{{ modal_header }}</h1>
-            <p>{{ modal_message }}</p>
-
-            <button @click="closeModal()">Close Modal</button>
-        </div>
-      </div>
-
       <div id="login-container">
         <div id="login-form-container">
             <div id="left-section">
@@ -89,28 +80,14 @@
               console.log(responseData.response);
 
               if (responseData.response == 'Registration successful.'){
-                  this.successful = true;
-                  this.modal_visible = true;
-                  this.modal_header = 'Registration Successful.';
-                  this.modal_message = 'You will now be redirected to the login screen.';
+                  this.$router.push('/');
               }
               else {
-                  this.modal_visible = true;
-                  this.modal_header = 'Registration Failed.';
-                  this.modal_message = 'Please ensure that all fields have been filled out.';
+                  console.log('Failed');
               }
           }
           else {
               console.log(`Request failed with status ${response.status}`);
-          }
-        },
-
-        closeModal(){
-          if (this.successful){
-            this.$router.push('/');
-          }
-          else {
-            this.modal_visible = false;
           }
         }
     },
@@ -124,13 +101,7 @@
         last_name: '',
         email: '',
         contact: '',
-        address: '',
-
-        // modal data
-        modal_visible: false,
-        modal_header: '',
-        modal_message: '',
-        successful: false
+        address: ''
       }
     }
   }
@@ -150,35 +121,6 @@
   
     h1, h4 {
       color: #2984CE;
-    }
-  }
-
-  #register-modal-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, .4);
-    z-index: 3;
-  }
-
-  #register-modal {
-    height: 40vh;
-    width: 35vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    border-radius: 15px;
-    z-index: 3;
-
-    button {
-      margin-top: 5%;
     }
   }
   

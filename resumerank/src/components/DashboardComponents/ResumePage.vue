@@ -1,4 +1,13 @@
 <template>
+    <div id="resume-modal-container" v-if="this.modal_visible">
+        <div id="resume-modal">
+            <h1>{{ modal_header }}</h1>
+            <p>{{ modal_message }}</p>
+
+            <button @click="closeInfoModal()">Close</button>
+        </div>
+    </div>
+
     <div id="container">
         <h1>{{ title }}</h1>
         <p>Please enter your resume details below.</p>
@@ -131,8 +140,6 @@ export default {
     },
     methods: {
         async submit_resume(){
-            console.log(this.certifications);
-
             const response = await fetch('http://127.0.0.1:8000/submit_resume', {
                 method: 'POST',
                 headers: {
@@ -152,21 +159,21 @@ export default {
                 }),
             })
 
-          if(response.ok){
-              const responseData = await response.json();
-              console.log(responseData.response);
+            if(response.ok){
+                const responseData = await response.json();
 
-              if (responseData.response == 'resume submitted'){
-                this.title = 'Resume Updated';
-                setTimeout(() => { this.title = 'Resume' }, 2000);
-              }
-              else {
-                  console.log('Failed');
-              }
-          }
-          else {
-              console.log(`Request failed with status ${response.status}`);
-          }
+                if (responseData.response == 'resume submitted'){
+                    this.modal_visible = true;
+                    this.modal_header = 'Resume Information Saved';
+                    this.modal_message = 'User information has been successfully updated.';
+                }
+                else {
+                    console.log('Failed');
+                }
+            }
+            else {
+                console.log(`Request failed with status ${response.status}`);
+            }
         },
 
         async retrieve_resume_data(){
@@ -200,6 +207,10 @@ export default {
             this.modalOpen = false;
         },
 
+        closeInfoModal(){
+            this.modal_visible = false;
+        },  
+
         handleFileUpload(event){
             const files = event.target.files;
 
@@ -207,7 +218,7 @@ export default {
                 this.certFileUpload = uploadedFile;
             }
         },
- 
+        
         addCertification() {
             let new_cert = {
                 'title': this.certTitle,
@@ -233,16 +244,6 @@ export default {
 
             this.certifications.push(new_cert);
             this.closeCertModal()
-        },
-
-        openWorkModal() {
-            this.workModalOpen = true;
-            this.modalOpen = true;
-        },
-
-        closeWorkModal(){
-            this.workModalOpen = false;
-            this.modalOpen = false;
         },
 
         addWorkExperience() {
@@ -272,6 +273,16 @@ export default {
             this.experiences.push(newWorkXp);
             this.closeWorkModal();
         },
+
+        openWorkModal() {
+            this.workModalOpen = true;
+            this.modalOpen = true;
+        },
+
+        closeWorkModal(){
+            this.workModalOpen = false;
+            this.modalOpen = false;
+        },
     },
     data (){
         return {
@@ -295,6 +306,10 @@ export default {
             workModalOpen: false,
             modalOpen: false,
 
+            modal_visible: false,
+            modal_header: '',
+            modal_message: '',
+
             certifications: [],
             experiences: [],
         }
@@ -314,6 +329,30 @@ export default {
     h1 {
         line-height: 0;
     }
+}
+
+#resume-modal-container {
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, .4);
+    z-index: 3;
+}
+
+#resume-modal {
+    height: 40vh;
+    width: 35vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background-color: white;
 }
 
 #notifications {

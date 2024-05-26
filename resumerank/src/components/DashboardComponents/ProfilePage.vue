@@ -1,7 +1,7 @@
 <template>
     <div id="container">
         <h1>Profile</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipscing elit.</p>
+        <p>General User Information / Resume Data</p>
 
         <div id="profile-container">
             <div id="left-panel">
