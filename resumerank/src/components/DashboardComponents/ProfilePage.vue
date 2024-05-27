@@ -122,7 +122,17 @@ export default {
             }
         },
 
-        modifyUserInfo(){
+        async modifyUserInfo(){
+            const response = await fetch(`${current_address}/edit_profile`);
+            const data = response.json();
+
+            if (data.response == ''){
+                console.log('failed');
+            }
+            else{
+                console.log('failed');
+            }
+
             this.profile_edit_permission = false;
         },
 

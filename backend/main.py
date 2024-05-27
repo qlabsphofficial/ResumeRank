@@ -56,7 +56,7 @@ class ProfileModel(BaseModel):
     username: str = Form(...)
     firstname : str = Form(...)
     lastname : str = Form(...)
-    profile_picture: UploadFile = Form(...)
+    profile_picture: Optional[UploadFile] = Form(None)
 
 
 class JobPostingModel(BaseModel):
@@ -176,21 +176,20 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
     
 
 @app.post('/edit_profile')
-async def edit_profile(form_data: ProfileModel = Depends(), db: Session = Depends(get_database)):
+async def edit_profile(profile_details: ProfileModel, db: Session = Depends(get_database)):
     try:
-        # existing_user = db.query(User).filter(User.username == profile.username).first()
+        # file_path = f"{IMAGEDIR}{form_data.profile_picture.filename}"
 
-        file_path = f"{IMAGEDIR}{form_data.profile_picture.filename}"
+        # with open(file_path, "wb") as f:
+        #     contents = await form_data.profile_picture.read()
+        #     f.write(contents)
 
-        with open(file_path, "wb") as f:
-            contents = await form_data.profile_picture.read()
-            f.write(contents)
-
-        existing_user = db.query(User).filter(User.username == form_data.username).first()
+        existing_user = db.query(User).filter(User.username == profile_details.username).first()
+        
         if existing_user:
-            existing_user.firstname = form_data.firstname
-            existing_user.lastname = form_data.lastname
-            existing_user.profile_picture = f"{IMAGEDIR}{form_data.profile_picture.filename}"
+            existing_user.firstname = profile_details.firstname
+            existing_user.lastname = profile_details.lastname
+            existing_user.profile_picture = f"test"
             db.commit()
             
         return { 'response': 'Update profile successful.', 'status_code': 200 }
