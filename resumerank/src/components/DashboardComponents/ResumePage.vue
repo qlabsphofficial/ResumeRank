@@ -133,6 +133,8 @@
 </template>
 
 <script>
+import current_address from '@/address';
+
 export default {
     name: 'ResumePage',
     props: {
@@ -140,7 +142,7 @@ export default {
     },
     methods: {
         async submit_resume(){
-            const response = await fetch('http://127.0.0.1:8000/submit_resume', {
+            const response = await fetch(`${current_address}/submit_resume`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -177,7 +179,7 @@ export default {
         },
 
         async retrieve_resume_data(){
-            const response = await fetch(`https://resumerank.onrender.com/retrieve_resume_data?user_id=${this.user_data.id}`);
+            const response = await fetch(`${current_address}/retrieve_resume_data?user_id=${this.user_data.id}`);
             const data = await response.json();
 
             if (!response.ok){
@@ -227,21 +229,6 @@ export default {
                 'attachment': this.certFileUpload
             }
             
-            let certificationDiv = document.createElement('div');
-            certificationDiv.classList.add('credential');
-
-            let certificationData = `
-                <h3>${new_cert.title}</h3>
-                <p>${new_cert.training_center}</p>
-                <p>Date Issued: ${new_cert.date}</p>
-                <button class="remove-credential-button">Remove Certification</button>
-            `;
-
-            certificationDiv.innerHTML = certificationData;
-
-            let certificationsSection = document.getElementById('certifications');
-            certificationsSection.appendChild(certificationDiv);
-
             this.certifications.push(new_cert);
             this.closeCertModal()
         },
@@ -253,22 +240,6 @@ export default {
                 'tenure_start': this.jobYears,
                 'tenure_end': this.jobYearEnd
             }
-
-            let newExperienceDiv = document.createElement('div');
-            newExperienceDiv.classList.add('credential');
-
-            let experienceData = `
-                <h3>Title: ${newWorkXp.job_title}</h3>
-                <p>Company: ${newWorkXp.company}</p>
-                <p>Tenure Start: ${newWorkXp.tenure_start}</p>
-                <p>Tenure End: ${newWorkXp.tenure_end}</p>
-                <button class="remove-credential-button">Remove Experience</button>
-            `;
-
-            newExperienceDiv.innerHTML = experienceData;
-
-            let experiencesSection = document.getElementById('experiences');
-            experiencesSection.appendChild(newExperienceDiv);
 
             this.experiences.push(newWorkXp);
             this.closeWorkModal();

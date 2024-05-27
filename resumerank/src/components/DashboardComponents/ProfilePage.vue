@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import current_address from '@/address';
+
 export default {
     name: 'ProfilePage',
     props: {
@@ -68,7 +70,7 @@ export default {
     },
     methods: {
         async retrieve_resume_data(){
-            const response = await fetch(`https://resumerank.onrender.com/retrieve_resume_data?user_id=${this.user_data.id}`);
+            const response = await fetch(`${current_address}/retrieve_resume_data?user_id=${this.user_data.id}`);
             const data = await response.json();
 
             if (!response.ok){

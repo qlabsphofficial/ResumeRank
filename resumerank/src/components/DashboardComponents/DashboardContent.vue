@@ -47,11 +47,13 @@
 </template>
 
 <script>
+import current_address from '@/address';
+
 export default {
     name: 'DashboardContent',
     methods: {
         async retrieve_data(){
-            const response = await fetch(`https://resumerank.onrender.com/show_jobs`);
+            const response = await fetch(`${current_address}/show_jobs`);
             const data = await response.json();
 
             if (!response.ok){

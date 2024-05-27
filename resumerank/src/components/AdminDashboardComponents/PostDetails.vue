@@ -71,6 +71,8 @@
 </template>
 
 <script>
+import current_address from '@/address';
+
 export default {
     name: 'PostDetails',
     props: {
@@ -78,7 +80,7 @@ export default {
     },
     methods: {
         async get_analysis(){
-            const response = await fetch(`https://resumerank.onrender.com/analyze_resumes?job_id=${this.job.id}`);
+            const response = await fetch(`${current_address}/analyze_resumes?job_id=${this.job.id}`);
             const data = await response.json();
 
             if (!response.ok){

@@ -37,12 +37,14 @@
 </template>
 
 <script>
+import current_address from '@/address';
+
 export default {
   name: 'LoginPage',
   methods: {
     async login() {
       try {
-          const response = await fetch(`https://resumerank.onrender.com/login?username=${this.username}&password=${this.password}`, {
+          const response = await fetch(`${current_address}/login?username=${this.username}&password=${this.password}`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',

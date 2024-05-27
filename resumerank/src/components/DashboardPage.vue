@@ -52,6 +52,7 @@ import ProfilePage from './DashboardComponents/ProfilePage.vue';
 import JobPostings from './DashboardComponents/JobPostings.vue';
 import ResumePage from './DashboardComponents/ResumePage.vue';
 import JobDetails from './DashboardComponents/JobDetails.vue';
+import current_address from '@/address';
 
 export default {
     name: 'DashboardPage',
@@ -70,7 +71,7 @@ export default {
         },
 
         async retrieve_dashboard_data(){
-            const response = await fetch(`https://resumerank.onrender.com/retrieve_user_data?user_id=${this.user_id}`);
+            const response = await fetch(`${current_address}/retrieve_user_data?user_id=${this.user_id}`);
             const data = await response.json();
 
             if (!response.ok){

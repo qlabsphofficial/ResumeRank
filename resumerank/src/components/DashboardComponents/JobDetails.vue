@@ -1,4 +1,13 @@
 <template>
+    <div id="modal-container" v-if="modal_visible">
+        <div id="modal">
+            <h1>Application Submitted</h1>
+            <p>Your application is now pending for review.</p>
+
+            <button @click="closeModal()">Close</button>
+        </div>
+    </div>
+
     <div id="container">
         <h1>{{ page_title }}</h1>
         <p>{{ job.date_posted.replace('T', ' ') }}</p>
@@ -11,6 +20,8 @@
 </template>
 
 <script>
+import current_address from '@/address';
+
 export default {
     name: 'JobDetails',
     props: {
@@ -20,7 +31,7 @@ export default {
     methods: {
         async apply() {
             try {
-                const response = await fetch(`https://resumerank.onrender.com/apply_to_job?user_id=${this.user_data.id}&job_id=${this.job.id}`, {
+                const response = await fetch(`${current_address}/apply_to_job?user_id=${this.user_data.id}&job_id=${this.job.id}`, {
                 method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -34,7 +45,7 @@ export default {
                     console.log(responseData.response);
 
                     if (responseData && responseData.response === 'applied to job') {
-                        this.page_title = 'Application Successful.';
+                        this.modal_visible = true;
                         setTimeout(() => { this.page_title = this.job.job_title }, 2000);
                     } else {
                         console.log('Error');
@@ -45,11 +56,17 @@ export default {
             } catch (error) {
                 console.error('An error occurred during login:', error.message);
             }
+        },
+
+        closeModal(){
+            this.modal_visible = false;
         }
     },
     data (){
         return {
-            page_title: ''
+            page_title: '',
+
+            modal_visible: false,
         }
     },
     mounted() {
@@ -59,6 +76,29 @@ export default {
 </script>
 
 <style scoped lang="scss">
+#modal-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, .4);
+}
+
+#modal {
+    height: 40vh;
+    width: 35vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    background-color: white;
+}
+
 #container {
     height: 100%;
     width: 100%;
