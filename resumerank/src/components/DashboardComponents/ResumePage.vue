@@ -225,8 +225,7 @@ export default {
             let new_cert = {
                 'title': this.certTitle,
                 'training_center': this.certLocation,
-                'date': this.certIssuedDate,
-                'attachment': this.certFileUpload
+                'date': this.certIssuedDate
             }
             
             this.certifications.push(new_cert);

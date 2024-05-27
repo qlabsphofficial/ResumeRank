@@ -81,7 +81,7 @@ class CertificationModel(BaseModel):
     title: str
     training_center : str
     date: str
-    attachment : UploadFile = Form(...)
+    attachment : Optional[UploadFile] = Form(None)
 
     class Config:
         orm_mode = True

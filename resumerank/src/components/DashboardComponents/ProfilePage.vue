@@ -13,25 +13,32 @@
                     <div id="profile-main-text">
                         <h2>{{ this.user_data.firstname }} {{ this.user_data.middlename }} {{ this.user_data.lastname }}</h2>
                         <p>{{ this.user_data.email }}</p>
-                        <button>Edit Profile</button>
+
+
+                        <button @click="modifyUserInfo()" v-if="this.profile_edit_permission">Edit Profile</button>
                     </div>
                 </div>
 
                 <div id="profile-info">
                     <label for="">First Name</label>
-                    <input type="text" placeholder="First name...">
+                    <input type="text" placeholder="First name..." :disabled="this.profile_edit_permission">
 
                     <label for="">Middle Name</label>
-                    <input type="text" placeholder="Middle name...">
+                    <input type="text" placeholder="Middle name..." :disabled="this.profile_edit_permission">
 
                     <label for="">Last Name</label>
-                    <input type="text" placeholder="Last name...">
+                    <input type="text" placeholder="Last name..." :disabled="this.profile_edit_permission">
 
                     <label for="">Username</label>
-                    <input type="text" placeholder="Username...">
+                    <input type="text" placeholder="Username..." :disabled="this.profile_edit_permission">
 
                     <label for="">Password</label>
-                    <input type="text" placeholder="Password...">
+                    <input type="text" placeholder="Password..." :disabled="this.profile_edit_permission">
+                </div>
+
+                <div id="edit-profile-buttons" v-if="!this.profile_edit_permission">
+                    <button @click="saveNewInfo()">Save</button>
+                    <button @click="stopModification()">Cancel</button>
                 </div>
             </div>
 
@@ -54,6 +61,10 @@
                     <div class="info">
                         <li v-for="experience of experiences" :key="experience">{{ experience.job_title }}</li>
                     </div>
+                </div>
+
+                <div id="export-to-word">
+                    <button @click="export_resume_to_word()">Export to Word</button>
                 </div>
             </div>
         </div>
@@ -90,6 +101,37 @@ export default {
                 console.log(data.certifications);
                 console.log(data.experiences);
             }            
+        },
+
+        async export_resume_to_word(){
+            const response = await fetch(`${current_address}/export_resume_to_word?user_id=${this.user_data.id}`);
+
+            if (!response.ok){
+                console.error('Failed to fetch the file:', response.statusText);
+            }
+            else{
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Resume.docx';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            }
+        },
+
+        modifyUserInfo(){
+            this.profile_edit_permission = false;
+        },
+
+        saveNewInfo(){
+            this.stopModification();
+        },
+
+        stopModification(){
+            this.profile_edit_permission = true;
         }
     },
     data (){
@@ -100,6 +142,7 @@ export default {
             tr1: '',
             tr2: '',
             tr3: '',
+            profile_edit_permission: true,
             certifications: [],
             experiences: []
         }
@@ -129,11 +172,13 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
+    height: 60%;
     width: 100%;
     margin-bottom: 5%;
 }
 
 #profile-edit {
+    height: 100%;
     width: 10%;
     display: flex;
     flex-direction: column;
@@ -153,13 +198,14 @@ export default {
 
 #profile-main-text {
     margin-left: 15%;
+    height: 100%;
     width: 80%;
 }
 
 #profile-info {
     display: flex;
     flex-direction: column;
-    height: 40%;
+    height: 80%;
     width: 100%;
 
     input {
@@ -175,13 +221,21 @@ export default {
     }
 }
 
+#edit-profile-buttons {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 5%;
+}
+
 #left-panel {
-    height: 90%;
+    height: 100%;
     width: 40%;
+    display: flex;
+    flex-direction: column;
 }
 
 #right-panel {
-    height: 90%;
+    height: 100%;
     width: 60%;
 }
 
@@ -193,8 +247,15 @@ export default {
 }
 
 #all-info {
-    height: 90%;
+    height: 80%;
     overflow-y: scroll;
+}
+
+#export-to-word {
+    height: 10%;
+    margin-top: 5%;
+    display: flex;
+    flex-direction: row-reverse;
 }
 
 #all-info::-webkit-scrollbar {
