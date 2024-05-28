@@ -187,7 +187,16 @@ async def edit_profile(profile_details: ProfileModel, db: Session = Depends(get_
         existing_user = db.query(User).filter(User.username == profile_details.username).first()
         
         if existing_user:
+            print(profile_details.username)
+            print(profile_details.password)
+            print(profile_details.firstname)
+            print(profile_details.middlename)
+            print(profile_details.lastname)
+            
+            existing_user.username = profile_details.username
+            existing_user.password = profile_details.password
             existing_user.firstname = profile_details.firstname
+            existing_user.middlename = profile_details.middlename
             existing_user.lastname = profile_details.lastname
             existing_user.profile_picture = f"test"
             db.commit()
@@ -275,6 +284,10 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
     # except:
     #     return { 'response': 'Error retrieving data.', 'status_code': 400 }
 
+
+@app.delete('/remove_certification')
+async def remove_certification(cert_id: int):
+    pass
 
 @app.get('/show_resumes')
 async def show_resumes(db: Session = Depends(get_database)):
@@ -390,12 +403,18 @@ async def apply_to_job(user_id: int, job_id: int, db: Session = Depends(get_data
         job_id = db.query(JobPosting).filter(JobPosting.id == job_id).first()
         resume = db.query(Resume).filter(Resume.resume_owner == user_id).first()
 
-        new_application = JobApplication()
-        new_application.resume = resume.id
-        new_application.job = job_id.id
+        existing_application = db.query(JobApplication).filter(JobApplication.resume == resume.id, JobApplication.job == job_id.id).first()
+        
+        if existing_application is not None:
+            return { 'response': 'already applied to job', 'status_code': 400 }
+        else:
+            new_application = JobApplication()
+            new_application.resume = resume.id
+            new_application.job = job_id.id
 
-        db.add(new_application)
-        db.commit()
+            db.add(new_application)
+            db.commit()
+            
         return { 'response': 'applied to job', 'status_code': 200 }
     except:
         return { 'response': 'Error retrieving data.', 'status_code': 400 }

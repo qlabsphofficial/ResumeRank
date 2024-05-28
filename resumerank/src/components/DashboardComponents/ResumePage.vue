@@ -40,7 +40,7 @@
                         <h3>{{ certification.title }}</h3>
                         <p>Issued By: {{ certification.training_center }}</p>
                         <p>Date Issued: {{ certification.date }}</p>
-                        <button class="remove-credential-button">Remove Certification</button>
+                        <button class="remove-credential-button" @click="removeCertification(certification.id)">Remove Certification</button>
                     </div>
                 </div>
                 <button @click="openCertModal()">Add Certification</button>
@@ -55,7 +55,7 @@
                         <h3>{{ experience.job_title }}</h3>
                         <p>{{ experience.company }}</p>
                         <p>Employment Duration: {{ experience.tenure_start }} to {{ experience.tenure_end }}</p>
-                        <button class="remove-credential-button">Remove Experience</button>
+                        <button class="remove-credential-button" @click="removeWorkExperience(experience.id)">Remove Experience</button>
                     </div>
                 </div>
                 <button @click="openWorkModal()">Add Experience</button>
@@ -232,6 +232,10 @@ export default {
             this.closeCertModal()
         },
 
+        async removeCertification(id) {
+            console.log(id);
+        },
+
         addWorkExperience() {
             let newWorkXp = {
                 'job_title': this.jobTitle,
@@ -242,6 +246,10 @@ export default {
 
             this.experiences.push(newWorkXp);
             this.closeWorkModal();
+        },
+
+        async removeWorkExperience(id) {
+            console.log(id);
         },
 
         openWorkModal() {

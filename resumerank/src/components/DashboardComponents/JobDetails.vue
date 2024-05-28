@@ -1,8 +1,8 @@
 <template>
     <div id="modal-container" v-if="modal_visible">
         <div id="modal">
-            <h1>Application Submitted</h1>
-            <p>Your application is now pending for review.</p>
+            <h1>{{ this.modal_header }}</h1>
+            <p>{{ this.modal_message }}</p>
 
             <button @click="closeModal()">Close</button>
         </div>
@@ -38,23 +38,22 @@ export default {
                     }
                 });
 
-                console.log('test works');
-
                 if (response.ok) {
                     const responseData = await response.json();
                     console.log(responseData.response);
 
                     if (responseData && responseData.response === 'applied to job') {
                         this.modal_visible = true;
-                        setTimeout(() => { this.page_title = this.job.job_title }, 2000);
+                        this.modal_header = 'Application Submitted';
+                        this.modal_message = 'Your application is now pending for review.';
                     } else {
-                        console.log('Error');
+                        this.modal_visible = true;
+                        this.modal_header = 'Application Submission Denied';
+                        this.modal_message = 'You have already applied to this job.';
                     }
-                } else {
-                    console.log('Login Failed. Status:', response.status);
                 }
             } catch (error) {
-                console.error('An error occurred during login:', error.message);
+                console.error('An error occurred during application to job:', error.message);
             }
         },
 
@@ -67,6 +66,8 @@ export default {
             page_title: '',
 
             modal_visible: false,
+            modal_header: '',
+            modal_message: ''
         }
     },
     mounted() {

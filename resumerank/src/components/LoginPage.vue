@@ -1,4 +1,13 @@
 <template>
+  <div id="login-modal-container" v-if="modal_visible">
+    <div id="login-modal">
+      <h1>Login Failed</h1>
+      <p>Please ensure that your credentials are correct.</p>
+
+      <button @click="closeModal()">Close</button>
+    </div>
+  </div>
+
   <div id="container">
     <div id="login-container">
       <div id="image-container"></div>
@@ -48,7 +57,7 @@ export default {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
-          }
+            }
           });
 
           console.log('test works');
@@ -57,30 +66,59 @@ export default {
               const responseData = await response.json();
 
               if (responseData && responseData.response === 'Login successful.') {
-                  console.log('im here')
                   this.$router.push({ name: 'dashboard', params: { user_id: responseData.user_data.id } });
-              } else {
-                  this.message = 'LOGIN FAILED.';
-                  setTimeout(() => { this.message = 'LOGIN'}, 2000);
+              }
+              else {
+                  this.modal_visible = true;
               }
           } else {
-              console.log('Login Failed. Status:', response.status);
+            this.modal_visible = true;
           }
       } catch (error) {
           console.error('An error occurred during login:', error.message);
       }
+    },
+
+    closeModal(){
+      this.modal_visible = false;
     }
   },
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+
+      modal_visible: false
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+#login-modal-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, .4);
+  z-index: 3;
+}
+
+#login-modal {
+  height: 40vh;
+  width: 45vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  background-color: white;
+}
+
 #container {
   position: absolute;
   top: 0;

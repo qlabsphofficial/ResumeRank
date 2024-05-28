@@ -21,19 +21,19 @@
 
                 <div id="profile-info">
                     <label for="">First Name</label>
-                    <input type="text" placeholder="First name..." :disabled="this.profile_edit_permission">
+                    <input type="text" v-model="this.firstname" placeholder="First name..." :disabled="this.profile_edit_permission">
 
                     <label for="">Middle Name</label>
-                    <input type="text" placeholder="Middle name..." :disabled="this.profile_edit_permission">
+                    <input type="text" v-model="this.middlename" placeholder="Middle name..." :disabled="this.profile_edit_permission">
 
                     <label for="">Last Name</label>
-                    <input type="text" placeholder="Last name..." :disabled="this.profile_edit_permission">
+                    <input type="text" v-model="this.lastname" placeholder="Last name..." :disabled="this.profile_edit_permission">
 
                     <label for="">Username</label>
-                    <input type="text" placeholder="Username..." :disabled="this.profile_edit_permission">
+                    <input type="text" v-model="this.username" placeholder="Username..." :disabled="this.profile_edit_permission">
 
                     <label for="">Password</label>
-                    <input type="text" placeholder="Password..." :disabled="this.profile_edit_permission">
+                    <input type="text" v-model="this.password" placeholder="Password..." :disabled="this.profile_edit_permission">
                 </div>
 
                 <div id="edit-profile-buttons" v-if="!this.profile_edit_permission">
@@ -77,7 +77,7 @@ import current_address from '@/address';
 export default {
     name: 'ProfilePage',
     props: {
-        user_data: {}
+        user_data: {},
     },
     methods: {
         async retrieve_resume_data(){
@@ -122,8 +122,25 @@ export default {
             }
         },
 
-        async modifyUserInfo(){
-            const response = await fetch(`${current_address}/edit_profile`);
+        modifyUserInfo(){
+            this.profile_edit_permission = false;
+        },
+
+        async saveNewInfo(){
+            const response = await fetch(`${current_address}/edit_profile`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'username': this.username,
+                    'password': this.password,
+                    'firstname': this.firstname,
+                    'middlename': this.middlename,
+                    'lastname': this.lastname
+                }),
+            });
+
             const data = response.json();
 
             if (data.response == ''){
@@ -133,10 +150,6 @@ export default {
                 console.log('failed');
             }
 
-            this.profile_edit_permission = false;
-        },
-
-        saveNewInfo(){
             this.stopModification();
         },
 
@@ -146,6 +159,11 @@ export default {
     },
     data (){
         return {
+            username: '',
+            password: '',
+            firstname: '',
+            middlename: '',
+            lastname: '',
             ed1: '',
             ed2: '',
             ed3: '',
