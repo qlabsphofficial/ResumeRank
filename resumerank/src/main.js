@@ -5,6 +5,7 @@ import LoginPage from './components/LoginPage.vue';
 import RegisterPage from './components/RegisterPage.vue';
 import DashboardPage from './components/DashboardPage.vue';
 import AdminPage from './components/AdminPage.vue';
+import ForgotPass from './components/ForgotPass.vue';
 
 // Create the Vue app instance
 const app = createApp(App);
@@ -15,6 +16,7 @@ const router = createRouter({
   routes: [
     { path: '/', component: LoginPage },
     { path: '/register', component: RegisterPage },
+    { path: '/forgot_password', component: ForgotPass },
     { path: '/dashboard/:user_id', component: DashboardPage, name: 'dashboard', props: true },
     { path: '/admin', component: AdminPage }
   ],

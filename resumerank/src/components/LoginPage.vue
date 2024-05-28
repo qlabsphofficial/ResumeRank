@@ -32,7 +32,7 @@
           </div>
 
           <div id="forgot-section">
-            <a href="">Forgot Password?</a>
+            <a @click="this.$router.push('/forgot_password')">Forgot Password?</a>
           </div>
 
           <div id="button-container">

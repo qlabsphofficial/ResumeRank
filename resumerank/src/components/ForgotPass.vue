@@ -1,14 +1,14 @@
 <template>
   <div id="container">
-    <div id="login-container">
-      <div id="login-form-container">
+    <div id="forgot-pass-container">
+      <div id="forgot-pass-form-container">
           <div id="left-section">
               <div id="left-section-header">
                 <img src="@/assets/icons/ResumeRankLogo3.png" height="10%" width="10%">
                 <h1>ResumeRank</h1>
               </div>
 
-              <div id="login-form">
+              <div id="forgot-pass-form">
                   <h4>Username</h4>
                   <input type="text" placeholder="Enter your username..." v-model="username">
 
@@ -17,29 +17,11 @@
 
                   <h4>Confirm Password</h4>
                   <input type="password" placeholder="Confirm your password..." v-model="confirm">
-
-                  <h4>First Name</h4>
-                  <input type="text" placeholder="Enter your first name..." v-model="first_name">
-
-                  <h4>Middle Name</h4>
-                  <input type="text" placeholder="Enter your middle name..." v-model="middle_name">
-
-                  <h4>Last Name</h4>
-                  <input type="text" placeholder="Enter your last name..." v-model="last_name">
-
-                  <h4>Email</h4>
-                  <input type="email" placeholder="Enter your email..." v-model="email">
-
-                  <h4>Contact Number</h4>
-                  <input type="text" placeholder="Enter your contact number..." v-model="contact">
-
-                  <h4>Address</h4>
-                  <input type="text" placeholder="Enter your address..." v-model="address">
               </div>
 
               <div id="button-container">
-                  <button @click="register()">Register</button>
-                  <p @click="this.$router.push('/')">Already a user? Sign in.</p>
+                  <button @click="register()">Submit</button>
+                  <p @click="this.$router.push('/')">Return to Homepage</p>
               </div>
           </div>
 
@@ -67,12 +49,6 @@ export default {
                 'username': this.username,
                 'password': this.password,
                 'confirm': this.confirm,
-                'firstname': this.first_name,
-                'middlename': this.middle_name,
-                'lastname': this.last_name,
-                'contact_no': this.contact,
-                'email': this.email,
-                'address': this.address
             }),
         })
 
@@ -97,12 +73,6 @@ export default {
       username: '',
       password: '',
       confirm: '',
-      first_name: '',
-      middle_name: '',
-      last_name: '',
-      email: '',
-      contact: '',
-      address: ''
     }
   }
 }
@@ -125,13 +95,13 @@ export default {
   }
 }
 
-#login-form-container {
+#forgot-pass-form-container {
   display: flex;
   flex-direction: row;
   width: 100%;
 }
 
-#login-container {
+#forgot-pass-container {
   display: flex;
   height: 70%;
   width: 65%;
@@ -176,12 +146,11 @@ export default {
   justify-content: center;
 }
 
-#login-form {
+#forgot-pass-form {
   margin-top: 10%;
-  height: 60%;
+  height: 62%;
   width: 100%;
   margin-bottom: 5%;
-  overflow-y: scroll;
 
   input {
     margin-bottom: 5%;
