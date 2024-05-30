@@ -438,7 +438,8 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
             .join(Certification, JobApplication.resume == Certification.resume_id).all()
         
         job_desc = job.description.split()
-
+        
+        applicants = []
         top_applicants = []
         
         for application in all_applications:
@@ -505,9 +506,9 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
                     current_points += 10
 
             # CHECK IF APPLICANT IS A TOP APPLICANT
-            if current_points > 250:
-                applicant = db.query(User).filter(User.id == resume.resume_owner).first()
-                
+            applicant = db.query(User).filter(User.id == resume.resume_owner).first()
+            
+            if current_points > 250:    
                 top_applicants.append({
                     'applicant': applicant, 
                     'applicant_resume': resume, 
@@ -516,15 +517,24 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
                     'certifications': certifications 
                 })
 
+            else:
+                applicants.append({
+                    'applicant': applicant, 
+                    'applicant_resume': resume, 
+                    'applicant_points': current_points, 
+                    'experiences': experiences, 
+                    'certifications': certifications 
+                })
+                
 
         sorted_top_applicants = sorted(top_applicants, key=lambda x: x['applicant_points'], reverse=True)
         
         if sorted_top_applicants:
-            return { 'response': 'applications retrieved', 'job': job, 'all_applications': all_applications, 'analysis': sorted_top_applicants, 'status_code': 200 }
+            return { 'response': 'applications retrieved', 'job': job, 'applicants': applicants, 'analysis': sorted_top_applicants, 'status_code': 200 }
         
         # If there are no top applicants, check if there are any applicants at all
         elif all_applications:
-            return { 'response': 'no top applicants', 'job': job, 'all_applications': all_applications, 'status_code': 200 }
+            return { 'response': 'no top applicants', 'job': job, 'applicants': applicants, 'status_code': 200 }
         
         # If there are no applicants at all
         else:

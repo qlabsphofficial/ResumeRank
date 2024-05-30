@@ -41,26 +41,26 @@
 
         <h2>Applicants</h2>
         <div id="applicants">
-            <div v-for="top_applicant in top_applicants" :key="top_applicant" class="applicant">
-                <h3>{{ top_applicant.applicant.firstname }} {{ top_applicant.applicant.middlename }} {{ top_applicant.applicant.lastname }}</h3>
-                <p class="contact-info">{{ top_applicant.applicant.email }} - {{ top_applicant.applicant.contact_no }}</p>
+            <div v-for="applicant in applicants" :key="applicant" class="applicant">
+                <h3>{{ applicant.applicant.firstname }} {{ applicant.applicant.middlename }} {{ applicant.applicant.lastname }}</h3>
+                <p class="contact-info">{{ applicant.applicant.email }} - {{ applicant.applicant.contact_no }}</p>
 
                 <div class="resume-details">
                     <h5>Education</h5>
                     <div class="info">
-                        <li>Primary - {{ top_applicant.applicant_resume.ed_1 }}</li>
-                        <li>Secondary - {{ top_applicant.applicant_resume.ed_2 }}</li>
-                        <li>College / University - {{ top_applicant.applicant_resume.ed_3 }}</li>
+                        <li>Primary - {{ applicant.applicant_resume.ed_1 }}</li>
+                        <li>Secondary - {{ applicant.applicant_resume.ed_2 }}</li>
+                        <li>College / University - {{ applicant.applicant_resume.ed_3 }}</li>
                     </div>
 
                     <h5>Certifications</h5>
                     <div class="info">
-                        <li v-for="certification in top_applicant.certifications" :key="certification">{{ certification.title }}</li>
+                        <li v-for="certification in applicant.certifications" :key="certification">{{ certification.title }}</li>
                     </div>
 
                     <h5>Experience</h5>
                     <div class="info">
-                        <li v-for="experience in top_applicant.experiences" :key="experience">
+                        <li v-for="experience in applicant.experiences" :key="experience">
                             {{ experience.job_title }} ({{ experience.tenure_start }} to {{ experience.tenure_end }})
                         </li>
                     </div>
@@ -87,15 +87,15 @@ export default {
                 console.log('Failed.');
             }
             else{
-                console.log('Printing top applicants...');
                 this.top_applicants = data.analysis;
-                console.log(this.top_applicants);
+                this.applicants = data.applicants;
             }            
         },
     },
     data (){
         return {
-            top_applicants: []
+            top_applicants: [],
+            applicants: []
         }
     },
     mounted(){
