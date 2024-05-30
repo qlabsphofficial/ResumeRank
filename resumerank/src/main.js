@@ -15,7 +15,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: LoginPage },
-    { path: '/administrator_page', component: AdminPage },
+    { path: '/admin', component: AdminPage },
     { path: '/register', component: RegisterPage },
     { path: '/forgot_password', component: ForgotPass },
     { path: '/dashboard/:user_id', component: DashboardPage, name: 'dashboard', props: true },
