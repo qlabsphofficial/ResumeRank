@@ -34,7 +34,7 @@
                         </div>
                     </div>
 
-                    <button class="contact-applicant-btn">Contact Applicant</button>
+                    <button class="contact-applicant-btn" @click="notifyApplicant(top_applicant.id)">Contact Applicant</button>
                 </div>
             </div>
         </div>
@@ -65,6 +65,8 @@
                         </li>
                     </div>
                 </div>
+
+                <button class="contact-applicant-btn" @click="notifyApplicant(top_applicant.id)">Contact Applicant</button>
             </div>
         </div>
     </div>
@@ -91,6 +93,25 @@ export default {
                 this.applicants = data.applicants;
             }            
         },
+
+        async notifyApplicant(id){
+            const response = await fetch(`${current_address}/create_notification`, {
+                'method': 'POST',
+                'headers': 'application/json',
+                'body': {
+                    'applicant_id': id
+                }
+            });
+            const data = await response.json();
+
+            if (!response.ok){
+                console.log('Failed.');
+            }
+            else{
+                this.top_applicants = data.analysis;
+                this.applicants = data.applicants;
+            } 
+        }
     },
     data (){
         return {
