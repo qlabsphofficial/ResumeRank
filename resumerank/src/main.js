@@ -18,7 +18,7 @@ const router = createRouter({
     { path: '/register', component: RegisterPage },
     { path: '/forgot_password', component: ForgotPass },
     { path: '/dashboard/:user_id', component: DashboardPage, name: 'dashboard', props: true },
-    { path: '/admin', component: AdminPage }
+    { path: '/administrator_page', component: AdminPage }
   ],
 });
 
