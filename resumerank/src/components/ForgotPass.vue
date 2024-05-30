@@ -13,10 +13,10 @@
                   <input type="text" placeholder="Enter your username..." v-model="username">
 
                   <h4>Password</h4>
-                  <input type="password" placeholder="Enter your password..." v-model="password">
+                  <input type="password" placeholder="Enter your new password..." v-model="password">
 
                   <h4>Confirm Password</h4>
-                  <input type="password" placeholder="Confirm your password..." v-model="confirm">
+                  <input type="password" placeholder="Confirm your new password..." v-model="confirm">
               </div>
 
               <div id="button-container">
@@ -39,7 +39,7 @@ import current_address from '@/address';
 export default {
   name: 'RegisterPage',
   methods: {
-    async register(){
+    async submitNewPassword(){
         const response = await fetch(`${current_address}/register`, {
             method: 'POST',
             headers: {

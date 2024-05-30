@@ -1,0 +1,179 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from datetime import datetime
+
+from models import User, Resume, Certification, Experience, JobPosting, JobApplication
+from model_classes import ResumeModel, JobPostingModel, JobPostingID
+from database import get_database
+
+router = APIRouter()
+
+
+@router.post('/create_job_posting')
+async def create_job_posting(job: JobPostingModel, db: Session = Depends(get_database)):
+    try:
+        date_expired = datetime.strptime(job.date_expired, "%Y-%m-%d")
+        
+        new_job = JobPosting()
+        new_job.job_title = job.job_title
+        new_job.description = job.description
+        new_job.post_status = job.post_status
+        new_job.date_expired = date_expired
+
+        db.add(new_job)
+        db.commit()
+
+        return { 'response': 'job created', 'status_code': 200 }
+    except:
+        return { 'response': 'Error retrieving data.', 'status_code': 400 }
+    
+
+@router.post('/delete_job_posting')
+async def delete_job_posting(job: JobPostingID, db: Session = Depends(get_database)):
+    try:
+        retrieved_job_posting = db.query(JobPosting).filter(JobPosting.id == job.id).first()
+        
+        if retrieved_job_posting:
+            db.delete(retrieved_job_posting)
+            db.commit()
+
+        return { 'response': 'job posting deleted.'}
+    except:
+        return {'response': 'failed to job posting.'}
+    
+
+@router.get('/show_jobs')
+async def show_jobs(db: Session = Depends(get_database)):
+    try:
+        all_jobs = db.query(JobPosting).all()
+        return { 'response': 'jobs retrieved', 'jobs': all_jobs, 'status_code': 200 }
+    except:
+        return { 'response': 'User Retrieval Failed', 'status_code': 200 }
+    
+    
+@router.get('/show_applications')
+async def show_applications(db: Session = Depends(get_database)):
+    try:
+        all_applications = db.query(JobApplication).all()
+        return { 'response': 'applications retrieved', 'applications': all_applications, 'status_code': 200 }
+    except:
+        return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
+    
+
+@router.get('/analyze_resumes')
+async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
+    # try:
+        job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
+        all_applications = db.query(JobApplication).join(Experience, JobApplication.resume == Experience.resume_id) \
+            .filter(JobApplication.job == job_id) \
+            .join(Certification, JobApplication.resume == Certification.resume_id).all()
+        
+        job_desc = job.description.split()
+        
+        applicants = []
+        top_applicants = []
+        
+        for application in all_applications:
+            resume = db.query(Resume).join(User).filter(Resume.id == application.resume).filter(User.id == Resume.resume_owner).first()
+            resume_analysis = ''
+            
+            current_points = 0
+
+            # CHECK EDUCATIONAL ATTAINMENTS
+            if resume.ed_1 and resume.ed_2 and resume.ed_3:
+                current_points += 50
+            elif resume.ed_1 and resume.ed_2 or resume.ed_1 and resume.ed_3 or resume.ed_2 and resume.ed_3:
+                current_points += 25
+            elif resume.ed_1 or resume.ed_2 or resume.ed_3:
+                current_points += 10
+
+            resume_analysis += f'{resume.summary}'
+
+            resume_text = resume_analysis.split()
+
+            # CHECK IF JOB DESCRIPTION MATCHES RESUME DESCRIPTION
+            common_words = set(job_desc) & set(resume_text)
+            current_points += len(common_words)
+
+            
+            # RATE APPLICANT BASED ON EXPERIENCE
+            experiences = db.query(Experience).filter(Experience.resume_id == resume.resume_owner).all()
+            
+            for experience in experiences:
+                experience_analysis = ''
+
+                experience_analysis += f'{experience.job_title}'
+                # experience_analysis += f'{experience.company}'
+
+                difference_in_years = (experience.tenure_end - experience.tenure_start).days // 365
+
+                experience_text = experience_analysis.split()
+                common_words = set(job_desc) & set(experience_text)
+
+                if len(common_words) > 0:
+                    current_points += difference_in_years * 50
+                else:
+                    current_points += difference_in_years * 20
+
+            
+            # RATE APPLICANT BASED ON CERTIFICATIONS / ACHIEVEMENTS
+            certifications = db.query(Certification).filter(Certification.resume_id == resume.resume_owner).all()
+
+            for certification in certifications:
+                certification_analysis = ''
+
+                certification_analysis += f'{certification.title}'
+                # certification_analysis += f'{certification.training_center}'
+
+                certification_text = certification_analysis.split()
+                common_words = set(job_desc) & set(certification_text)
+
+                if len(common_words) > 0:
+                    current_points += 50
+                else:
+                    current_points += 20
+                
+                if certification.attachment:
+                    current_points += 10
+
+            # CHECK IF APPLICANT IS A TOP APPLICANT
+            applicant = db.query(User).filter(User.id == resume.resume_owner).first()
+            
+            if current_points > 250:    
+                top_applicants.append({
+                    'applicant': applicant, 
+                    'applicant_resume': resume, 
+                    'applicant_points': current_points, 
+                    'experiences': experiences, 
+                    'certifications': certifications 
+                })
+
+            else:
+                applicants.append({
+                    'applicant': applicant, 
+                    'applicant_resume': resume, 
+                    'applicant_points': current_points, 
+                    'experiences': experiences, 
+                    'certifications': certifications 
+                })
+                
+
+        sorted_top_applicants = sorted(top_applicants, key=lambda x: x['applicant_points'], reverse=True)
+        
+        if sorted_top_applicants:
+            return { 'response': 'applications retrieved', 'job': job, 'applicants': applicants, 'analysis': sorted_top_applicants, 'status_code': 200 }
+        
+        # If there are no top applicants, check if there are any applicants at all
+        elif all_applications:
+            return { 'response': 'no top applicants', 'job': job, 'applicants': applicants, 'status_code': 200 }
+        
+        # If there are no applicants at all
+        else:
+            return { 'response': 'no applicants', 'job': job, 'status_code': 200 }
+        
+    # except:
+    #     return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
+
+
+
