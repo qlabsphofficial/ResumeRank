@@ -547,11 +547,11 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
 
 # NOTIFICATION ENDPOINTS
 @app.post('/create_notification')
-async def create_notification(notification: NotificationModel, db: Session = Depends(get_database)):
+async def create_notification(applicant_id: int, db: Session = Depends(get_database)):
     try:
         new_notification = Notification()
-        new_notification.message = notification.message
-        new_notification.sent_to = notification.sent_to
+        new_notification.message = 'Application Reviewed'
+        new_notification.sent_to = applicant_id
 
         db.add(new_notification)
         db.commit()

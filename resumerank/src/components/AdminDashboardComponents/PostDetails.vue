@@ -1,4 +1,13 @@
 <template>
+    <div id="modal-container" v-if="this.modal_visible">
+        <div id="modal">
+            <h1>{{ modal_header }}</h1>
+            <p>{{ modal_message }}</p>
+
+            <button @click="() => { this.modal_visible = false }">Close</button>
+        </div>
+    </div>
+
     <div id="container">
         <h1>{{ job.job_title }}</h1>
         <p>Date Posted: {{ job.date_posted }}</p>
@@ -34,7 +43,7 @@
                         </div>
                     </div>
 
-                    <button class="contact-applicant-btn" @click="notifyApplicant(top_applicant.id)">Contact Applicant</button>
+                    <button class="contact-applicant-btn" @click="notifyApplicant(top_applicant.applicant.id)">Contact Applicant</button>
                 </div>
             </div>
         </div>
@@ -66,7 +75,7 @@
                     </div>
                 </div>
 
-                <button class="contact-applicant-btn" @click="notifyApplicant(top_applicant.id)">Contact Applicant</button>
+                <button class="contact-applicant-btn" @click="notifyApplicant(applicant.applicant.id)">Contact Applicant</button>
             </div>
         </div>
     </div>
@@ -95,28 +104,35 @@ export default {
         },
 
         async notifyApplicant(id){
-            const response = await fetch(`${current_address}/create_notification`, {
-                'method': 'POST',
-                'headers': 'application/json',
-                'body': {
-                    'applicant_id': id
+            console.log(id);
+            const response = await fetch(`${current_address}/create_notification?applicant_id=${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
                 }
             });
-            const data = await response.json();
 
-            if (!response.ok){
-                console.log('Failed.');
+            if (response.ok){
+                this.modal_header = 'Applicant Notified';
+                this.modal_message = 'A notification has been sent to this applicant.';
+                this.modal_visible = true;
             }
-            else{
-                this.top_applicants = data.analysis;
-                this.applicants = data.applicants;
+            else
+            {
+                this.modal_header = 'Failed to Notify Applicant';
+                this.modal_message = 'The notification could not be sent. Contact your administrator for details.';
+                this.modal_visible = false;
             } 
         }
     },
     data (){
         return {
             top_applicants: [],
-            applicants: []
+            applicants: [],
+
+            modal_header: '',
+            modal_message: '',
+            modal_visible: false
         }
     },
     mounted(){
@@ -126,6 +142,27 @@ export default {
 </script>
 
 <style scoped lang="scss">
+#modal-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, .4);
+    z-index: 3;
+}
+
+#modal {
+    height: 40vh;
+    width: 35vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border-radius: 15px;
+}
+
 #container {
     height: 100%;
     width: 95%;
