@@ -74,3 +74,8 @@ class JobPostingID(BaseModel):
 class NotificationModel(BaseModel):
     message : str
     sent_to : int
+
+
+#MISC MODELS
+class IdModel(BaseModel):
+    id: int

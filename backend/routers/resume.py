@@ -8,7 +8,7 @@ from docx.shared import Inches
 from datetime import datetime
 
 from models import User, Resume, Certification, Experience, JobPosting, JobApplication
-from model_classes import ResumeModel
+from model_classes import ResumeModel, IdModel
 from database import get_database
 
 import os
@@ -86,19 +86,29 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
 
 
 @router.delete('/remove_certification')
-async def remove_certification(cert_id: int):
+async def remove_certification(cert_id: IdModel, db: Session = Depends(get_database)):
     try:
-        pass
+        cert = db.query(Certification).filter(Certification.id == cert_id.id).first()
+        
+        db.delete(cert)
+        db.commit()
+        
+        return { 'response': 'Certification Successfully Removed', 'status_code': '200' }
     except:
-        pass
+        return { 'response': 'Failed to Remove Certification', 'status_code': '400' }
 
 
 @router.delete('/remove_experience')
-async def remove_certification(experience_id: int):
+async def remove_experience(experience_id: IdModel, db: Session = Depends(get_database)):
     try:
-        pass
+        exp = db.query(Experience).filter(Experience.id == experience_id.id).first()
+        
+        db.delete(exp)
+        db.commit()
+        
+        return { 'response': 'Work Experience Successfully Removed', 'status_code': '200' }
     except:
-        pass
+        return { 'response': 'Failed to Remove Work Experience', 'status_code': '400' }
 
 
 

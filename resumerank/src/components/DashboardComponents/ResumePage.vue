@@ -234,6 +234,19 @@ export default {
 
         async removeCertification(id) {
             console.log(id);
+
+            const response = await fetch(`${current_address}/remove_certification`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'id': id
+                }),
+            })
+
+            const data = await response.json();
+            console.log(data.response);
         },
 
         addWorkExperience() {
@@ -250,6 +263,19 @@ export default {
 
         async removeWorkExperience(id) {
             console.log(id);
+
+            const response = await fetch(`${current_address}/remove_experience`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'id': id
+                }),
+            })
+
+            const data = await response.json();
+            console.log(data.response);
         },
 
         openWorkModal() {
