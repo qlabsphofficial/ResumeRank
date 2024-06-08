@@ -42,6 +42,7 @@ class ExperienceModel(BaseModel):
         
 
 class ExpModel(BaseModel):
+    id: int
     job_title: str
     company: str
     tenure_start: str
@@ -59,10 +60,11 @@ class CertificationModel(BaseModel):
         
 
 class CertModel(BaseModel):
+    id: int
     title: str
+    # date: str
+    # attachment : Optional[UploadFile] = Form(None)
     training_center : str
-    date: str
-    attachment : Optional[UploadFile] = Form(None)
     
 
 class ResumeModel(BaseModel):
