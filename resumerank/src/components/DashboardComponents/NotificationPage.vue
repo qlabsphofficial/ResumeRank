@@ -163,7 +163,7 @@ export default {
 }
 
 .notif:hover {
-    transform: translateY(-10%);
+    transform: translateY(-5%);
 }
 
 #all-notifs::-webkit-scrollbar {

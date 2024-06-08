@@ -31,7 +31,7 @@
 
                     <div class="notification" v-for="notification in notifications" :key="notification">
                         <h4>{{ notification.message }}</h4>
-                        <p class="date-posted">{{ notification.date_posted }}</p>
+                        <p class="date-posted">{{ notification.date_posted.slice(0, 10) }}</p>
                         <p v-if="notification.message === 'Application Reviewed'">The recruiter wants to move forward with your application.</p>
                         <p v-else>The recruiter has decided not to push through with your application.</p>
                     </div>
