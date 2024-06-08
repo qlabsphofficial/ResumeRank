@@ -8,7 +8,7 @@ from docx.shared import Inches
 from datetime import datetime
 
 from models import User, Resume, Certification, Experience, JobPosting, JobApplication
-from model_classes import ResumeModel, IdModel
+from model_classes import CertModel, ResumeModel, IdModel
 from database import get_database
 
 import os
@@ -50,6 +50,11 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
             existing_resume.ref_3 = resume.ref_3
             db.commit()
 
+        return { 'response': 'resume submitted', 'status_code': 200 }
+    # except:
+    #     return { 'response': 'Error retrieving data.', 'status_code': 400 }
+
+
 
         for exp in resume.experiences:
             existing_experience = db.query(Experience).filter(Experience.resume_id == resume.resume_owner, Experience.job_title == exp.job_title, Experience.company == exp.company).first()
@@ -64,27 +69,31 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
                 db.add(new_experience)
 
             db.commit()
+            
+            
+@router.post('/add_certification')
+async def add_certification(cert_info: CertModel, user_id: int, db: Session = Depends(get_database)):
+    try:
+        existing_certification = db.query(Certification).filter(
+            Certification.title == cert_info.title, 
+            Certification.training_center == cert_info.training_center).first()
 
+        if not existing_certification:
+            new_certification = Certification()
+            new_certification.title=cert_info.title
+            new_certification.date=cert_info.date
+            new_certification.attachment= f"{FILESDIR}{cert_info.attachment}"
+            new_certification.training_center= cert_info.training_center
+            new_certification.resume_id=user_id
+            db.add(new_certification)
 
-        for certs in resume.certifications:
-            existing_certification = db.query(Certification).filter(Certification.resume_id == resume.resume_owner, Certification.title == certs.title, Certification.training_center == certs.training_center).first()
-
-            if not existing_certification:
-                new_certification = Certification()
-                new_certification.title=certs.title
-                new_certification.date=certs.date
-                new_certification.attachment= f"{FILESDIR}{certs.attachment}"
-                new_certification.training_center= certs.training_center
-                new_certification.resume_id=resume.resume_owner
-                db.add(new_certification)
-
-            db.commit()
-
-        return { 'response': 'resume submitted', 'status_code': 200 }
-    # except:
-    #     return { 'response': 'Error retrieving data.', 'status_code': 400 }
-
-
+        db.commit()
+        
+        return { 'response': 'Certification Successfully Removed', 'status_code': '200' }
+    except:
+        return { 'response': 'Failed to Remove Certification', 'status_code': '400' }
+    
+    
 @router.delete('/remove_certification')
 async def remove_certification(cert_id: IdModel, db: Session = Depends(get_database)):
     try:
@@ -188,6 +197,7 @@ async def apply_to_job(user_id: int, job_id: int, db: Session = Depends(get_data
         
         if existing_application is not None:
             return { 'response': 'already applied to job', 'status_code': 400 }
+        
         else:
             new_application = JobApplication()
             new_application.resume = resume.id

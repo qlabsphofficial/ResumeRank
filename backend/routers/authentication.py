@@ -25,6 +25,7 @@ async def login(username: str, password: str, db: Session = Depends(get_database
         if existing_user:
             if existing_user.password == password:
                 return { 'response': 'Login successful.', 'user_data': existing_user, 'status_code': 200 }
+            
             else:
                 return { 'response': 'Login failed.', 'status_code': 403 }
     except:
@@ -96,13 +97,7 @@ async def edit_profile(profile_details: ProfileModel, db: Session = Depends(get_
 
         existing_user = db.query(User).filter(User.username == profile_details.username).first()
         
-        if existing_user:
-            print(profile_details.username)
-            print(profile_details.password)
-            print(profile_details.firstname)
-            print(profile_details.middlename)
-            print(profile_details.lastname)
-            
+        if existing_user:  
             existing_user.username = profile_details.username
             existing_user.password = profile_details.password
             existing_user.firstname = profile_details.firstname

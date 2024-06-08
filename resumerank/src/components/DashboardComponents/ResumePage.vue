@@ -100,7 +100,14 @@
                 <input type="date" placeholder="Enter issued date..." id="cert-title" v-model="certIssuedDate">
 
                 <h5>Upload File</h5>
-                <input type="file" placeholder="Upload certification proof..." id="cert-title" multiple="false" @change="handleFileUpload">
+                <input 
+                    type="file" 
+                    placeholder="Upload certification proof..." 
+                    id="cert-title" 
+                    multiple="false" 
+                    accept=".png, .jpg, .jpeg, .pdf" 
+                    @change="handleFileUpload"
+                >
 
                 <div class="buttons">
                     <button @click="addCertification()">Add Certification</button>
@@ -157,7 +164,9 @@ export default {
                     'certifications': this.certifications,
                     'ref_1': '',
                     'ref_2': '',
-                    'ref_3': ''
+                    'ref_3': '',
+
+
                 }),
             })
 
@@ -229,6 +238,7 @@ export default {
             }
             
             this.certifications.push(new_cert);
+            this.retrieve_resume_data();
             this.closeCertModal()
         },
 
@@ -247,6 +257,8 @@ export default {
 
             const data = await response.json();
             console.log(data.response);
+
+            this.retrieve_resume_data();
         },
 
         addWorkExperience() {
@@ -276,6 +288,8 @@ export default {
 
             const data = await response.json();
             console.log(data.response);
+
+            this.retrieve_resume_data();
         },
 
         openWorkModal() {

@@ -65,8 +65,6 @@ export default {
               }
             });
 
-            console.log('test works');
-
             if (response.ok) {
                 const responseData = await response.json();
 

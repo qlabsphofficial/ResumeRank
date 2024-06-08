@@ -3,20 +3,8 @@
         <h1>Dashboard</h1>
 
         <div id="dashboard-info-container">
-            <div class="dashboard-info">
-                <div class="dashboard-icon"></div>
-                <div class="dashboard-info-detail">
-                    <h4>0</h4>
-                    <p>Profile Views</p>
-                </div>
-            </div>
-
-            <div class="dashboard-info">
-                <div class="dashboard-icon"></div>
-                <div class="dashboard-info-detail">
-                    <h4>0</h4>
-                    <p>Notifications</p>
-                </div>
+            <div class="notifications" v-for="notification in notifications" :key="notification">
+                <h4>{{ notification.message }}</h4>
             </div>
         </div>
 
@@ -39,7 +27,14 @@
                 <h2>Recent Notifications</h2>
 
                 <div id="all-notifs">
-                    <h5>No notifications.</h5>
+                    <h3 v-if="notifications.length === 0">No notifications.</h3>
+
+                    <div class="notification" v-for="notification in notifications" :key="notification">
+                        <h4>{{ notification.message }}</h4>
+                        <p class="date-posted">{{ notification.date_posted }}</p>
+                        <p v-if="notification.message === 'Application Reviewed'">The recruiter wants to move forward with your application.</p>
+                        <p v-else>The recruiter has decided not to push through with your application.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,29 +48,44 @@ export default {
     name: 'DashboardContent',
     methods: {
         async retrieve_data(){
-            const response = await fetch(`${current_address}/show_jobs`);
-            const data = await response.json();
+            const jobs_response = await fetch(`${current_address}/show_jobs`);
+            const jobs_data = await jobs_response.json();
 
-            if (!response.ok){
-                console.log('Failed.');
+            if (jobs_response.ok){
+                this.all_jobs = jobs_data.jobs;
             }
-            else{
-                console.log(data.jobs);
-                this.all_jobs = data.jobs;
-            }            
+            else {
+                console.log('Retrieval of Jobs Failed.');
+            }
+            
+            const notifs_response = await fetch(`${ current_address }/show_notifications?id=${ this.$route.params.user_id }`);
+            const notifs_data = await notifs_response.json();
+
+            console.log(notifs_data);
+
+            if (notifs_response.ok) {
+                this.notifications = notifs_data.notifications;
+            }
+            else {
+                console.log('Retrieval of Notifications Failed.');
+            }
         },
+
         sendDataToParent(job){
             this.$emit('send-job-data', { job_data: job });
         }
     },
+
     data (){
         return {
-            all_jobs: []
+            all_jobs: [],
+            notifications: []
         }
     },
+
     mounted() {
         this.retrieve_data();
-    },
+    }
 }
 </script>
 
@@ -92,6 +102,7 @@ export default {
     height: 10vh;
     width: 100%;
     margin-top: 3%;
+    overflow-y: scroll;
 }
 
 .dashboard-info {
@@ -148,9 +159,14 @@ export default {
     background-color: #EDF3F3;
     margin-top: 2%;
     margin-bottom: 2%;
-    padding: 1%;
+    padding: 3%;
     border-radius: 15px;
     box-shadow: 2px 2px 2px #AEAEAE;
+    transition: .4s;
+}
+
+.job:hover {
+    transform: translateY(-10%);
 }
 
 .job-info {
@@ -175,6 +191,20 @@ export default {
     padding-left: 8%;
     padding-right: 8%;
     overflow-y: scroll;
+}
+
+.notification {
+    height: 50%;
+    width: 90%;
+    padding: 5%;
+    background-color: #EDF3F3;
+    border-radius: 15px;
+    box-shadow: 2px 2px 2px #AEAEAE;
+    transition: .4s;
+}
+
+.notification:hover {
+    transform: translateY(-10%);
 }
 
 #all-notifs::-webkit-scrollbar, #all-jobs::-webkit-scrollbar {

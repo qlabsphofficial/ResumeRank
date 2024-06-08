@@ -39,6 +39,13 @@ class ExperienceModel(BaseModel):
 
     class Config:
         orm_mode = True
+        
+
+class ExpModel(BaseModel):
+    job_title: str
+    company: str
+    tenure_start: str
+    tenure_end: str
 
 
 class CertificationModel(BaseModel):
@@ -49,6 +56,13 @@ class CertificationModel(BaseModel):
 
     class Config:
         orm_mode = True
+        
+
+class CertModel(BaseModel):
+    title: str
+    training_center : str
+    date: str
+    attachment : Optional[UploadFile] = Form(None)
     
 
 class ResumeModel(BaseModel):
@@ -56,8 +70,6 @@ class ResumeModel(BaseModel):
     ed_1: str
     ed_2: str
     ed_3: str
-    certifications: Optional[List[CertificationModel]] = []
-    experiences: Optional[List[ExperienceModel]] = []
     summary: str
     ref_1: str
     ref_2: str
