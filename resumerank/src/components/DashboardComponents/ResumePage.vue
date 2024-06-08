@@ -165,8 +165,6 @@ export default {
                     'ref_1': '',
                     'ref_2': '',
                     'ref_3': '',
-
-
                 }),
             })
 

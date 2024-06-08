@@ -2,9 +2,6 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
-from docx import Document
-from docx.shared import Inches
-
 from datetime import datetime
 
 from models import User, Resume, Certification, Experience, JobPosting, JobApplication
@@ -56,19 +53,19 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
 
 
 
-        for exp in resume.experiences:
-            existing_experience = db.query(Experience).filter(Experience.resume_id == resume.resume_owner, Experience.job_title == exp.job_title, Experience.company == exp.company).first()
+    # for exp in resume.experiences:
+    #     existing_experience = db.query(Experience).filter(Experience.resume_id == resume.resume_owner, Experience.job_title == exp.job_title, Experience.company == exp.company).first()
 
-            if not existing_experience:
-                new_experience = Experience()
-                new_experience.job_title=exp.job_title
-                new_experience.company=exp.company
-                new_experience.tenure_start = datetime.strptime(exp.tenure_start, '%Y-%m-%d')
-                new_experience.tenure_end = datetime.strptime(exp.tenure_end, '%Y-%m-%d')
-                new_experience.resume_id=resume.resume_owner
-                db.add(new_experience)
+    #     if not existing_experience:
+    #         new_experience = Experience()
+    #         new_experience.job_title=exp.job_title
+    #         new_experience.company=exp.company
+    #         new_experience.tenure_start = datetime.strptime(exp.tenure_start, '%Y-%m-%d')
+    #         new_experience.tenure_end = datetime.strptime(exp.tenure_end, '%Y-%m-%d')
+    #         new_experience.resume_id=resume.resume_owner
+    #         db.add(new_experience)
 
-            db.commit()
+    #     db.commit()
             
             
 @router.post('/add_certification')
@@ -186,45 +183,6 @@ async def retrieve_experience_data(user_id: int, db: Session = Depends(get_datab
         }
     except:
         return { 'response': 'Experiences Retrieval Failed', 'status_code': 200 }
-
-
-@router.get('/export_resume_to_word')
-async def export_resume_to_word(user_id: int, db: Session = Depends(get_database)):
-    # try:
-        user, resume = db.query(User, Resume).join(Resume, User.id == Resume.resume_owner).filter(User.id == user_id).first()
-        experience = db.query(Experience).filter(Experience.resume_id == user_id).all()
-        certification = db.query(Certification).filter(Certification.resume_id == user_id).all()
-
-        doc = Document()
-        doc.add_heading(f'{user.firstname} {user.middlename} {user.lastname}', 1)
-        doc.add_paragraph(f'{user.email} • {user.contact_no} • @{user.firstname}.{user.lastname}')
-
-        doc.add_heading(f'SUMMARY', 2)
-        doc.add_paragraph(f'{resume.summary}')
-
-        doc.add_heading(f'WORK EXPERIENCE', 3)
-
-        for exp in experience:
-            doc.add_heading(f'{exp.job_title}                                                                                                                 {exp.tenure_start} - {exp.tenure_end}', 3)
-            doc.add_paragraph(f'{exp.company}')
-
-        doc.add_heading(f'CERTIFICATION', 3)
-        
-        for certs in certification:
-            doc.add_heading(f'{certs.title}                                                                                                                                      {certs.date}', 3)
-            doc.add_paragraph(f'{certs.training_center}')
-
-        # Save the document
-        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-            doc.save(tmp_file.name)
-            tmp_file_path = tmp_file.name
-
-        # Return the generated DOCX file as a downloadable attachment
-        return FileResponse(tmp_file_path, filename=f"Resume.docx", media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-
-        
-    # except:
-    #     return { 'response': 'resume Retrieval Failed', 'status_code': 200 }
 
 
 @router.post('/apply_to_job')

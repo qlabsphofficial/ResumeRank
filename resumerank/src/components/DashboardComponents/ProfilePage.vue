@@ -11,8 +11,8 @@
                     </div>
 
                     <div id="profile-main-text">
-                        <h2>{{ this.user_data.firstname }} {{ this.user_data.middlename }} {{ this.user_data.lastname }}</h2>
-                        <p>{{ this.user_data.email }}</p>
+                        <h2>{{ this.fn }} {{ this.mn }} {{ this.ln }}</h2>
+                        <p>{{ this.user_email }}</p>
 
 
                         <button @click="modifyUserInfo()" v-if="this.profile_edit_permission">Edit Profile</button>
@@ -29,11 +29,11 @@
                     <label for="">Last Name</label>
                     <input type="text" v-model="this.lastname" placeholder="Last name..." :disabled="this.profile_edit_permission">
 
-                    <label for="">Username</label>
-                    <input type="text" v-model="this.username" placeholder="Username..." :disabled="this.profile_edit_permission">
+                    <label for="">Email</label>
+                    <input type="email" v-model="this.email" placeholder="Email..." :disabled="this.profile_edit_permission">
 
                     <label for="">Password</label>
-                    <input type="text" v-model="this.password" placeholder="Password..." :disabled="this.profile_edit_permission">
+                    <input type="password" v-model="this.password" placeholder="Password..." :disabled="this.profile_edit_permission">
                 </div>
 
                 <div id="edit-profile-buttons" v-if="!this.profile_edit_permission">
@@ -80,15 +80,23 @@ export default {
         user_data: {},
     },
     methods: {
+        async retrieve_profile_info(){
+            const response = await fetch(`${current_address}/retrieve_profile_info?id=${ this.$route.params.user_id }`);
+            const data = await response.json();
+
+            if (response.ok){
+                this.fn = data.user.firstname;
+                this.mn = data.user.middlename;
+                this.ln = data.user.lastname;
+                this.user_email = data.user.email;
+            }
+        },
+
         async retrieve_resume_data(){
             const response = await fetch(`${current_address}/retrieve_resume_data?user_id=${this.user_data.id}`);
             const data = await response.json();
 
-            if (!response.ok){
-                console.log('Failed.');
-            }
-            else{
-                console.log(data.resume);
+            if (response.ok){
                 this.ed1 = data.resume.ed_1;
                 this.ed2 = data.resume.ed_2;
                 this.ed3 = data.resume.ed_3;
@@ -97,9 +105,9 @@ export default {
                 this.tr3 = data.resume.training_3;
                 this.certifications = data.certifications;
                 this.experiences = data.experiences;
-
-                console.log(data.certifications);
-                console.log(data.experiences);
+            }
+            else{
+                console.log('Failed');
             }            
         },
 
@@ -127,13 +135,14 @@ export default {
         },
 
         async saveNewInfo(){
-            const response = await fetch(`${current_address}/edit_profile`, {
+            const response = await fetch(`${current_address}/change_profile_info`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    'username': this.username,
+                    'id': this.$route.params.user_id,
+                    'email': this.email,
                     'password': this.password,
                     'firstname': this.firstname,
                     'middlename': this.middlename,
@@ -141,10 +150,16 @@ export default {
                 }),
             });
 
-            const data = response.json();
+            const data = await response.json();
 
-            if (data.response == ''){
-                console.log('failed');
+            if (data.response == 'Successfully updated profile info'){
+                this.email = '';
+                this.password = '';
+                this.firstname = '';
+                this.middlename = '';
+                this.lastname = '';
+
+                this.retrieve_profile_info();
             }
             else{
                 console.log('failed');
@@ -159,7 +174,12 @@ export default {
     },
     data (){
         return {
-            username: '',
+            fn: '',
+            mn: '',
+            ln: '',
+            user_email: '',
+
+            email: '',
             password: '',
             firstname: '',
             middlename: '',
@@ -176,6 +196,7 @@ export default {
         }
     },
     mounted() {
+        this.retrieve_profile_info();
         this.retrieve_resume_data();
     },
 }

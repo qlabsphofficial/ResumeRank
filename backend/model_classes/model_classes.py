@@ -21,6 +21,15 @@ class ProfileModel(BaseModel):
     firstname : str = Form(...)
     lastname : str = Form(...)
     profile_picture: Optional[UploadFile] = Form(None)
+    
+    
+class UpdateProfileModel(BaseModel):
+    id: int
+    email: str
+    firstname : str
+    middlename: str
+    lastname : str
+    password: str
 
 
 class JobPostingModel(BaseModel):

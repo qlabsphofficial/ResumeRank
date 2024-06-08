@@ -1,4 +1,4 @@
-from .model_classes import UserModel, ProfileModel, JobPostingModel, ExperienceModel, ExpModel, CertificationModel, CertModel, ResumeModel, JobPostingID, NotificationModel, IdModel
+from .model_classes import UserModel, ProfileModel, JobPostingModel, ExperienceModel, ExpModel, CertificationModel, UpdateProfileModel, CertModel, ResumeModel, JobPostingID, NotificationModel, IdModel
 
 __all__ = [
     "UserModel", 
@@ -6,6 +6,7 @@ __all__ = [
     "JobPostingModel",
     "ExperienceModel",
     "ExpModel",
+    "UpdateProfileModel",
     "CertificationModel",
     "CertModel",
     "ResumeModel",
