@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database import get_database
 
-from models import User, Resume
+from models import User, Resume, JobPosting, JobApplication
 from model_classes import UserModel, ProfileModel
 
 router = APIRouter()
@@ -73,17 +73,23 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
     
 
 @router.get('/retrieve_user_data')
-async def retrieve_dashboard_data(user_id: int, db: Session = Depends(get_database)):
-    try:
+async def retrieve_user_data(user_id: int, db: Session = Depends(get_database)):
+    # try:
         user = db.query(User).filter(User.id == user_id).first()
+        all_applied_jobs = db.query(JobApplication).join(Resume, JobApplication.resume == Resume.id and Resume.resume_owner == user.id).all()
+            
+            
+        for applied_job in all_applied_jobs:
+            print(applied_job.applicant)
+            print(applied_job.job)
 
         payload = {}
         payload.update({ 'user_data': user })
 
         return { 'payload': payload, 'status_code': 200 }
         
-    except:
-        return { 'response': 'Error retrieving data.', 'status_code': 400 }
+    # except:
+    #     return { 'response': 'Error retrieving data.', 'status_code': 400 }
 
 
 @router.post('/edit_profile')

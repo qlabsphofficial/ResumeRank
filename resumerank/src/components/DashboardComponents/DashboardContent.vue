@@ -196,6 +196,8 @@ export default {
 .notification {
     height: 50%;
     width: 90%;
+    margin-top: 4%;
+    margin-bottom: 4%;
     padding: 5%;
     background-color: #EDF3F3;
     border-radius: 15px;
@@ -204,7 +206,7 @@ export default {
 }
 
 .notification:hover {
-    transform: translateY(-10%);
+    transform: translateY(-4%);
 }
 
 #all-notifs::-webkit-scrollbar, #all-jobs::-webkit-scrollbar {
