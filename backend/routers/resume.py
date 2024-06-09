@@ -78,7 +78,7 @@ async def add_certification(cert_info: CertModel, db: Session = Depends(get_data
         if not existing_certification:
             new_certification = Certification()
             new_certification.title=cert_info.title
-            # new_certification.date=cert_info.date
+            new_certification.date=cert_info.date
             # new_certification.attachment= f"{FILESDIR}{cert_info.attachment}"
             new_certification.training_center= cert_info.training_center
             new_certification.resume_id=cert_info.id
@@ -170,7 +170,21 @@ async def retrieve_resume_data(user_id: int, db: Session = Depends(get_database)
     except:
         return { 'response': 'resume Retrieval Failed', 'status_code': 200 }
     
-    
+
+@router.get('/retrieve_certification_data')
+async def retrieve_certification_data(user_id: int, db: Session = Depends(get_database)):
+    try:
+        certifications = db.query(Certification).filter(Certification.resume_id == user_id).all()
+
+        return { 
+            'response': 'Certification retrieved', 
+            'certifications': certifications,
+            'status_code': 200
+        }
+    except:
+        return { 'response': 'Certification Retrieval Failed', 'status_code': 200 }
+
+
 @router.get('/retrieve_experience_data')
 async def retrieve_experience_data(user_id: int, db: Session = Depends(get_database)):
     try:

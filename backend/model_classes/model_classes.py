@@ -71,7 +71,7 @@ class CertificationModel(BaseModel):
 class CertModel(BaseModel):
     id: int
     title: str
-    # date: str
+    date: str
     # attachment : Optional[UploadFile] = Form(None)
     training_center : str
     
@@ -100,5 +100,9 @@ class NotificationModel(BaseModel):
 
 
 #MISC MODELS
+class ProfilePicModel(BaseModel):
+    user_id: int
+    file: UploadFile
+    
 class IdModel(BaseModel):
     id: int

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 
 from datetime import datetime
 
@@ -42,6 +43,28 @@ async def delete_job_posting(job: JobPostingID, db: Session = Depends(get_databa
     except:
         return {'response': 'failed to job posting.'}
     
+
+@router.get('/applied_jobs')
+async def applied_jobs(id: int, db: Session = Depends(get_database)):
+    # try:
+        job_postings = (
+            db.query(JobPosting)
+            .join(JobApplication, JobPosting.id == JobApplication.job)
+            .join(Resume, JobApplication.resume == Resume.id)
+            .join(User, Resume.resume_owner == User.id)
+            .filter(User.id == id)
+            .order_by(desc(JobApplication.id))  # Assuming `id` in JobApplication represents the application date implicitly
+            .limit(5)
+            .all()
+        )
+
+        if not job_postings:
+            return { 'response': 'Job Application Retrieval Failed', 'status_code': 200 }
+
+        return { 'response': 'applied jobs retrieved', 'jobs': job_postings, 'status_code': 200 }
+
+    # except Exception as e:
+    #     return { 'response': 'Job Application Retrieval Failed', 'status_code': 200 }
 
 @router.get('/show_jobs')
 async def show_jobs(db: Session = Depends(get_database)):
