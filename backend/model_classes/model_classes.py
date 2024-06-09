@@ -51,6 +51,7 @@ class ExperienceModel(BaseModel):
         
 
 class ExpModel(BaseModel):
+    id: int
     job_title: str
     company: str
     tenure_start: str
@@ -68,10 +69,11 @@ class CertificationModel(BaseModel):
         
 
 class CertModel(BaseModel):
+    id: int
     title: str
-    training_center : str
     date: str
-    attachment : Optional[UploadFile] = Form(None)
+    # attachment : Optional[UploadFile] = Form(None)
+    training_center : str
     
 
 class ResumeModel(BaseModel):
@@ -98,5 +100,9 @@ class NotificationModel(BaseModel):
 
 
 #MISC MODELS
+class ProfilePicModel(BaseModel):
+    user_id: int
+    file: UploadFile
+    
 class IdModel(BaseModel):
     id: int

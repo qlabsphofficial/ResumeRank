@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
 
-from routers import admin, authentication, notifications, resume, profile
+from routers import admin, authentication, notifications, resume, profile, email
 
 
 IMAGEDIR = "images/"
@@ -15,6 +15,7 @@ app.include_router(authentication.router)
 app.include_router(notifications.router)
 app.include_router(resume.router)
 app.include_router(profile.router)
+app.include_router(email.router)
 
 
 app.add_middleware(

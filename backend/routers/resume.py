@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 
 from models import User, Resume, Certification, Experience, JobPosting, JobApplication
-from model_classes import CertModel, ResumeModel, IdModel
+from model_classes import CertModel, ResumeModel, IdModel, ExpModel
 from database import get_database
 
 import os
@@ -69,7 +69,7 @@ async def submit_resume(resume: ResumeModel, db: Session = Depends(get_database)
             
             
 @router.post('/add_certification')
-async def add_certification(cert_info: CertModel, user_id: int, db: Session = Depends(get_database)):
+async def add_certification(cert_info: CertModel, db: Session = Depends(get_database)):
     try:
         existing_certification = db.query(Certification).filter(
             Certification.title == cert_info.title, 
@@ -79,16 +79,42 @@ async def add_certification(cert_info: CertModel, user_id: int, db: Session = De
             new_certification = Certification()
             new_certification.title=cert_info.title
             new_certification.date=cert_info.date
-            new_certification.attachment= f"{FILESDIR}{cert_info.attachment}"
+            # new_certification.attachment= f"{FILESDIR}{cert_info.attachment}"
             new_certification.training_center= cert_info.training_center
-            new_certification.resume_id=user_id
+            new_certification.resume_id=cert_info.id
             db.add(new_certification)
 
         db.commit()
         
-        return { 'response': 'Certification Successfully Removed', 'status_code': '200' }
+        return { 'response': 'Certification Successfully Added', 'status_code': '200' }
     except:
         return { 'response': 'Failed to Remove Certification', 'status_code': '400' }
+    
+
+@router.post('/add_experience')
+async def add_experience(exp_info: ExpModel, db: Session = Depends(get_database)):
+    try:
+    
+        existing_experience = db.query(Experience).filter(
+            Experience.job_title == exp_info.job_title, 
+            Experience.company == exp_info.company,
+            Experience.tenure_start == datetime.strptime(exp_info.tenure_start, '%Y-%m-%d'), 
+            Experience.tenure_end == datetime.strptime(exp_info.tenure_end, '%Y-%m-%d')).first()
+
+        if not existing_experience:
+            new_experience = Experience()
+            new_experience.job_title=exp_info.job_title
+            new_experience.company=exp_info.company
+            new_experience.tenure_start= datetime.strptime(exp_info.tenure_start, '%Y-%m-%d')
+            new_experience.tenure_end= datetime.strptime(exp_info.tenure_end, '%Y-%m-%d')
+            new_experience.resume_id=exp_info.id
+            db.add(new_experience)
+
+        db.commit()
+        
+        return { 'response': 'Experience Successfully Added', 'status_code': '200' }
+    except:
+        return { 'response': 'Failed to add experience', 'status_code': '400' }
     
     
 @router.delete('/remove_certification')
@@ -143,6 +169,34 @@ async def retrieve_resume_data(user_id: int, db: Session = Depends(get_database)
         }
     except:
         return { 'response': 'resume Retrieval Failed', 'status_code': 200 }
+    
+
+@router.get('/retrieve_certification_data')
+async def retrieve_certification_data(user_id: int, db: Session = Depends(get_database)):
+    try:
+        certifications = db.query(Certification).filter(Certification.resume_id == user_id).all()
+
+        return { 
+            'response': 'Certification retrieved', 
+            'certifications': certifications,
+            'status_code': 200
+        }
+    except:
+        return { 'response': 'Certification Retrieval Failed', 'status_code': 200 }
+
+
+@router.get('/retrieve_experience_data')
+async def retrieve_experience_data(user_id: int, db: Session = Depends(get_database)):
+    try:
+        experiences = db.query(Experience).filter(Experience.resume_id == user_id).all()
+
+        return { 
+            'response': 'Experiences retrieved', 
+            'experiences': experiences,
+            'status_code': 200
+        }
+    except:
+        return { 'response': 'Experiences Retrieval Failed', 'status_code': 200 }
 
 
 @router.post('/apply_to_job')

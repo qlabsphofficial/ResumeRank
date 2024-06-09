@@ -97,7 +97,7 @@
                 <input type="text" placeholder="Enter training center name..." id="cert-title" v-model="certLocation">
 
                 <h5>Date Issued</h5>
-                <input type="date" placeholder="Enter issued date..." id="cert-title" v-model="certIssuedDate">
+                <input type="date" placeholder="Enter issued date..." id="cert-title" v-model="certIssuedDate" :max="getCurrentDate()">
 
                 <h5>Upload File</h5>
                 <input 
@@ -125,13 +125,13 @@
                 <input type="text" placeholder="Enter training center name..." id="cert-title" v-model="jobCompany">
 
                 <h5>Start of Service</h5>
-                <input type="date" placeholder="Enter start date..." id="cert-title" v-model="jobYears">
+                <input type="date" placeholder="Enter start date..." id="cert-title" v-model="jobYears" :max="getCurrentDate()">
 
                 <h5>End of Service</h5>
-                <input type="date" placeholder="Enter end date..." id="cert-title" v-model="jobYearEnd">
+                <input type="date" placeholder="Enter end date..." id="cert-title" v-model="jobYearEnd" :max="getCurrentDate()">
 
                 <div class="buttons">
-                    <button @click="addWorkExperience()">Add Work Experience</button>
+                    <button @click="submit_experience()">Add Work Experience</button>
                     <button @click="closeWorkModal()">Cancel</button>
                 </div>
             </div>
@@ -148,6 +148,19 @@ export default {
         user_data: {}
     },
     methods: {
+        getCurrentDate() {
+            const today = new Date();
+            let month = today.getMonth() + 1;
+            let day = today.getDate();
+            const year = today.getFullYear();
+
+            // Ensure leading zero for single-digit months and days
+            month = month < 10 ? '0' + month : month;
+            day = day < 10 ? '0' + day : day;
+
+            return `${year}-${month}-${day}`;
+        },
+
         async submit_resume(){
             const response = await fetch(`${current_address}/submit_resume`, {
                 method: 'POST',
@@ -206,6 +219,30 @@ export default {
             }
         },
 
+        async retrieve_certification_data(){
+            const response = await fetch(`${current_address}/retrieve_certification_data?user_id=${this.user_data.id}`);
+            const data = await response.json();
+
+            if (!response.ok){
+                console.log('Failed.');
+            }
+            else{
+                this.certifications = data.certifications;
+            }
+        },
+
+        async retrieve_experience_data(){
+            const response = await fetch(`${current_address}/retrieve_experience_data?user_id=${this.user_data.id}`);
+            const data = await response.json();
+
+            if (!response.ok){
+                console.log('Failed.');
+            }
+            else{
+                this.experiences = data.experiences;
+            }
+        },
+
         openCertModal() {
             this.certModalOpen = true;
             this.modalOpen = true;
@@ -228,16 +265,38 @@ export default {
             }
         },
         
-        addCertification() {
-            let new_cert = {
-                'title': this.certTitle,
-                'training_center': this.certLocation,
-                'date': this.certIssuedDate
+        async addCertification() {
+            const response = await fetch(`${current_address}/add_certification`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'id': this.$route.params.user_id,
+                    'title': this.certTitle,
+                    'training_center': this.certLocation,
+                    'date': this.certIssuedDate
+                }),
+            })
+
+            if(response.ok){
+                const responseData = await response.json();
+
+                if (responseData.response == 'Certification Successfully Added'){
+                    this.modal_visible = true;
+                    this.modal_header = 'Certification Information Saved';
+                    this.modal_message = 'Certification has been successfully updated.';
+                    
+                    this.retrieve_certification_data();
+                    this.closeCertModal()
+                }
+                else {
+                    console.log('Failed');
+                }
             }
-            
-            this.certifications.push(new_cert);
-            this.retrieve_resume_data();
-            this.closeCertModal()
+            else {
+                console.log(`Request failed with status ${response.status}`);
+            }
         },
 
         async removeCertification(id) {
@@ -259,16 +318,38 @@ export default {
             this.retrieve_resume_data();
         },
 
-        addWorkExperience() {
-            let newWorkXp = {
-                'job_title': this.jobTitle,
-                'company': this.jobCompany,
-                'tenure_start': this.jobYears,
-                'tenure_end': this.jobYearEnd
-            }
+        async submit_experience(){
+            const response = await fetch(`${current_address}/add_experience`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'id': this.$route.params.user_id,
+                    'job_title': this.jobTitle,
+                    'company': this.jobCompany,
+                    'tenure_start': this.jobYears,
+                    'tenure_end': this.jobYearEnd
+                }),
+            })
 
-            this.experiences.push(newWorkXp);
-            this.closeWorkModal();
+            if(response.ok){
+                const responseData = await response.json();
+
+                if (responseData.response == 'Experience Successfully Added'){
+                    this.modal_visible = true;
+                    this.modal_header = 'Experience Information Saved';
+                    this.modal_message = 'Experience has been successfully updated.';
+                    this.closeWorkModal();
+                    this.retrieve_experience_data();
+                }
+                else {
+                    console.log('Failed');
+                }
+            }
+            else {
+                console.log(`Request failed with status ${response.status}`);
+            }
         },
 
         async removeWorkExperience(id) {
@@ -287,7 +368,7 @@ export default {
             const data = await response.json();
             console.log(data.response);
 
-            this.retrieve_resume_data();
+            this.retrieve_experience_data();
         },
 
         openWorkModal() {

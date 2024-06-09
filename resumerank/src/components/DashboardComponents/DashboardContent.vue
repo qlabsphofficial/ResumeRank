@@ -3,8 +3,11 @@
         <h1>Dashboard</h1>
 
         <div id="dashboard-info-container">
-            <div class="notifications" v-for="notification in notifications" :key="notification">
-                <h4>{{ notification.message }}</h4>
+            <h2>Recently Applied Job Postings</h2>
+            <div class="applied-job" v-for="applied_job in applied_jobs" :key="applied_job">
+                <h4>{{ applied_job.job_title }}</h4>
+                <p>{{ applied_job.date_posted.slice(0, 10) }}</p>
+                <p>{{ applied_job.description.slice(0, 80) }}...</p>
             </div>
         </div>
 
@@ -69,6 +72,16 @@ export default {
             else {
                 console.log('Retrieval of Notifications Failed.');
             }
+
+            const applied_jobs_response = await fetch(`${ current_address }/applied_jobs?id=${ this.$route.params.user_id }`);
+            const applied_jobs_data = await applied_jobs_response.json();
+
+            if (applied_jobs_response.ok) {
+                this.applied_jobs = applied_jobs_data.jobs;
+            }
+            else {
+                console.log('Retrieval of Applied Jobs Failed.');
+            }
         },
 
         sendDataToParent(job){
@@ -78,8 +91,9 @@ export default {
 
     data (){
         return {
+            applied_jobs: [],
             all_jobs: [],
-            notifications: []
+            notifications: [],   
         }
     },
 
@@ -98,8 +112,8 @@ export default {
 
 #dashboard-info-container {
     display: flex;
-    flex-direction: row;
-    height: 10vh;
+    flex-direction: column;
+    height: 20vh;
     width: 100%;
     margin-top: 3%;
     overflow-y: scroll;
@@ -123,6 +137,16 @@ export default {
     }
 }
 
+.applied-job {
+    width: 90%;
+    background-color: #EDF3F3;
+    margin-bottom: 2%;
+    padding: 1%;
+    border-radius: 15px;
+    box-shadow: 2px 2px 2px #AEAEAE;
+    transition: .4s;
+}
+
 .dashboard-icon {
     height: 80px;
     width: 80px;
@@ -135,9 +159,9 @@ export default {
 }
 
 #dashboard-news {
-    height: 70%;
+    height: 60%;
     width: 100%;
-    margin-top: 7.5%;
+    margin-top: 4%;
     display: flex;
     flex-direction: row;
 }
@@ -209,14 +233,14 @@ export default {
     transform: translateY(-4%);
 }
 
-#all-notifs::-webkit-scrollbar, #all-jobs::-webkit-scrollbar {
+#dashboard-info-container::-webkit-scrollbar, #all-notifs::-webkit-scrollbar, #all-jobs::-webkit-scrollbar {
     width: 8px;
     border-radius: 15px;
     background-color: #EEE;
     scroll-behavior: smooth;
 }
 
-#all-notifs::-webkit-scrollbar-thumb, #all-jobs::-webkit-scrollbar-thumb {
+#dashboard-info-container::-webkit-scrollbar-thumb, #all-notifs::-webkit-scrollbar-thumb, #all-jobs::-webkit-scrollbar-thumb {
     background-color: #B8C3C6;
     border-radius: 15px;
 }

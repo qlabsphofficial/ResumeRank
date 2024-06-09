@@ -179,7 +179,6 @@ export default {
 }
 
 #modal-close-button {
-    height: 1000vh;
     margin-top: 5%;
 }
 </style>

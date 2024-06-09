@@ -7,7 +7,10 @@
             <div id="left-panel">
                 <div id="profile-main-details">
                     <div id="profile-edit">
-                        <div id="profile-pic"></div>
+                        <div id="profile-pic" @click="triggerFileInput()">
+                            <img v-if="profilePicture" :src="profilePicture" alt="Profile Picture" id="profile-image"/>
+                            <input type="file" ref="fileInput" @change="handleFileChange" accept="image/*" style="display: none;" />
+                        </div>
                     </div>
 
                     <div id="profile-main-text">
@@ -170,6 +173,65 @@ export default {
 
         stopModification(){
             this.profile_edit_permission = true;
+        },
+
+        // PROFILE PICTURE UPLOADING
+        async retrieve_profile_picture(){
+            const pictureResponse = await fetch(`${current_address}/get_profile_picture/${this.user_data.id}`);
+
+            if (pictureResponse.ok) {
+                const pictureBlob = await pictureResponse.blob();
+                const imageUrl = URL.createObjectURL(pictureBlob);
+
+                // Update the profile picture
+                this.profilePicture = imageUrl;
+            } else {
+                console.error('Failed to retrieve profile picture:', pictureResponse.statusText);
+            }
+        },
+
+        triggerFileInput() {
+            this.$refs.fileInput.click();
+        },
+
+        handleFileChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                this.readImageFile(file);
+            }
+        },
+
+        async readImageFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.profilePicture = e.target.result;
+                this.uploadProfilePicture(file);
+            };
+            reader.readAsDataURL(file);
+        },
+
+        async uploadProfilePicture(file) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('user_id', this.$route.params.user_id);
+
+                const response = await fetch(`${current_address}/upload_profile_picture?user_id=${this.$route.params.user_id}`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'accept': 'application/json'
+                    },
+                });
+
+                if (response.ok) {
+                    console.log('Profile picture uploaded successfully');
+                } else {
+                    console.error('Failed to upload profile picture:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
         }
     },
     data (){
@@ -178,6 +240,7 @@ export default {
             mn: '',
             ln: '',
             user_email: '',
+            profilePicture: '',
 
             email: '',
             password: '',
@@ -197,6 +260,7 @@ export default {
     },
     mounted() {
         this.retrieve_profile_info();
+        this.retrieve_profile_picture();
         this.retrieve_resume_data();
     },
 }
@@ -293,6 +357,17 @@ export default {
     width: 100px;
     border: 1px solid black;
     border-radius: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer; /* Indicates clickability */
+}
+
+#profile-pic img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
 }
 
 #all-info {
