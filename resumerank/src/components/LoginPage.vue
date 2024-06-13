@@ -149,8 +149,13 @@ export default {
   display: flex;
   height: 80%;
   width: 75%;
+  background-color: white;
   border-radius: 15px;
   box-shadow: 2px 2px 2px 2px #DDD;
+  opacity: 0;
+  transform: translateX(-5%);
+  animation: slideIn .4s ease-in-out;
+  animation-fill-mode: forwards;
 }
 
 #left-section {
@@ -169,12 +174,17 @@ export default {
   flex: 40%;
   flex-grow: 1;
   text-align: left;
-  background-color: white;
+  background-color: transparent;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
   padding: 2%;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  transform: translateX(-5%);
+  animation: slideIn .4s ease-in-out;
+  animation-fill-mode: forwards;
+  animation-delay: .4s;
 
   h1 {
     color: black;
@@ -257,5 +267,17 @@ export default {
 #sign-up-cta:hover {
   color: black;
   text-decoration: underline;
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-5%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 </style>
