@@ -7,7 +7,7 @@
             <div id="all-jobs">
                 <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
                     <div class="job-top-section">
-                        
+                        <img src="@/assets/icons/ResumeRankLogo3.png" height="100px" width="100px">
                     </div>
 
                     <div class="job-bottom-section">
@@ -103,6 +103,7 @@ export default {
     background-color: white;
     border-radius: 15px;
     transition: .4s;
+    cursor: pointer;
 
     h3 {
         line-height: 0;
@@ -112,6 +113,9 @@ export default {
 .job-top-section {
     height: 60%;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: #2984CE;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
