@@ -3,21 +3,30 @@
         <div id="job-posting">
             <h1>Add Job Posting</h1>
             <h5>Title</h5>
-            <input type="text" placeholder="Enter title..." v-model="jobTitle">
+            <input type="text" placeholder="Enter title..." v-model="title">
 
             <h5>Job Title</h5>
-            <input type="text" placeholder="Enter job role..." v-model="jobCompany">
+            <input type="text" placeholder="Enter job role..." v-model="jobTitle">
 
             <h5>Description</h5>
-            <textarea rows="10" cols="60" placeholder="Job description..." v-model="this.summary"></textarea>
+            <textarea rows="10" cols="60" placeholder="Job description..." v-model="jobDescription"></textarea>
 
             <h5>Date Expired</h5>
-            <input type="date" placeholder="Enter date expired..." v-model="jobYears">
+            <input type="date" placeholder="Enter date expired..." v-model="dateExpiration">
 
             <div class="buttons">
-                <button @click="submit_experience()">Add Work Experience</button>
-                <button @click="closeWorkModal()">Cancel</button>
+                <button @click="submit_job_postings()">Add Job Posting</button>
+                <button @click="closeJobPostingModal()">Cancel</button>
             </div>
+        </div>
+    </div>
+
+    <div id="job-post-modal-info-container" v-if="post_modal_visible">
+        <div id="job-post-modal-info">
+            <h1>{{ modal_header }}</h1>
+            <p>{{ modal_message }}</p>
+
+            <button @click="closePostInfoModal()">Close</button>
         </div>
     </div>
 
@@ -70,6 +79,41 @@ export default {
                 this.all_jobs = data.jobs;
             }            
         },
+
+        async submit_job_postings() {
+            const response = await fetch(`${current_address}/create_job_posting`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'title': this.title,
+                    'job_title': this.jobTitle,
+                    'description': this.jobDescription,
+                    'post_status': 1,
+                    'date_expired': this.dateExpiration
+                }),
+            })
+
+            if(response.ok){
+                const responseData = await response.json();
+
+                if (responseData.response == 'job created'){
+                    this.retrieve_data();
+                    this.closeJobPostingModal();
+                    this.post_modal_visible = true;
+                    this.modal_header = 'Job Posting Saved';
+                    this.modal_message = 'Job Posting has been successfully Added.';
+                }
+                else {
+                    console.log('Failed');
+                }
+            }
+            else {
+                console.log(`Request failed with sStatus ${response.status}`);
+            }
+        },
+
         sendDataToParent(job){
             this.$emit('send-job-data', { job_data: job });
         },
@@ -81,13 +125,25 @@ export default {
         closeJobPostingModal(){
             this.modal_visible = false;
         },
+
+        closePostInfoModal(){
+            this.post_modal_visible = false;
+        },
     },
 
     data (){
         return {
             all_jobs: [],
 
-            modal_visible: false
+            modal_visible: false,
+            title: '',
+            jobTitle: '',
+            jobDescription: '',
+            dateExpiration: '',
+
+            post_modal_visible: false,
+            modal_header: '',
+            modal_message: '',
         }
     },
     mounted(){
@@ -192,14 +248,23 @@ export default {
 #job-posting {
     height: 50vh;
     width: 40vw;
-    padding: 3%;
+    padding: 2%;
     background-color: white;
     border-radius: 15px;
     overflow-y: scroll;
+    text-align: left;
 
     input {
         height: 3vh;
         width: 50%;
+    }
+
+    textarea {
+        margin-bottom: 0;
+    }
+
+    h5 {
+        margin-bottom: 0;
     }
 }
 
@@ -226,5 +291,29 @@ export default {
     flex-direction: column;
     align-items: end;
     justify-content: center;
+}
+
+#job-post-modal-info-container {
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, .4);
+    z-index: 3;
+}
+
+#job-post-modal-info {
+    height: 40vh;
+    width: 35vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background-color: white;
 }
 </style>
