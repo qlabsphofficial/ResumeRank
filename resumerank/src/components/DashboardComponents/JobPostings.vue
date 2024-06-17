@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    <div id="container">
+    <div id="container" class="fade-in-top">
         <div id="top-container">
             <div id="top-left-container">
                 <h1>Job Postings</h1>
@@ -42,7 +42,7 @@
             </div>
         </div>
         
-        <div id="jobs">
+        <div id="jobs" class="fade-in-left">
             <div id="all-jobs">
                 <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
                     <div class="job-top-section">
@@ -153,6 +153,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/global/styles.scss';
+
 #container {
     height: 100%;
     width: 100%;

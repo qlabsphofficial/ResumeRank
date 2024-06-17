@@ -8,13 +8,44 @@
         </div>
     </div>
 
-    <div id="container">
-        <h1>{{ page_title }}</h1>
-        <p>{{ job.date_posted.replace('T', ' ') }}</p>
-        <p id="description">Date Posted: {{ job.description }}</p>
+    <div id="container" class="fade-in-top">
+        <div id="main-job">
+            <div id="job-image"></div>
 
-        <div id="actions">
-            <button @click="apply()">Apply Now</button>
+            <h2>{{ page_title }}</h2>
+            <p>{{ job.date_posted.replace('T', ' ') }}</p>
+
+
+            <div id="job-info">
+                <div id="job-description-container">
+                    <h3>Overview</h3>
+                    <p id="description">{{ job.description }}</p>
+                </div>
+                
+                <div id="about-the-company">
+                    <h3>About the Company</h3>
+                    <p>
+                        Anvaya Cove, located in Morong, Bataan, is a premier seaside residential community developed by Ayala Land Premier. 
+                        Spanning approximately 470 hectares, this exclusive enclave seamlessly integrates the natural beauty of the surrounding landscape 
+                        with a range of luxurious amenities and sustainable design practices.
+                    </p>
+                </div>
+            </div>
+
+            <div id="actions">
+                <button @click="apply()">Apply Now</button>
+            </div>
+        </div>
+
+        <div id="all-jobs">
+            <h3>Active Jobs</h3>
+
+            <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
+                <h4>{{ job.job_title }}</h4>
+                <h5>{{ job.date_posted.slice(0, 10) }}</h5>
+                <p class="description">{{ job.description.slice(0, 40) }}...</p>
+                <hr>
+            </div>
         </div>
     </div>
 </template>
@@ -29,6 +60,23 @@ export default {
         job: {}
     },
     methods: {
+        async retrieve_data(){
+            const response = await fetch(`${current_address}/show_jobs`);
+            const data = await response.json();
+
+            if (!response.ok){
+                console.log('Failed.');
+            }
+            else{
+                console.log(data.jobs);
+                this.all_jobs = data.jobs;
+            }            
+        },
+
+        sendDataToParent(job){
+            this.$emit('send-job-data', { job_data: job });
+        },
+
         async apply() {
             try {
                 const response = await fetch(`${current_address}/apply_to_job?user_id=${this.user_data.id}&job_id=${this.job.id}`, {
@@ -67,16 +115,21 @@ export default {
 
             modal_visible: false,
             modal_header: '',
-            modal_message: ''
+            modal_message: '',
+
+            all_jobs: []
         }
     },
     mounted() {
         this.page_title = this.job.job_title;
+        this.retrieve_data();
     }
 }
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/global/styles.scss';
+
 #modal-container {
     position: absolute;
     top: 0;
@@ -102,15 +155,74 @@ export default {
 
 #container {
     height: 100%;
-    width: 100%;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#main-job {
+    height: 100%;
+    width: 70%;
+    margin-right: 5%;
     text-align: left;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-#description {
+#job-image {
+    height: 15vh;
+    width: 100%;
+    background-color: #3B6EA5;
+    border-radius: 15px;
+}
+
+#job-info {
+    height: 40vh;
+    overflow-y: scroll;
+}
+
+#job-description-container {
+    width: 80%;
+}
+
+#about-the-company {
     margin-top: 5%;
+}
+
+#all-jobs {
+    height: 96%;
+    width: 20%;
+    padding: 2%;
+    background-color: white;
+    border-radius: 15px;
+
+    h3 {
+        margin-bottom: 15%;
+    }
+
+    .job {
+        margin-bottom: 15%;
+
+        h4 {
+            line-height: 0;
+        }
+
+        p {
+            color: #8C8C8C;
+            line-height: 1;
+        }
+
+        hr {
+            display: block;
+            height: 1px;
+            border: 0;
+            border-top: 1px solid #e6e6e6;
+            margin: 1em 0;
+            padding: 0;
+        }
+    }
 }
 
 button {

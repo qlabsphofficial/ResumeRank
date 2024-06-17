@@ -27,7 +27,7 @@
             <p>Thank you for your interest in joining our team at Anvaya Cove Beach and Nature Club.</p>
             <p>Best regards,</p>
 
-            <h4 class="recruiter-info">Jayvee R. Topasi</h4>
+            <h4 class="recruiter-info">Justine Mae S. Payot</h4>
             <h4 class="recruiter-info">Human Resource Assistant</h4>
             <h4 class="recruiter-info">Anvaya Cove Beach and Nature Club</h4>
 
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <div id="container">
+    <div id="container" class="fade-in-top">
         <h1>Notifications</h1>
 
         <div id="notifications">
@@ -45,10 +45,13 @@
 
             <div id="all-notifs" v-else>
                 <div v-for="notif in all_notifs" :key="notif" class="notif" @click="() => { this.modal_visible = true }">
-                    <h1>{{ notif.message }}</h1>
-                    <p class="date-posted">{{ notif.date_posted }}</p>
-                    <p v-if="notif.message === 'Application Reviewed'">The recruiter wants to move forward with your application.</p>
-                    <p v-else>The recruiter has decided not to push through with your application.</p>
+                    <h3>{{ notif.message }}</h3>
+
+                    <div class="notif-info">
+                        <p class="date-posted">{{ notif.date_posted }}</p>
+                        <p v-if="notif.message === 'Application Reviewed'">The recruiter wants to move forward with your application.</p>
+                        <p v-else>The recruiter has decided not to push through with your application.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -100,6 +103,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/global/styles.scss';
+
 #info-modal-container {
     height: 100vh;
     width: 100vw;
@@ -152,18 +157,32 @@ export default {
 }
 
 .notif {
+    height: 15%;
     width: 90%;
-    background-color: #EDF3F3;
+    display: block;
+    background-color: white;
     margin-top: 2%;
     margin-bottom: 2%;
-    padding: 4%;
+    padding: 1%;
+    padding-left: 3%;
     border-radius: 15px;
     box-shadow: 2px 2px 2px #AEAEAE;
     transition: .4s;
+    cursor: pointer;
+
+    h3 {
+        line-height: 0;
+    }
 }
 
 .notif:hover {
     transform: translateY(-5%);
+}
+
+.notif-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
 }
 
 #all-notifs::-webkit-scrollbar {

@@ -9,7 +9,7 @@
   </div>
 
   <div id="container">
-    <div id="login-container">
+    <div id="login-container" class="fade-in-top">
       <div id="image-container"></div>
 
       <div id="login-form-container">
@@ -17,7 +17,7 @@
           <img src="@/assets/icons/login-icon.webp" height="80%" width="80%">
         </div>
 
-        <div id="right-section">
+        <div id="right-section" class="fade-in-left">
           <div id="right-section-hero">
             <img src="@/assets/icons/ResumeRankLogo3.png" height="10%" width="10%">
             <h1>ResumeRank</h1>
@@ -99,6 +99,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/global/styles.scss';
+
 #login-modal-container {
   position: absolute;
   top: 0;
@@ -152,10 +154,7 @@ export default {
   background-color: white;
   border-radius: 15px;
   box-shadow: 2px 2px 2px 2px #DDD;
-  opacity: 0;
-  transform: translateX(-5%);
-  animation: slideIn .4s ease-in-out;
-  animation-fill-mode: forwards;
+  background-color: white;
 }
 
 #left-section {
@@ -180,11 +179,6 @@ export default {
   padding: 2%;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transform: translateX(-5%);
-  animation: slideIn .4s ease-in-out;
-  animation-fill-mode: forwards;
-  animation-delay: .4s;
 
   h1 {
     color: black;
@@ -267,17 +261,5 @@ export default {
 #sign-up-cta:hover {
   color: black;
   text-decoration: underline;
-}
-
-@keyframes slideIn {
-  0% {
-    opacity: 0;
-    transform: translateX(-5%);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
 }
 </style>

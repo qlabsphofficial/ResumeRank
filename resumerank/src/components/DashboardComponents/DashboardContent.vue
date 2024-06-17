@@ -1,5 +1,5 @@
 <template>
-    <div id="container">
+    <div id="container" class="fade-in-top">
         <h1>Dashboard</h1>
 
         <div id="dashboard-info-container">
@@ -104,6 +104,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/global/styles.scss';
+
 #container {
     height: 100%;
     width: 100%;
@@ -113,7 +115,7 @@ export default {
 #dashboard-info-container {
     display: flex;
     flex-direction: column;
-    height: 20vh;
+    height: 25vh;
     width: 100%;
     margin-top: 3%;
     overflow-y: scroll;
@@ -139,7 +141,7 @@ export default {
 
 .applied-job {
     width: 90%;
-    background-color: #EDF3F3;
+    background-color: white;
     margin-bottom: 2%;
     padding: 1%;
     border-radius: 15px;
@@ -180,7 +182,7 @@ export default {
 }
 
 .job {
-    background-color: #EDF3F3;
+    background-color: white;
     margin-top: 2%;
     margin-bottom: 2%;
     padding: 3%;
@@ -207,7 +209,7 @@ export default {
 }
 
 #all-notifs {
-    height: 75%;
+    height: 70%;
     width: 90%;
     overflow-y: scroll;
     margin-top: 3%;
@@ -223,7 +225,7 @@ export default {
     margin-top: 4%;
     margin-bottom: 4%;
     padding: 5%;
-    background-color: #EDF3F3;
+    background-color: white;
     border-radius: 15px;
     box-shadow: 2px 2px 2px #AEAEAE;
     transition: .4s;

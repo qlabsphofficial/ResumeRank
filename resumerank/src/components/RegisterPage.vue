@@ -9,9 +9,9 @@
         </div>
       </div>
 
-      <div id="login-container">
+      <div id="login-container" class="fade-in-top">
         <div id="login-form-container">
-            <div id="left-section">
+            <div id="left-section" class="fade-in-left">
                 <div id="left-section-header">
                   <img src="@/assets/icons/ResumeRankLogo3.png" height="10%" width="10%">
                   <h1>ResumeRank</h1>
@@ -138,6 +138,8 @@ import current_address from '@/address';
   </script>
   
   <style scoped lang="scss">
+  @import '@/assets/global/styles.scss';
+
   #container {
     position: absolute;
     top: 0;

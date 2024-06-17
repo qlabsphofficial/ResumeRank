@@ -1,8 +1,8 @@
 <template>
   <div id="container">
-    <div id="forgot-pass-container">
+    <div id="forgot-pass-container" class="fade-in-top">
       <div id="forgot-pass-form-container">
-          <div id="left-section">
+          <div id="left-section" class="fade-in-left">
               <div id="left-section-header">
                 <img src="@/assets/icons/ResumeRankLogo3.png" height="10%" width="10%">
                 <h1>ResumeRank</h1>

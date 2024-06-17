@@ -8,7 +8,7 @@
         </div>
     </div>
 
-    <div id="container">
+    <div id="container" class="fade-in-top">
         <h1>{{ title }}</h1>
         <p>Please enter your resume details below.</p>
 
@@ -37,13 +37,22 @@
                     <h4 v-if="this.certifications.length == 0">No Certifications Included.</h4>
 
                     <div v-else v-for="certification of certifications" :key="certification" class="credential">
-                        <h3>{{ certification.title }}</h3>
-                        <p>Issued By: {{ certification.training_center }}</p>
-                        <p>Date Issued: {{ certification.date }}</p>
-                        <button class="remove-credential-button" @click="removeCertification(certification.id)">Remove Certification</button>
+                        <div class="credential-header"></div>
+
+                        <div class="credential-details">
+                            <h4>Certification</h4>
+                            <h3>{{ certification.title }}</h3>
+
+                            <p>Issued By: {{ certification.training_center }}</p>
+                            <p>Date Issued: {{ certification.date }}</p>
+
+                            <div class="remove-credential-container">
+                                <button class="remove-credential-button" @click="removeCertification(certification.id)">Remove Certification</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button @click="openCertModal()">Add Certification</button>
+                <button @click="openCertModal()" class="add-credential-button">Add Certification</button>
             </div>
             
             <h3>Experience</h3>
@@ -52,13 +61,23 @@
                     <h4 v-if="this.experiences.length == 0">No Work Experience Included.</h4>
                     
                     <div v-else v-for="experience of experiences" :key="experience" class="credential">
-                        <h3>{{ experience.job_title }}</h3>
-                        <p>{{ experience.company }}</p>
-                        <p>Employment Duration: {{ experience.tenure_start }} to {{ experience.tenure_end }}</p>
-                        <button class="remove-credential-button" @click="removeWorkExperience(experience.id)">Remove Experience</button>
+                        <div class="credential-header"></div>
+
+                        <div class="credential-details">
+                            <h4>Work Experience</h4>
+                            <h3>{{ experience.job_title }}</h3>
+
+                            <p>{{ experience.company }}</p>
+                            <p>Employment Duration:</p>
+                            <p>{{ experience.tenure_start }} to {{ experience.tenure_end }}</p>
+
+                            <div class="remove-credential-container">
+                                <button class="remove-credential-button" @click="removeWorkExperience(experience.id)">Remove Experience</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button @click="openWorkModal()">Add Experience</button>
+                <button @click="openWorkModal()" class="add-credential-button">Add Experience</button>
             </div>
 
             <h3>About</h3>
@@ -82,58 +101,57 @@
                 </div>
             </div>
 
-            <button @click="submit_resume()">Save</button>
+            <button @click="submit_resume()" class="add-credential-button">Save</button>
+        </div>
+    </div>
+
+    <div id="modal-container" v-if="modalOpen">
+        <div id="certification-modal" v-if="certModalOpen">
+            <h1>Add Certification</h1>
+
+            <h5>Certification</h5>
+            <input type="text" placeholder="Enter certification name..." id="cert-title" v-model="certTitle">
+
+            <h5>Training Center</h5>
+            <input type="text" placeholder="Enter training center name..." id="cert-title" v-model="certLocation">
+
+            <h5>Date Issued</h5>
+            <input type="date" placeholder="Enter issued date..." id="cert-title" v-model="certIssuedDate" :max="getCurrentDate()">
+
+            <h5>Upload File</h5>
+            <input 
+                type="file" 
+                placeholder="Upload certification proof..." 
+                id="cert-title" 
+                multiple="false" 
+                accept=".png, .jpg, .jpeg, .pdf" 
+                @change="handleFileUpload"
+            >
+
+            <div class="buttons">
+                <button @click="addCertification()">Add Certification</button>
+                <button @click="closeCertModal()">Cancel</button>
+            </div>
         </div>
 
+        <div id="work-modal" v-if="workModalOpen">
+            <h1>Add Work Experience</h1>
 
-        <div id="modal-container" v-if="modalOpen">
-            <div id="certification-modal" v-if="certModalOpen">
-                <h1>Add Certification</h1>
+            <h5>Job Title</h5>
+            <input type="text" placeholder="Enter certification name..." id="cert-title" v-model="jobTitle">
 
-                <h5>Certification</h5>
-                <input type="text" placeholder="Enter certification name..." id="cert-title" v-model="certTitle">
+            <h5>Company Name</h5>
+            <input type="text" placeholder="Enter training center name..." id="cert-title" v-model="jobCompany">
 
-                <h5>Training Center</h5>
-                <input type="text" placeholder="Enter training center name..." id="cert-title" v-model="certLocation">
+            <h5>Start of Service</h5>
+            <input type="date" placeholder="Enter start date..." id="cert-title" v-model="jobYears" :max="getCurrentDate()">
 
-                <h5>Date Issued</h5>
-                <input type="date" placeholder="Enter issued date..." id="cert-title" v-model="certIssuedDate" :max="getCurrentDate()">
+            <h5>End of Service</h5>
+            <input type="date" placeholder="Enter end date..." id="cert-title" v-model="jobYearEnd" :max="getCurrentDate()">
 
-                <h5>Upload File</h5>
-                <input 
-                    type="file" 
-                    placeholder="Upload certification proof..." 
-                    id="cert-title" 
-                    multiple="false" 
-                    accept=".png, .jpg, .jpeg, .pdf" 
-                    @change="handleFileUpload"
-                >
-
-                <div class="buttons">
-                    <button @click="addCertification()">Add Certification</button>
-                    <button @click="closeCertModal()">Cancel</button>
-                </div>
-            </div>
-
-            <div id="work-modal" v-if="workModalOpen">
-                <h1>Add Work Experience</h1>
-
-                <h5>Job Title</h5>
-                <input type="text" placeholder="Enter certification name..." id="cert-title" v-model="jobTitle">
-
-                <h5>Company Name</h5>
-                <input type="text" placeholder="Enter training center name..." id="cert-title" v-model="jobCompany">
-
-                <h5>Start of Service</h5>
-                <input type="date" placeholder="Enter start date..." id="cert-title" v-model="jobYears" :max="getCurrentDate()">
-
-                <h5>End of Service</h5>
-                <input type="date" placeholder="Enter end date..." id="cert-title" v-model="jobYearEnd" :max="getCurrentDate()">
-
-                <div class="buttons">
-                    <button @click="submit_experience()">Add Work Experience</button>
-                    <button @click="closeWorkModal()">Cancel</button>
-                </div>
+            <div class="buttons">
+                <button @click="submit_experience()">Add Work Experience</button>
+                <button @click="closeWorkModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -418,6 +436,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/assets/global/styles.scss';
+
 #container {
     height: 100%;
     width: 100%;
@@ -460,22 +480,47 @@ export default {
 
 .credentials {
     display: flex;
+    justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
+
+    .add-credential-button {
+        background-color: #26C81C;
+    }
 }
 
 .credential {
-    height: 80%;
-    width: 50%;
-    margin-bottom: 2%;
-    padding: 3%;
+    height: 400px;
+    width: 30%;
+    background-color: white;
+    margin: 1%;
     border-radius: 15px;
     box-shadow: 2px 2px 2px 2px #DFDFDF;
+
+    .credential-header {
+        height: 3%;
+        width: 100%;
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px;
+        background-color: #2c3e50;
+    }
+
+    .credential-details {
+        padding: 5%;
+    }
+
+    .remove-credential-container {
+        width: 100%;
+        margin-top: 20%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
     
     .remove-credential-button {
-        width: 40%;
-        background-color: black;
+        width: 60%;
+        background-color: #DE3636;
         color: white;
         border: 1px solid transparent;
         border-radius: 15px;
@@ -483,7 +528,7 @@ export default {
     }
 
     .remove-credential-button:hover {
-        border: 1px solid black;
+        border: 1px solid #DE3636;
         background-color: transparent;
         color: #444444;
     }
@@ -492,6 +537,7 @@ export default {
 #certifications {
     height: 90%;
     width: 100%;
+    display: flex;
     margin-bottom: 3%;
 }
 
@@ -507,6 +553,10 @@ export default {
 #experiences {
     height: 90%;
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 3%;
 }
 
@@ -568,9 +618,15 @@ export default {
 }
 
 textarea {
+    border: 1px solid #CBCBCB;
+    outline: none;
     padding: 2%;
     resize: none;
     margin-bottom: 5%;
+    font-family: 'Montserrat', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
 }
 
 
@@ -607,10 +663,10 @@ button:hover {
 }
 
 .buttons {
-    width: 100%;
+    width: 80%;
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-around;
     margin-top: 5%;
 
     button {

@@ -177,7 +177,7 @@ export default {
     width: 85%;
     padding: 5%;
     padding-top: 2%;
-    background-color: white;
+    background-color: #EEE;
     border-radius: 25px;
     box-shadow: 2px 2px 2px #AEAEAE;
 }

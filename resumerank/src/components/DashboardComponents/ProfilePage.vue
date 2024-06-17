@@ -1,5 +1,5 @@
 <template>
-    <div id="container">
+    <div id="container" class="fade-in-top">
         <h1>Profile</h1>
         <p>General User Information / Resume Data</p>
 
@@ -267,6 +267,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/global/styles.scss';
+
 #container {
     height: 100%;
     width: 100%;
