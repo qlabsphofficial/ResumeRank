@@ -18,6 +18,7 @@ async def create_job_posting(job: JobPostingModel, db: Session = Depends(get_dat
         
         new_job = JobPosting()
         new_job.job_title = job.job_title
+        new_job.job_title = job.job_title
         new_job.description = job.description
         new_job.post_status = job.post_status
         new_job.date_expired = date_expired
