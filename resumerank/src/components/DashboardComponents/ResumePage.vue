@@ -488,6 +488,12 @@ export default {
     .add-credential-button {
         background-color: #26C81C;
     }
+
+    .add-credential-button:hover {
+        border: 1px solid #26C81C;
+        color: #26C81C;
+        background-color: transparent;
+    }
 }
 
 .credential {
@@ -530,7 +536,7 @@ export default {
     .remove-credential-button:hover {
         border: 1px solid #DE3636;
         background-color: transparent;
-        color: #444444;
+        color: #DE3636;
     }
 }
 

@@ -34,6 +34,7 @@
 
                     <div class="notification" v-for="notification in notifications" :key="notification">
                         <h4>{{ notification.message }}</h4>
+
                         <p class="date-posted">{{ notification.date_posted.slice(0, 10) }}</p>
                         <p v-if="notification.message === 'Application Reviewed'">The recruiter wants to move forward with your application.</p>
                         <p v-else>The recruiter has decided not to push through with your application.</p>
@@ -115,7 +116,7 @@ export default {
 #dashboard-info-container {
     display: flex;
     flex-direction: column;
-    height: 25vh;
+    height: 27.5vh;
     width: 100%;
     margin-top: 3%;
     overflow-y: scroll;
@@ -163,7 +164,7 @@ export default {
 #dashboard-news {
     height: 60%;
     width: 100%;
-    margin-top: 4%;
+    margin-top: 1%;
     display: flex;
     flex-direction: row;
 }
@@ -192,7 +193,7 @@ export default {
 }
 
 .job:hover {
-    transform: translateY(-10%);
+    transform: translateY(-2.5%);
 }
 
 .job-info {
@@ -232,7 +233,7 @@ export default {
 }
 
 .notification:hover {
-    transform: translateY(-4%);
+    transform: translateY(-2.5%);
 }
 
 #dashboard-info-container::-webkit-scrollbar, #all-notifs::-webkit-scrollbar, #all-jobs::-webkit-scrollbar {

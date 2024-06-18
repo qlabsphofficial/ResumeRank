@@ -7,7 +7,7 @@
             <p>We hope this message finds you well.</p>
 
             <p>
-                We are pleased to inform you that we have reviewed your application for the [Job Title] position at Anvaya Cove Beach and Nature Club. 
+                We are pleased to inform you that we have reviewed your application for the {{ this.job_title }} position at Anvaya Cove Beach and Nature Club. 
                 After careful consideration, we are excited to move forward with your application.
             </p>
 
@@ -44,7 +44,7 @@
             <h3 v-if="all_notifs.length == 0">No Notifications.</h3>
 
             <div id="all-notifs" v-else>
-                <div v-for="notif in all_notifs" :key="notif" class="notif" @click="() => { this.modal_visible = true }">
+                <div v-for="notif in all_notifs" :key="notif" class="notif" @click="showNotifInfo(notif.job_title)">
                     <h3>{{ notif.message }}</h3>
 
                     <div class="notif-info">
@@ -81,6 +81,12 @@ export default {
             }
         },
 
+        async showNotifInfo(job_title) {
+            this.modal_visible = true;
+            this.job_title = job_title;
+
+        },
+
         closeInfoModal() {
             this.modal_header = '';
             this.modal_message = '';
@@ -91,6 +97,7 @@ export default {
         return {
             all_notifs: [],
 
+            job_title: '',
             modal_header: '',
             modal_message: '',
             modal_visible: ''

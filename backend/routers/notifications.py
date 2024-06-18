@@ -12,10 +12,11 @@ router = APIRouter()
 
 # NOTIFICATION ENDPOINTS
 @router.post('/create_notification')
-async def create_notification(applicant_id: int, db: Session = Depends(get_database)):
+async def create_notification(applicant_id: int, job_title: str, db: Session = Depends(get_database)):
     try:
         new_notification = Notification()
         new_notification.message = 'Application Reviewed'
+        new_notification.job_title = job_title
         new_notification.sent_to = applicant_id
 
         db.add(new_notification)

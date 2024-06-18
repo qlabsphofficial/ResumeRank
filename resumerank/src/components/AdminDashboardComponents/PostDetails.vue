@@ -104,8 +104,7 @@ export default {
         },
 
         async notifyApplicant(id){
-            console.log(id);
-            const response = await fetch(`${current_address}/create_notification?applicant_id=${id}`, {
+            const response = await fetch(`${current_address}/create_notification?applicant_id=${id}&job_title=${this.job.job_title}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -97,6 +97,7 @@ class Notification(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     date_posted = Column(DateTime, server_default=func.now())
+    job_title = Column(String)
     message = Column(String)
     sent_to = Column(Integer, ForeignKey('users.id'))
 
