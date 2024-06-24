@@ -31,19 +31,25 @@ async def create_job_posting(job: JobPostingModel, db: Session = Depends(get_dat
         return { 'response': 'Error retrieving data.', 'status_code': 400 }
     
 
-@router.post('/delete_job_posting')
+@router.delete('/delete_job_posting')
 async def delete_job_posting(job: JobPostingID, db: Session = Depends(get_database)):
     try:
-        retrieved_job_posting = db.query(JobPosting).filter(JobPosting.id == job.id).first()
+        job_exist = db.query(JobPosting).filter(JobPosting.id == job.id).first()
         
-        if retrieved_job_posting:
-            db.delete(retrieved_job_posting)
+        if job_exist:
+            entries = db.query(JobApplication).all()
+            
+            for entry in entries:
+                db.delete(entry)
             db.commit()
-
-        return { 'response': 'job posting deleted.'}
+            
+            db.delete(job_exist)
+            db.commit()
+            
+            return { 'response': 'job deleted', 'status_code': 200 }
     except:
-        return {'response': 'failed to job posting.'}
-    
+        return { 'response': 'Error deleting data.', 'status_code': 400 }
+        
 
 @router.get('/applied_jobs')
 async def applied_jobs(id: int, db: Session = Depends(get_database)):

@@ -3,15 +3,33 @@
         <div id="modal">
             <h1>{{ modal_header }}</h1>
             <p>{{ modal_message }}</p>
+            
+            <div id="modal-btn" v-if="this.delete_post">
+                <button @click="confirmDelete(job.id)">Confirm</button>
+                <button @click="() => { this.modal_visible = false }">Close</button>
+            </div>
 
-            <button @click="() => { this.modal_visible = false }">Close</button>
+            <div id="modal-btn-else" v-else>
+                <button @click="() => { this.modal_visible = false }">Close</button>
+            </div>
         </div>
     </div>
 
     <div id="container">
-        <h1>{{ job.job_title }}</h1>
-        <p>Date Posted: {{ job.date_posted }}</p>
-        <p id="description">{{ job.description }}</p>
+        <div id="post-top-section">
+            <h1>{{ job.job_title }}</h1>
+            <p>Date Posted: {{ job.date_posted }}</p>
+        </div>
+
+        <div id="post-middle-section">
+            <button>Update Job</button>
+            <button @click="deleteJob()">Delete Job</button>
+            <button>Close Job</button>
+        </div>
+
+        <div id="post-bottom-section">
+            <p>{{ job.description }}</p>
+        </div>
 
         <h2>Top Applicants</h2>
         <div id="top-applicants">
@@ -122,6 +140,30 @@ export default {
                 this.modal_message = 'The notification could not be sent. Contact your administrator for details.';
                 this.modal_visible = false;
             } 
+        },
+
+        deleteJob() {
+            this.modal_header = 'Confirm Deletion';
+            this.modal_message = 'Are you sure you want to delete this item? This action cannot be undone.';
+            this.modal_visible = true;
+            this.delete_post = true;
+        },
+
+         async confirmDelete(id) {
+            const response = await fetch(`${current_address}/delete_job_posting`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'id': id
+                }),
+            })
+
+            const data = await response.json();
+            console.log(data.response);
+
+            this.$router.push('/admin');
         }
     },
     data (){
@@ -131,7 +173,8 @@ export default {
 
             modal_header: '',
             modal_message: '',
-            modal_visible: false
+            modal_visible: false,
+            delete_post: false
         }
     },
     mounted(){
@@ -165,13 +208,50 @@ export default {
 #container {
     height: 100%;
     width: 95%;
+    display: flex;
+    flex-direction: column;
     padding-right: 5%;
     text-align: left;
     overflow-y: scroll;
 }
 
-#description {
-    margin-top: 5%;
+#post-top-section {
+    height: 20%;
+    width: 100%;
+}
+
+#post-middle-section {
+    height: 10%;
+    width: 50%;
+    padding-left: 50%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+
+    button {
+        width: 30%;
+    }
+}
+
+#post-bottom-section {
+    height: 20%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#modal-btn {
+    height: 30%;
+    width: 70%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+
+    button {
+        width: 40%;
+    }
 }
 
 button {
@@ -194,7 +274,7 @@ button:hover {
 }
 
 h2 {
-    margin-top: 5%;
+    margin-top: 3%;
 }
 
 #top-applicants, #applicants {
