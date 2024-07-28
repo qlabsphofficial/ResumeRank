@@ -425,4 +425,29 @@ export default {
     border-radius: 15px;
     background-color: white;
 }
+
+textarea {
+    height: 1000px;
+    border: 1px solid #CBCBCB;
+    outline: none;
+    padding: 2%;
+    resize: none;
+    margin-bottom: 5%;
+    font-family: 'Montserrat', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
+}
+
+#new-job-posting-form::-webkit-scrollbar, #certification-modal::-webkit-scrollbar, #resume-fillup::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 15px;
+    background-color: #EEE;
+    scroll-behavior: smooth;
+}
+
+#new-job-posting-form::-webkit-scrollbar-thumb, #certification-modal::-webkit-scrollbar-thumb, #resume-fillup::-webkit-scrollbar-thumb {
+    background-color: #2984CE;
+    border-radius: 15px;
+}
 </style>

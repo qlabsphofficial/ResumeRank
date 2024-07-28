@@ -90,6 +90,16 @@ async def show_jobs(db: Session = Depends(get_database)):
     except:
         return { 'response': 'User Retrieval Failed', 'status_code': 200 }
     
+
+
+@router.get('/retrieve_job_qualifications')
+async def retrieve_job_qualifications(id: int, db: Session = Depends(get_database)):
+    try:
+        all_qualifications = db.query(JobQualification).filter(JobQualification.posting_id == id).all()
+        return { 'response': 'qualifications retrieved', 'qualifications': all_qualifications, 'status_code': 200 }
+    except:
+        return { 'response': 'Qualifications Retrieval Failed', 'status_code': 200 }
+    
     
 @router.get('/show_applications')
 async def show_applications(db: Session = Depends(get_database)):

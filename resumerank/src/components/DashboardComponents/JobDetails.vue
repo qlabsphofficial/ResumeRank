@@ -21,6 +21,11 @@
                     <h3>Overview</h3>
                     <p id="description">{{ job.description }}</p>
                 </div>
+
+                <div id="job-description-container">
+                    <h3>Job Requirements:</h3>
+                    <li v-for="qualification of qualifications" :key="qualification">{{ qualification.description }}</li>
+                </div>
                 
                 <div id="about-the-company">
                     <h3>About the Company</h3>
@@ -68,9 +73,20 @@ export default {
                 console.log('Failed.');
             }
             else{
-                console.log(data.jobs);
                 this.all_jobs = data.jobs;
-            }            
+            }
+            
+            console.log(this.job);
+            const applications_retrieval_response = await fetch(`${current_address}/retrieve_job_qualifications?id=${this.job.id}`);
+            const applications_retrieval_data = await applications_retrieval_response.json();
+
+            if (!response.ok){
+                console.log('Failed.');
+            }
+            else{
+                console.log(applications_retrieval_data.qualifications);
+                this.qualifications = applications_retrieval_data.qualifications;
+            }     
         },
 
         sendDataToParent(job){
@@ -88,7 +104,6 @@ export default {
 
                 if (response.ok) {
                     const responseData = await response.json();
-                    console.log(responseData.response);
 
                     if (responseData && responseData.response === 'applied to job') {
                         this.modal_visible = true;
@@ -117,7 +132,8 @@ export default {
             modal_header: '',
             modal_message: '',
 
-            all_jobs: []
+            all_jobs: [],
+            qualifications: []
         }
     },
     mounted() {
