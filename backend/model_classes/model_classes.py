@@ -38,6 +38,7 @@ class JobPostingModel(BaseModel):
     description: str
     post_status: bool
     date_expired : str
+    qualifications: List[str]
 
 
 class ExperienceModel(BaseModel):

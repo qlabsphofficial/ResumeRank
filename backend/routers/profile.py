@@ -5,7 +5,10 @@ from sqlalchemy.orm import Session
 
 from docx import Document
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
-from docx.shared import Pt, Inches
+from docx.shared import Pt, RGBColor, Inches
+from docx.enum.table import WD_ALIGN_VERTICAL
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
 
 from datetime import datetime
 
@@ -72,201 +75,111 @@ async def change_profile_info(profile_info: UpdateProfileModel, db: Session = De
         return { 'response': 'Failed to update profile info', 'status_code': 400 }
 
 
+def add_section_heading(cell, heading_text, level=2):
+    paragraph = cell.add_paragraph()
+    run = paragraph.add_run(heading_text)
+    run.bold = True
+    run.font.size = Pt(14 if level == 2 else 12)
+    run.font.color.rgb = RGBColor(54, 95, 145)  # Dark Blue
+    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    paragraph.paragraph_format.space_after = Pt(6)
+    paragraph.paragraph_format.line_spacing = 1.0
+
+def add_styled_paragraph(cell, text, bold=False, font_size=Pt(12), font_color=RGBColor(0, 0, 0), alignment=WD_PARAGRAPH_ALIGNMENT.LEFT):
+    paragraph = cell.add_paragraph()
+    run = paragraph.add_run(text)
+    run.bold = bold
+    run.font.size = font_size
+    run.font.color.rgb = font_color
+    paragraph.alignment = alignment
+    return paragraph
+
+def set_cell_border(cell, **kwargs):
+    """
+    Set cell's border
+    Usage:
+
+    set_cell_border(cell, top={"sz": 12, "val": "single", "color": "#000000", "space": "0"},
+                         bottom={"sz": 12, "val": "single", "color": "#000000", "space": "0"},
+                         left={"sz": 12, "val": "single", "color": "#000000", "space": "0"},
+                         right={"sz": 12, "val": "single", "color": "#000000", "space": "0"})
+    """
+    tc = cell._element.tc
+    tcPr = tc.get_or_add_tcPr()
+    for edge in ('top', 'left', 'bottom', 'right'):
+        if edge in kwargs:
+            edge_data = kwargs[edge]
+            tag = 'w:{}'.format(edge)
+            element = tcPr.find(qn(tag))
+            if element is None:
+                element = OxmlElement(tag)
+                tcPr.append(element)
+            for key in ["sz", "val", "color", "space"]:
+                if key in edge_data:
+                    element.set(qn('w:{}'.format(key)), str(edge_data[key]))
+
 @router.get('/export_resume_to_word')
 async def export_resume_to_word(user_id: int, db: Session = Depends(get_database)):
-    # Fetch user and associated resume data
     user, resume = db.query(User, Resume).join(Resume, User.id == Resume.resume_owner).filter(User.id == user_id).first()
     experiences = db.query(Experience).filter(Experience.resume_id == resume.id).all()
     certifications = db.query(Certification).filter(Certification.resume_id == resume.id).all()
 
     doc = Document()
 
-    # Set document title
-    title = doc.add_heading(f'{user.firstname} {user.middlename} {user.lastname}', level=1)
-    title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    title_format = title.paragraph_format
-    title_format.space_after = Pt(0)
-    title_format.line_spacing = 1.0
-    
-    contact_info = f'{user.email} • {user.contact_no} • @{user.firstname}.{user.lastname}'
-    contact_paragraph = doc.add_paragraph(contact_info)
-    contact_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    contact_paragraph_format = contact_paragraph.paragraph_format
-    contact_paragraph_format.space_after = Pt(6)
-    contact_paragraph_format.line_spacing = 1.0
+    # Adding a two-column layout using a table
+    table = doc.add_table(rows=1, cols=2)
+    table.autofit = False
+    table.columns[0].width = Inches(2.5)
+    table.columns[1].width = Inches(4.5)
 
-    doc.add_paragraph()  # Add a blank line for spacing
+    # Left Column (Profile, Contact Info, Education, etc.)
+    cell_left = table.cell(0, 0)
+    cell_left.vertical_alignment = WD_ALIGN_VERTICAL.TOP
 
-    # Add a section for summary
-    summary_heading = doc.add_heading('SUMMARY', level=2)
-    summary_heading.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-    summary_format = summary_heading.paragraph_format
-    summary_format.space_after = Pt(6)
-    summary_format.line_spacing = 1.0
+    # Right Column (Experience, Certifications, etc.)
+    cell_right = table.cell(0, 1)
+    cell_right.vertical_alignment = WD_ALIGN_VERTICAL.TOP
 
-    summary_paragraph = doc.add_paragraph(resume.summary)
-    summary_paragraph_format = summary_paragraph.paragraph_format
-    summary_paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-    summary_paragraph_format.space_after = Pt(6)
-    summary_paragraph_format.line_spacing = 1.0
+    # Profile Picture (Placeholder)
+    # Uncomment the next line to add a real picture
+    cell_left.paragraphs[0].add_run().add_picture(f'{user.profile_picture}', width=Inches(1.25))
 
-    doc.add_paragraph()  # Add a blank line for spacing
+    # Name and Title
+    add_styled_paragraph(cell_right, f'{user.firstname} {user.middlename} {user.lastname}', bold=True, font_size=Pt(24), alignment=WD_PARAGRAPH_ALIGNMENT.LEFT)
 
-    # Add a section for work experience
-    work_exp_heading = doc.add_heading('WORK EXPERIENCE', level=2)
-    work_exp_heading.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-    work_exp_format = work_exp_heading.paragraph_format
-    work_exp_format.space_after = Pt(6)
-    work_exp_format.line_spacing = 1.0
+    # Summary
+    add_section_heading(cell_right, 'Summary')
+    if resume.summary:
+        add_styled_paragraph(cell_right, resume.summary, font_size=Pt(10), font_color=RGBColor(77, 77, 77))
+    else:
+        add_styled_paragraph(cell_right, "No summary has been provided.", font_size=Pt(10), font_color=RGBColor(77, 77, 77))
 
+    # Contact Info
+    add_section_heading(cell_left, 'Contact', level=3)
+    add_styled_paragraph(cell_left, f'Phone\n{user.contact_no}', font_size=Pt(10))
+    add_styled_paragraph(cell_left, f'Email\n{user.email}', font_size=Pt(10))
+    add_styled_paragraph(cell_left, f'Address\n123 Anywhere St., Any City', font_size=Pt(10))  # Placeholder Address
+
+    # Education
+    add_section_heading(cell_left, 'Education', level=3)
+    add_styled_paragraph(cell_left, f'2008\nEnter Your Degree\nUniversity/College', font_size=Pt(10))
+    add_styled_paragraph(cell_left, f'2008\nEnter Your Degree\nUniversity/College', font_size=Pt(10))
+
+    # Work Experience
+    add_section_heading(cell_right, 'Experience')
     if experiences:
         for exp in experiences:
-            exp_paragraph = doc.add_paragraph()
-            exp_run = exp_paragraph.add_run(f'{exp.job_title}\n')
-            exp_run.bold = True
-            exp_run.font.size = Pt(12)
-            exp_run.font.name = 'Arial'
-
-            exp_paragraph.add_run(f'{exp.company}\n').font.size = Pt(11)
-            exp_paragraph.add_run(f'{exp.tenure_start} - {exp.tenure_end}').font.size = Pt(10)
-            exp_paragraph_format = exp_paragraph.paragraph_format
-            exp_paragraph_format.space_after = Pt(6)
-            exp_paragraph_format.line_spacing = 1.0
-
-            doc.add_paragraph()  # Add a blank line for spacing
+            exp_paragraph = add_styled_paragraph(cell_right, f'{exp.tenure_start} - {exp.tenure_end}\n{exp.job_title}\n{exp.company}\n', bold=True, font_size=Pt(12), font_color=RGBColor(54, 95, 145))
     else:
-        doc.add_paragraph("No work experience provided.")
+        add_styled_paragraph(cell_right, "No work experience provided.", font_size=Pt(10), font_color=RGBColor(77, 77, 77))
 
-    doc.add_paragraph()  # Add a blank line for spacing
-
-    # Add a section for certifications
-    cert_heading = doc.add_heading('CERTIFICATIONS', level=2)
-    cert_heading.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-    cert_format = cert_heading.paragraph_format
-    cert_format.space_after = Pt(6)
-    cert_format.line_spacing = 1.0
-
+    # Certifications
+    add_section_heading(cell_right, 'Certifications')
     if certifications:
         for cert in certifications:
-            cert_paragraph = doc.add_paragraph()
-            cert_run = cert_paragraph.add_run(f'{cert.title}\n')
-            cert_run.bold = True
-            cert_run.font.size = Pt(12)
-            cert_run.font.name = 'Arial'
-
-            cert_paragraph.add_run(f'{cert.training_center}\n').font.size = Pt(11)
-            cert_paragraph.add_run(f'{cert.date}').font.size = Pt(10)
-            cert_paragraph_format = cert_paragraph.paragraph_format
-            cert_paragraph_format.space_after = Pt(6)
-            cert_paragraph_format.line_spacing = 1.0
-
-            doc.add_paragraph()  # Add a blank line for spacing
+            add_styled_paragraph(cell_right, f'{cert.title}\n{cert.training_center}\n{cert.date}', bold=True, font_size=Pt(12), font_color=RGBColor(54, 95, 145))
     else:
-        doc.add_paragraph("No certification provided.")
-
-    # Save the document to a temporary file
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.docx') as tmp_file:
-        doc.save(tmp_file.name)
-        tmp_file_path = tmp_file.name
-
-    # Return the generated DOCX file as a downloadable attachment
-    return FileResponse(tmp_file_path, filename=f"Resume_{user.firstname}_{user.lastname}.docx", media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-
-@router.get('/export_resume_to_word')
-async def export_resume_to_word(user_id: int, db: Session = Depends(get_database)):
-    # Fetch user and associated resume data
-    user, resume = db.query(User, Resume).join(Resume, User.id == Resume.resume_owner).filter(User.id == user_id).first()
-    experiences = db.query(Experience).filter(Experience.resume_id == resume.id).all()
-    certifications = db.query(Certification).filter(Certification.resume_id == resume.id).all()
-
-    doc = Document()
-
-    # Set document title
-    title = doc.add_heading(f'{user.firstname} {user.middlename} {user.lastname}', level=1)
-    title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    title_format = title.paragraph_format
-    title_format.space_after = Pt(0)
-    title_format.line_spacing = 1.0
-    
-    contact_info = f'{user.email} • {user.contact_no} • @{user.firstname}.{user.lastname}'
-    contact_paragraph = doc.add_paragraph(contact_info)
-    contact_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    contact_paragraph_format = contact_paragraph.paragraph_format
-    contact_paragraph_format.space_after = Pt(6)
-    contact_paragraph_format.line_spacing = 1.0
-
-    doc.add_paragraph()  # Add a blank line for spacing
-
-    # Add a section for summary
-    summary_heading = doc.add_heading('SUMMARY', level=2)
-    summary_heading.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-    summary_format = summary_heading.paragraph_format
-    summary_format.space_after = Pt(6)
-    summary_format.line_spacing = 1.0
-
-    if resume.summary != '':
-        summary_paragraph = doc.add_paragraph(resume.summary)
-    else:
-        summary_paragraph = doc.add_paragraph("No summary has been provided.")
-
-    summary_paragraph_format = summary_paragraph.paragraph_format
-    summary_paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-    summary_paragraph_format.space_after = Pt(6)
-    summary_paragraph_format.line_spacing = 1.0
-
-    doc.add_paragraph()  # Add a blank line for spacing
-
-    # Add a section for work experience
-    work_exp_heading = doc.add_heading('WORK EXPERIENCE', level=2)
-    work_exp_heading.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-    work_exp_format = work_exp_heading.paragraph_format
-    work_exp_format.space_after = Pt(6)
-    work_exp_format.line_spacing = 1.0
-
-    if experiences:
-        for exp in experiences:
-            exp_paragraph = doc.add_paragraph()
-            exp_run = exp_paragraph.add_run(f'{exp.job_title}\n')
-            exp_run.bold = True
-            exp_run.font.size = Pt(12)
-            exp_run.font.name = 'Arial'
-
-            exp_paragraph.add_run(f'{exp.company}\n').font.size = Pt(11)
-            exp_paragraph.add_run(f'{exp.tenure_start} - {exp.tenure_end}').font.size = Pt(10)
-            exp_paragraph_format = exp_paragraph.paragraph_format
-            exp_paragraph_format.space_after = Pt(6)
-            exp_paragraph_format.line_spacing = 1.0
-
-            doc.add_paragraph()  # Add a blank line for spacing
-    else:
-        doc.add_paragraph("No work experience provided.")
-
-    doc.add_paragraph()  # Add a blank line for spacing
-
-    # Add a section for certifications
-    cert_heading = doc.add_heading('CERTIFICATIONS', level=2)
-    cert_heading.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-    cert_format = cert_heading.paragraph_format
-    cert_format.space_after = Pt(6)
-    cert_format.line_spacing = 1.0
-
-    if certifications:
-        for cert in certifications:
-            cert_paragraph = doc.add_paragraph()
-            cert_run = cert_paragraph.add_run(f'{cert.title}\n')
-            cert_run.bold = True
-            cert_run.font.size = Pt(12)
-            cert_run.font.name = 'Arial'
-
-            cert_paragraph.add_run(f'{cert.training_center}\n').font.size = Pt(11)
-            cert_paragraph.add_run(f'{cert.date}').font.size = Pt(10)
-            cert_paragraph_format = cert_paragraph.paragraph_format
-            cert_paragraph_format.space_after = Pt(6)
-            cert_paragraph_format.line_spacing = 1.0
-
-            doc.add_paragraph()  # Add a blank line for spacing
-    else:
-        doc.add_paragraph("No certification provided.")
+        add_styled_paragraph(cell_right, "No certification provided.", font_size=Pt(10), font_color=RGBColor(77, 77, 77))
 
     # Save the document to a temporary file
     with tempfile.NamedTemporaryFile(delete=False, suffix='.docx') as tmp_file:

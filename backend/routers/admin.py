@@ -4,7 +4,7 @@ from sqlalchemy import desc
 
 from datetime import datetime
 
-from models import User, Resume, Certification, Experience, JobPosting, JobApplication
+from models import User, Resume, Certification, Experience, JobPosting, JobApplication, JobQualification
 from model_classes import ResumeModel, JobPostingModel, JobPostingID
 from database import get_database
 
@@ -22,8 +22,17 @@ async def create_job_posting(job: JobPostingModel, db: Session = Depends(get_dat
         new_job.description = job.description
         new_job.post_status = job.post_status
         new_job.date_expired = date_expired
-
+        
         db.add(new_job)
+        db.commit()
+        
+        for test in job.qualifications:
+            new_qualification = JobQualification()
+            new_qualification.description = test
+            new_qualification.posting_id = new_job.id
+
+            db.add(new_qualification)
+            
         db.commit()
 
         return { 'response': 'job created', 'status_code': 200 }

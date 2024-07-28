@@ -1,38 +1,11 @@
 <template>
     <div id="container">
         <h1>Admin Dashboard</h1>
-        <p>Administrator Dashboard Page</p>
-
-        <div id="dashboard-info-container">
-            <div class="dashboard-info">
-                <div class="dashboard-icon"></div>
-                <div class="dashboard-info-detail">
-                    <h4>0</h4>
-                    <p>Active Job Postings</p>
-                </div>
-            </div>
-
-            <div class="dashboard-info">
-                <div class="dashboard-icon"></div>
-                <div class="dashboard-info-detail">
-                    <h4>0</h4>
-                    <p>Applications</p>
-                </div>
-            </div>
-
-            <div class="dashboard-info">
-                <div class="dashboard-icon"></div>
-                <div class="dashboard-info-detail">
-                    <h4>0</h4>
-                    <p>Potential Interviewees</p>
-                </div>
-            </div>
-        </div>
+        <hr>
 
         <div id="dashboard-news">
             <div id="jobs">
-                <h2>Available Job Postings</h2>
-
+                <h3>Available Job Postings</h3>
                 <div id="all-jobs">
                     <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
                         <h4>{{ job.job_title }}</h4>
@@ -122,16 +95,15 @@ export default {
 }
 
 #dashboard-news {
-    height: 50%;
+    height: 80%;
     width: 100%;
-    margin-top: 7.5%;
     display: flex;
     flex-direction: row;
 }
 
 #jobs {
     height: 100%;
-    width: 80%;
+    width: 100%;
 }
 
 #all-jobs {

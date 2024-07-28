@@ -34,6 +34,19 @@ class JobPosting(Base):
     
 
     application = relationship('JobApplication', back_populates='job_posting')
+    qualification = relationship('JobQualification', back_populates='job_posting')
+    
+    
+class JobQualification(Base):
+    __tablename__ = 'qualifications'
+    
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    description = Column(String)
+    posting_id = Column(Integer, ForeignKey("jobs.id"))
+    
+    
+    job_posting = relationship('JobPosting', back_populates='qualification')
+
 
 class Resume(Base):
     __tablename__ = 'resumes'

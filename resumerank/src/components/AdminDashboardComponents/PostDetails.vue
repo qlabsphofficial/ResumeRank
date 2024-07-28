@@ -33,7 +33,7 @@
 
         <h2>Top Applicants</h2>
         <div id="top-applicants">
-            <h3 v-if="this.top_applicants.length == 0">No top applicants.</h3>
+            <h3 v-if="this.top_applicants.length == 0 || this.top_applicants == null">No top applicants.</h3>
             
             <div v-else id="all-top-applicants">
                 <div v-for="top_applicant in top_applicants" :key="top_applicant" class="applicant">

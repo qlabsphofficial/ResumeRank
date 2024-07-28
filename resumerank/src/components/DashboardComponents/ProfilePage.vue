@@ -67,7 +67,7 @@
                 </div>
 
                 <div id="export-to-word">
-                    <button @click="export_resume_to_word()">Export to Word</button>
+                    <button @click="export_resume_to_word()">Export to PDF</button>
                 </div>
             </div>
         </div>

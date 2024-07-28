@@ -1,22 +1,42 @@
 <template>
     <div id="job-posting-modal-container" v-if="this.modal_visible">
         <div id="job-posting">
-            <h1>Add Job Posting</h1>
-            <h5>Title</h5>
-            <input type="text" placeholder="Enter title..." v-model="title">
+            <h2>Add Job Posting</h2>
+            <hr>
 
-            <h5>Job Title</h5>
-            <input type="text" placeholder="Enter job role..." v-model="jobTitle">
+            <div id="new-job-posting-form">
+                <div class="form-input">
+                    <h4>Title</h4>
+                    <input type="text" placeholder="Enter title..." v-model="title">
+                </div>
+    
+                <div class="form-input">
+                    <h4>Job Title</h4>
+                    <input type="text" placeholder="Enter job role..." v-model="jobTitle">
+                </div>
+    
+                <div class="form-input">
+                    <h4>Date Expired</h4>
+                    <input type="date" placeholder="Enter date expired..." v-model="dateExpiration">
+                </div>
+    
+                <div id="qualifications">
+                    <h4>Qualifications</h4>
+                    <div v-for="(qualification, index) in qualifications" :key="index" class="qualification">
+                        <input type="text" v-model="qualifications[index]" placeholder="Enter qualification...">
+                        <button @click="removeQualification(index)">Remove</button>
+                    </div>
 
-            <h5>Description</h5>
-            <textarea rows="10" cols="60" placeholder="Job description..." v-model="jobDescription"></textarea>
+                    <button @click="addQualification">Add Qualification</button>
+                </div>
 
-            <h5>Date Expired</h5>
-            <input type="date" placeholder="Enter date expired..." v-model="dateExpiration">
+                <h4>Description</h4>
+                <textarea cols="100" placeholder="Tell us about yourself..." v-model="this.jobDescription"></textarea>
 
-            <div class="buttons">
-                <button @click="submit_job_postings()">Add Job Posting</button>
-                <button @click="closeJobPostingModal()">Cancel</button>
+                <div class="modal-buttons">
+                    <button @click="submit_job_postings()">Add Job Posting</button>
+                    <button @click="closeJobPostingModal()">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
@@ -91,6 +111,7 @@ export default {
                     'job_title': this.jobTitle,
                     'description': this.jobDescription,
                     'post_status': 1,
+                    'qualifications': this.qualifications,
                     'date_expired': this.dateExpiration
                 }),
             })
@@ -129,6 +150,13 @@ export default {
         closePostInfoModal(){
             this.post_modal_visible = false;
         },
+
+        addQualification(qualification_text) {
+            this.qualifications.push(qualification_text);
+        },
+        removeQualification(index) {
+            this.qualifications.splice(index, 1);
+        },
     },
 
     data (){
@@ -139,6 +167,7 @@ export default {
             title: '',
             jobTitle: '',
             jobDescription: '',
+            qualifications: [''],
             dateExpiration: '',
 
             post_modal_visible: false,
@@ -159,6 +188,18 @@ export default {
     height: 100%;
     width: 100%;
     text-align: left;
+
+    button {
+        background-color: #2984CE;
+        border: 1px solid transparent;
+        transition: .4s;
+    }
+
+    button:hover {
+        border: 1px solid #2984CE;
+        background-color: transparent;
+        color: #2984CE;
+    }
 }
 
 #notifications {
@@ -245,28 +286,94 @@ export default {
     justify-content: center;
     background-color: rgba(0, 0, 0, .4);
     z-index: 1;
+
+    button {
+        background-color: #2984CE;
+        border: 1px solid transparent;
+        transition: .4s;
+    }
+
+    button:hover {
+        border: 1px solid #2984CE;
+        background-color: transparent;
+        color: #2984CE;
+    }
 }
 
 #job-posting {
-    height: 50vh;
+    height: 65vh;
     width: 40vw;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     padding: 2%;
     background-color: white;
     border-radius: 15px;
-    overflow-y: scroll;
-    text-align: left;
 
-    input {
-        height: 3vh;
-        width: 50%;
+    hr {
+        width: 100%;
+        border: 1px solid #f1f1f1;
     }
 
-    textarea {
-        margin-bottom: 0;
-    }
+    #new-job-posting-form {
+        height: 100vh;
+        width: 100%;
+        padding: 1%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        overflow-y: scroll;
 
-    h5 {
-        margin-bottom: 0;
+        .form-input {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+    
+        input {
+            height: 3vh;
+            width: 80%;
+            border: none;
+            border-bottom: 1px solid #AEAEAE;
+            transition: .4s;
+        }
+    
+        input:focus {
+            border: none;
+            outline: 2px solid #2984CE;
+        }
+
+        #qualifications {
+            height: 80vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            .qualification {
+                width: 100%;
+
+                input {
+                    width: 70%;
+                    margin-right: 1%;
+                }
+    
+                button {
+                    width: 10%;
+                }
+            }
+        }
+    
+        .modal-buttons {
+            margin-top: 10%;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+        }
     }
 }
 
