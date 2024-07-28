@@ -5,8 +5,13 @@ from database import get_database
 from models import User, Resume, JobPosting, JobApplication
 from model_classes import UserModel, ProfileModel
 
+import smtplib
+from email.message import EmailMessage
+
 router = APIRouter()
 
+email_address = "resumerank.notification@gmail.com"
+email_password = "rghy ntrx wdio vciw"
 
 @router.get('/show_users')
 async def show_users(db: Session = Depends(get_database)):
@@ -64,7 +69,35 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             new_resume.ref_3 = ''
             db.add(new_resume)
             db.commit()
-            
+
+            msg = EmailMessage()
+            msg['Subject'] = "Registration Confirmation"
+            msg['From'] = email_address
+            msg['To'] = user.address
+            msg.set_content(
+            f"""\
+            Dear {user.firstname} {user.lastname},
+
+            Thank you for registering with us! Your registration has been successfully completed.
+
+            Please find your login details below:
+
+            Username: {user.username}
+            Password: {user.password}
+
+            You can log in to your account at the following URL: {https://resumerank-fe.onrender.com/}
+
+            This is an automated message—please do not reply.
+
+            Best regards,
+            ResumeRank
+            """,
+
+            )
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                smtp.login(email_address, email_password)
+                smtp.send_message(msg)
+
             return { 'response': 'Registration successful.', 'status_code': 200 }
         else:
             return { 'response': 'User already exists.', 'status_code': 403 }

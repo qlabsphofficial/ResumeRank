@@ -1,8 +1,7 @@
 from fastapi import APIRouter, FastAPI, HTTPException
 from pydantic import BaseModel, EmailStr
 import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from email.message import EmailMessage
 
 router = APIRouter()
 
@@ -11,27 +10,24 @@ class EmailSchema(BaseModel):
     subject: str
     message: str
 
-def send_email(receiver_email: str, subject: str, message: str):
-    sender_email = "karlreubenresultan@gmail.com"
-    sender_password = "test"
-
-    msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = receiver_email
-    msg['Subject'] = subject
-
-    msg.attach(MIMEText(message, 'plain'))
-
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
-    server.login(sender_email, sender_password)
-    server.send_message(msg)
-    server.quit()
+email_address = "resumerank.notification@gmail.com"
+email_password = "rghy ntrx wdio vciw"
 
 @router.post("/send_email/")
 async def send_email_route(email: EmailSchema):
-    try:
-        send_email(email.receiver_email, email.subject, email.message)
-        return {"message": "Email sent successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
+    msg = EmailMessage()
+    msg['Subject'] = "Email subject"
+    msg['From'] = email_address
+    msg['To'] = "beneboizxc@gmail.com"
+    msg.set_content(
+       f"""\
+    It works!
+    """,
+         
+    )
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(email_address, email_password)
+        smtp.send_message(msg)
+ 
+    return "email successfully sent"
