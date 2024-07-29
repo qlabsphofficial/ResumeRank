@@ -4,11 +4,14 @@ from fastapi.responses import FileResponse, Response
 from sqlalchemy.orm import Session
 
 from docx import Document
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import Pt, RGBColor, Inches
 from docx.enum.table import WD_ALIGN_VERTICAL
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
+
+from tempfile import NamedTemporaryFile
+from docx2pdf import convert
 
 from datetime import datetime
 
@@ -75,24 +78,27 @@ async def change_profile_info(profile_info: UpdateProfileModel, db: Session = De
         return { 'response': 'Failed to update profile info', 'status_code': 400 }
 
 
+def add_styled_paragraph(cell, text, bold=False, font_size=Pt(12), font_color=RGBColor(0, 0, 0), alignment=WD_PARAGRAPH_ALIGNMENT.LEFT):
+    paragraph = cell.add_paragraph()
+    run = paragraph.add_run(text)
+    font = run.font
+    font.bold = bold
+    font.name = 'Century Gothic'
+    font.size = font_size
+    font.color.rgb = font_color
+    paragraph.alignment = alignment
+    return paragraph
+
 def add_section_heading(cell, heading_text, level=2):
     paragraph = cell.add_paragraph()
     run = paragraph.add_run(heading_text)
     run.bold = True
     run.font.size = Pt(14 if level == 2 else 12)
     run.font.color.rgb = RGBColor(54, 95, 145)  # Dark Blue
+    run.font.name = 'Century Gothic'
     paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
     paragraph.paragraph_format.space_after = Pt(6)
     paragraph.paragraph_format.line_spacing = 1.0
-
-def add_styled_paragraph(cell, text, bold=False, font_size=Pt(12), font_color=RGBColor(0, 0, 0), alignment=WD_PARAGRAPH_ALIGNMENT.LEFT):
-    paragraph = cell.add_paragraph()
-    run = paragraph.add_run(text)
-    run.bold = bold
-    run.font.size = font_size
-    run.font.color.rgb = font_color
-    paragraph.alignment = alignment
-    return paragraph
 
 def set_cell_border(cell, **kwargs):
     """
@@ -129,8 +135,10 @@ async def export_resume_to_word(user_id: int, db: Session = Depends(get_database
     # Adding a two-column layout using a table
     table = doc.add_table(rows=1, cols=2)
     table.autofit = False
-    table.columns[0].width = Inches(2.5)
-    table.columns[1].width = Inches(4.5)
+    column_widths = [Inches(3.2), Inches(3.3)]
+    for col, width in zip(table.columns, column_widths):
+        for cell in col.cells:
+            cell.width = width
 
     # Left Column (Profile, Contact Info, Education, etc.)
     cell_left = table.cell(0, 0)
@@ -145,49 +153,65 @@ async def export_resume_to_word(user_id: int, db: Session = Depends(get_database
     cell_left.paragraphs[0].add_run().add_picture(f'{user.profile_picture}', width=Inches(1.25))
 
     # Name and Title
-    add_styled_paragraph(cell_right, f'{user.firstname} {user.middlename} {user.lastname}', bold=True, font_size=Pt(24), alignment=WD_PARAGRAPH_ALIGNMENT.LEFT)
+    add_styled_paragraph(cell_right, f'{user.firstname} {user.middlename} {user.lastname}', bold=True, font_size=Pt(30), alignment=WD_PARAGRAPH_ALIGNMENT.LEFT)
 
     # Summary
-    add_section_heading(cell_right, 'Summary')
+    add_section_heading(cell_right, '', level=3)
+    add_section_heading(cell_right, 'SUMMARY', level=3)
     if resume.summary:
-        add_styled_paragraph(cell_right, resume.summary, font_size=Pt(10), font_color=RGBColor(77, 77, 77))
+        add_styled_paragraph(cell_right, resume.summary, font_size=Pt(10), font_color=RGBColor(0, 0, 0))
     else:
-        add_styled_paragraph(cell_right, "No summary has been provided.", font_size=Pt(10), font_color=RGBColor(77, 77, 77))
+        add_styled_paragraph(cell_right, "No summary has been provided.", font_size=Pt(10), font_color=RGBColor(0, 0, 0))
 
     # Contact Info
-    add_section_heading(cell_left, 'Contact', level=3)
+    add_section_heading(cell_left, '', level=3)
+    add_section_heading(cell_left, 'CONTACT', level=3)
     add_styled_paragraph(cell_left, f'Phone\n{user.contact_no}', font_size=Pt(10))
     add_styled_paragraph(cell_left, f'Email\n{user.email}', font_size=Pt(10))
-    add_styled_paragraph(cell_left, f'Address\n123 Anywhere St., Any City', font_size=Pt(10))  # Placeholder Address
+    add_styled_paragraph(cell_left, f'Address\n{user.address}', font_size=Pt(10))
 
     # Education
-    add_section_heading(cell_left, 'Education', level=3)
-    add_styled_paragraph(cell_left, f'2008\nEnter Your Degree\nUniversity/College', font_size=Pt(10))
-    add_styled_paragraph(cell_left, f'2008\nEnter Your Degree\nUniversity/College', font_size=Pt(10))
+    add_section_heading(cell_left, '', level=3)
+    add_section_heading(cell_left, 'EDUCATION', level=3)
+    if resume.ed_1:
+        add_styled_paragraph(cell_left, f'Primary Education\n{resume.ed_1}', font_size=Pt(10))
+    if resume.ed_2:
+        add_styled_paragraph(cell_left, f'Secondary Education\n{resume.ed_2}', font_size=Pt(10))
+    if resume.ed_3:
+        add_styled_paragraph(cell_left, f'Tertiary Education\n{resume.ed_3}', font_size=Pt(10))
 
     # Work Experience
-    add_section_heading(cell_right, 'Experience')
+    add_section_heading(cell_right, '', level=3)
+    add_section_heading(cell_right, 'EXPERIENCE', level=3)
     if experiences:
         for exp in experiences:
-            exp_paragraph = add_styled_paragraph(cell_right, f'{exp.tenure_start} - {exp.tenure_end}\n{exp.job_title}\n{exp.company}\n', bold=True, font_size=Pt(12), font_color=RGBColor(54, 95, 145))
+            exp_paragraph = add_styled_paragraph(cell_right, f'{exp.job_title}\n{exp.company}\n{exp.tenure_start} - {exp.tenure_end}', bold=False, font_size=Pt(10), font_color=RGBColor(0, 0, 0))
     else:
         add_styled_paragraph(cell_right, "No work experience provided.", font_size=Pt(10), font_color=RGBColor(77, 77, 77))
 
     # Certifications
-    add_section_heading(cell_right, 'Certifications')
+    add_section_heading(cell_right, '', level=3)
+    add_section_heading(cell_right, 'CERTIFICATIONS', level=3)
     if certifications:
         for cert in certifications:
-            add_styled_paragraph(cell_right, f'{cert.title}\n{cert.training_center}\n{cert.date}', bold=True, font_size=Pt(12), font_color=RGBColor(54, 95, 145))
+            add_styled_paragraph(cell_right, f'{cert.title}\n{cert.training_center}\n{cert.date}', bold=False, font_size=Pt(10), font_color=RGBColor(0, 0, 0))
     else:
         add_styled_paragraph(cell_right, "No certification provided.", font_size=Pt(10), font_color=RGBColor(77, 77, 77))
 
     # Save the document to a temporary file
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.docx') as tmp_file:
+    with NamedTemporaryFile(delete=False, suffix='.docx') as tmp_file:
         doc.save(tmp_file.name)
         tmp_file_path = tmp_file.name
 
-    # Return the generated DOCX file as a downloadable attachment
-    return FileResponse(tmp_file_path, filename=f"Resume_{user.firstname}_{user.lastname}.docx", media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    # Convert the DOCX file to PDF
+    pdf_path = tmp_file_path.replace('.docx', '.pdf')
+    convert(tmp_file_path, pdf_path)
+
+    # Remove the temporary DOCX file
+    os.remove(tmp_file_path)
+
+    # Return the generated PDF file as a downloadable attachment
+    return FileResponse(pdf_path, filename=f"Resume_{user.firstname}_{user.lastname}.pdf", media_type='application/pdf')
 
 
 # UPLOADING PROFILE PICTURE

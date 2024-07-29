@@ -30,13 +30,18 @@
                     <button @click="addQualification">Add Qualification</button>
                 </div>
 
-                <h4>Description</h4>
-                <textarea cols="100" placeholder="Tell us about yourself..." v-model="this.jobDescription"></textarea>
-
-                <div class="modal-buttons">
-                    <button @click="submit_job_postings()">Add Job Posting</button>
-                    <button @click="closeJobPostingModal()">Cancel</button>
+                <div class="form-input">
+                    <h4>Image (Optional)</h4>
+                    <input type="file" accept="image/*">
                 </div>
+            </div>
+
+            <h4>Description</h4>
+            <textarea rows="30" cols="100" placeholder="Tell us about yourself..." v-model="this.jobDescription"></textarea>
+
+            <div class="modal-buttons">
+                <button @click="submit_job_postings()">Add Job Posting</button>
+                <button @click="closeJobPostingModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -57,7 +62,7 @@
                 <p>Listed below are the active job postings.</p>
             </div>
 
-            <div id="top-right-container">
+            <div id="top-right-container" v-if="this.$route.path === '/admin'">
                 <button @click="openJobPostingModal()">Create Job Posting</button>
             </div>
         </div>
@@ -366,14 +371,14 @@ export default {
                 }
             }
         }
-    
-        .modal-buttons {
-            margin-top: 10%;
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-evenly;
-        }
+    }
+
+    .modal-buttons {
+        margin-top: 5%;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
     }
 }
 
