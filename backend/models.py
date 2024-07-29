@@ -16,6 +16,7 @@ class User(Base):
     contact_no = Column(String)
     address = Column(String)
     profile_picture = Column(String)
+    is_active = Column(Boolean, default=False)
 
     resume = relationship('Resume', back_populates='user')
     owner_notifs = relationship('Notification', back_populates='notif_owner')

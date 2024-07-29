@@ -4,6 +4,7 @@ from database import get_database
 
 from models import User, Resume, JobPosting, JobApplication
 from model_classes import UserModel, ProfileModel
+from fastapi.responses import RedirectResponse
 
 import smtplib
 from email.message import EmailMessage
@@ -28,7 +29,7 @@ async def login(username: str, password: str, db: Session = Depends(get_database
         existing_user = db.query(User).filter(User.username == username).first()
         
         if existing_user:
-            if existing_user.password == password:
+            if existing_user.password == password and existing_user.is_active:
                 return { 'response': 'Login successful.', 'user_data': existing_user, 'status_code': 200 }
             
             else:
@@ -85,7 +86,7 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             Username: {user.username}
             Password: {user.password}
 
-            You can log in to your account at the following URL: {https://resumerank-fe.onrender.com/}
+            You can log in to your account at the following URL: {https://resumerank-fe.onrender.com/confirm_account?user_id=new_user.id}
 
             This is an automated message—please do not reply.
 
@@ -103,6 +104,24 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             return { 'response': 'User already exists.', 'status_code': 403 }
     except:
         return { 'response': 'Registration failed.', 'status_code': 400 }
+    
+
+
+@router.get('/confirm_account')
+async def confirm_account(user_id: int, db: Session = Depends(get_database)):
+     # try:
+        user = db.query(User).filter(User.id == user_id).first()
+        
+        user.is_active = True
+        db.commit()
+
+        payload = {}
+        payload.update({ 'user_data': user })
+
+        return RedirectResponse("https://resumerank-fe.onrender.com")
+        
+    # except:
+    #     return { 'response': 'Error retrieving data.', 'status_code': 400 }
     
 
 @router.get('/retrieve_user_data')
