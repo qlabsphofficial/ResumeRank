@@ -42,17 +42,6 @@
                 </div>
             </div>
         </div>
-
-        <div id="all-jobs">
-            <h3>Active Jobs</h3>
-
-            <div class="job" v-for="job in all_jobs" :key="job">
-                <h4>{{ job.job_title }}</h4>
-                <h5>{{ job.date_posted.slice(0, 10) }}</h5>
-                <p class="description">{{ job.description.slice(0, 40) }}...</p>
-                <hr>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -192,7 +181,6 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    overflow-y: scroll;
 }
 
 #main-job {
