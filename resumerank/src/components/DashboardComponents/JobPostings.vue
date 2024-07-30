@@ -27,7 +27,7 @@
                         <button @click="removeQualification(index)">Remove</button>
                     </div>
 
-                    <button @click="addQualification">Add Qualification</button>
+                    <button @click="addQualification('')">Add Qualification</button>
                 </div>
 
                 <div class="form-input">
@@ -146,27 +146,7 @@ export default {
             console.log(job_id);
             
             if (this.image != null && job_id != null){
-                try {
-                    const formData = new FormData();
-                    formData.append('file', this.image);
-                    formData.append('job_id', job_id);
-
-                    const job_response = await fetch(`${current_address}/upload_job_picture`, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'accept': 'application/json'
-                        },
-                    });
-
-                    if (job_response.ok) {
-                        console.log('Job picture uploaded successfully');
-                    } else {
-                        console.error('Failed to upload job picture:', job_response.statusText);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                }
+                this.readImageFile(this.image, job_id);
             }
         },
 
@@ -196,6 +176,38 @@ export default {
         onImageChange(event) {
             const file = event.target.files[0];
             this.image = file;
+        },
+
+        async readImageFile(file, job_id) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.uploadJobPicture(file, job_id);
+            };
+            reader.readAsDataURL(file);
+        },
+
+        async uploadJobPicture(file, job_id){
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('job_id', job_id);
+
+                const job_response = await fetch(`${current_address}/upload_job_picture`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'accept': 'application/json'
+                    },
+                });
+
+                if (job_response.ok) {
+                    console.log('Job picture uploaded successfully');
+                } else {
+                    console.error('Failed to upload job picture:', job_response.statusText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
         }
     },
 

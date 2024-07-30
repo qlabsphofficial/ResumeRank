@@ -7,7 +7,7 @@ from sqlalchemy import desc
 from datetime import datetime
 
 from models import User, Resume, Certification, Experience, JobPosting, JobApplication, JobQualification
-from model_classes import ResumeModel, JobPostingModel, JobPostingID
+from model_classes import PicModel, ResumeModel, JobPostingModel, JobPostingID
 from database import get_database
 
 from pathlib import Path
