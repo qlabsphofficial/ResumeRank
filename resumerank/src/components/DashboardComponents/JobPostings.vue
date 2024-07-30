@@ -146,7 +146,7 @@ export default {
                 try {
                     const formData = new FormData();
                     formData.append('file', this.image);
-                    formData.append('job_id', this.$route.params.user_id);
+                    formData.append('job_id', job_id);
 
                     const job_response = await fetch(`${current_address}/upload_job_picture`, {
                         method: 'POST',
