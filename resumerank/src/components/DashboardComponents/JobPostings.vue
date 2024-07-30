@@ -146,7 +146,7 @@ export default {
             console.log(job_id);
             
             if (this.image != null && job_id != null){
-                this.readImageFile(this.image, job_id);
+                this.uploadJobPicture(this.image, job_id);
             }
         },
 
@@ -176,14 +176,6 @@ export default {
         onImageChange(event) {
             const file = event.target.files[0];
             this.image = file;
-        },
-
-        async readImageFile(file, job_id) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                this.uploadJobPicture(file, job_id);
-            };
-            reader.readAsDataURL(file);
         },
 
         async uploadJobPicture(file, job_id){
