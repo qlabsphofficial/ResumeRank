@@ -32,6 +32,7 @@ class JobPosting(Base):
     date_posted = Column(DateTime, server_default=func.now())
     post_status = Column(Boolean)
     date_expired = Column(DateTime)
+    picture = Column(String)
     
 
     application = relationship('JobApplication', back_populates='job_posting')

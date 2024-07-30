@@ -16,7 +16,7 @@ from docx2pdf import convert
 from datetime import datetime
 
 from models import User, Resume, Certification, Experience, JobPosting, JobApplication
-from model_classes import ProfilePicModel, CertModel, ResumeModel, IdModel, UpdateProfileModel
+from model_classes import PicModel, CertModel, ResumeModel, IdModel, UpdateProfileModel
 from database import get_database
 
 from pathlib import Path

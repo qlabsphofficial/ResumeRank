@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi.exceptions import HTTPException
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
@@ -8,7 +10,15 @@ from models import User, Resume, Certification, Experience, JobPosting, JobAppli
 from model_classes import ResumeModel, JobPostingModel, JobPostingID
 from database import get_database
 
+from pathlib import Path
+
+import shutil
+
+
 router = APIRouter()
+
+JOB_UPLOAD_DIRECTORY = Path("./uploads/job_pictures")
+JOB_UPLOAD_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 
 @router.post('/create_job_posting')
@@ -35,7 +45,7 @@ async def create_job_posting(job: JobPostingModel, db: Session = Depends(get_dat
             
         db.commit()
 
-        return { 'response': 'job created', 'status_code': 200 }
+        return { 'response': 'job created', 'job_id': new_job.id, 'status_code': 200 }
     except:
         return { 'response': 'Error retrieving data.', 'status_code': 400 }
     
@@ -59,6 +69,65 @@ async def delete_job_posting(job: JobPostingID, db: Session = Depends(get_databa
     except:
         return { 'response': 'Error deleting data.', 'status_code': 400 }
         
+
+# UPLOADING JOB PICTURE
+@router.post('/upload_job_picture')
+async def upload_job_picture(job_id: int, file: UploadFile = File(...), db: Session = Depends(get_database)):
+    ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+
+    # Check if the file extension is allowed
+    file_extension = file.filename.split(".")[-1].lower()
+    if file_extension not in ALLOWED_EXTENSIONS:
+        return { 'response': 'Invalid File Type', 'status_code': 400 }
+
+    # Define a unique filename and save path
+    unique_filename = f"job_{job_id}_profile.{file_extension}"
+    file_path = JOB_UPLOAD_DIRECTORY / unique_filename
+
+    # Save the file
+    try:
+        with file_path.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        return { 'response': 'Failed to save profile picture', 'status_code': 400 }
+
+
+    job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
+    if not job:
+        return { 'response': 'Failed to update job info', 'status_code': 400 }
+
+    job.picture = str(file_path)
+    db.commit()
+
+    return {"detail": "Job picture uploaded successfully", "file_path": str(file_path)}
+
+
+@router.get('/get_job_picture/{job_id}')
+async def get_job_picture(job_id: int, db: Session = Depends(get_database)):
+    # Retrieve the user from the database
+    job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
+
+    # Check if the user exists and has a profile picture
+    if not job or not job.picture:
+        raise HTTPException(status_code=404, detail="Job or Job picture not found")
+
+    # Get the file path of the profile picture
+    file_path = JOB_UPLOAD_DIRECTORY / Path(job.picture).name
+
+    # Check if the file exists
+    if not file_path.is_file():
+        raise HTTPException(status_code=404, detail="Job picture file not found")
+
+    # Open the file and return its content
+    with file_path.open("rb") as file:
+        content = file.read()
+
+    # Determine the content type based on the file extension
+    content_type = "image/jpeg" if file_path.suffix.lower() == ".jpg" else "image/png"
+    
+    # Return the file content as a response with appropriate content type
+    return Response(content, media_type=content_type)
+
 
 @router.get('/applied_jobs')
 async def applied_jobs(id: int, db: Session = Depends(get_database)):

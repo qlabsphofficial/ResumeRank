@@ -32,7 +32,7 @@
 
                 <div class="form-input">
                     <h4>Image (Optional)</h4>
-                    <input type="file" accept="image/*">
+                    <input type="file" accept="image/*" @change="onImageChange">
                 </div>
             </div>
 
@@ -106,6 +106,8 @@ export default {
         },
 
         async submit_job_postings() {
+            let job_id = null;
+
             const response = await fetch(`${current_address}/create_job_posting`, {
                 method: 'POST',
                 headers: {
@@ -123,20 +125,45 @@ export default {
 
             if(response.ok){
                 const responseData = await response.json();
-
                 if (responseData.response == 'job created'){
                     this.retrieve_data();
                     this.closeJobPostingModal();
                     this.post_modal_visible = true;
                     this.modal_header = 'Job Posting Saved';
                     this.modal_message = 'Job Posting has been successfully Added.';
+                    job_id = responseData.job_id;
                 }
                 else {
                     console.log('Failed');
                 }
             }
             else {
-                console.log(`Request failed with sStatus ${response.status}`);
+                console.log(`Request failed with Status ${response.status}`);
+            }
+            
+            // UPLOADING IMAGE FOR JOB POSTING
+            if (this.image != null && job_id != null){
+                try {
+                    const formData = new FormData();
+                    formData.append('file', this.image);
+                    formData.append('job_id', this.$route.params.user_id);
+
+                    const job_response = await fetch(`${current_address}/upload_job_picture`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'accept': 'application/json'
+                        },
+                    });
+
+                    if (job_response.ok) {
+                        console.log('Job picture uploaded successfully');
+                    } else {
+                        console.error('Failed to upload job picture:', job_response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             }
         },
 
@@ -162,6 +189,11 @@ export default {
         removeQualification(index) {
             this.qualifications.splice(index, 1);
         },
+
+        onImageChange(event) {
+            const file = event.target.files[0];
+            this.image = file;
+        }
     },
 
     data (){
@@ -174,6 +206,7 @@ export default {
             jobDescription: '',
             qualifications: [''],
             dateExpiration: '',
+            image: null,
 
             post_modal_visible: false,
             modal_header: '',
