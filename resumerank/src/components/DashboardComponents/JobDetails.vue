@@ -10,7 +10,9 @@
 
     <div id="container" class="fade-in-top">
         <div id="main-job">
-            <div id="job-image"></div>
+            <div id="job-image">
+                <img :src="job_picture" alt="Job Picture">
+            </div>
 
             <h2>{{ page_title }}</h2>
             <p>{{ job.date_posted.replace('T', ' ') }}</p>
@@ -89,6 +91,19 @@ export default {
             }     
         },
 
+        async get_job_picture(){
+            const pictureResponse = await fetch(`${current_address}/get_job_picture/${this.job.id}`);
+
+            if (pictureResponse.ok) {
+                const pictureBlob = await pictureResponse.blob();
+                const imageUrl = URL.createObjectURL(pictureBlob);
+
+                this.job_picture = imageUrl;
+            } else {
+                console.error('Failed to retrieve profile picture:', pictureResponse.statusText);
+            }
+        },
+
         sendDataToParent(job){
             this.$emit('send-job-data', { job_data: job });
         },
@@ -133,7 +148,8 @@ export default {
             modal_message: '',
 
             all_jobs: [],
-            qualifications: []
+            qualifications: [],
+            job_picture: ''
         }
     },
     mounted() {

@@ -38,7 +38,6 @@ class JobPostingModel(BaseModel):
     description: str
     post_status: bool
     date_expired : str
-    job_picture: Optional[UploadFile] = Form(None)
     qualifications: List[str]
 
 
@@ -102,9 +101,10 @@ class NotificationModel(BaseModel):
 
 
 #MISC MODELS
-class ProfilePicModel(BaseModel):
-    user_id: int
+class PicModel(BaseModel):
+    id: int
     file: UploadFile
+    
     
 class IdModel(BaseModel):
     id: int
