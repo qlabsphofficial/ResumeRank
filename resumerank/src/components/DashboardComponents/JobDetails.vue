@@ -155,6 +155,7 @@ export default {
     mounted() {
         this.page_title = this.job.job_title;
         this.retrieve_data();
+        this.get_job_picture();
     }
 }
 </script>
