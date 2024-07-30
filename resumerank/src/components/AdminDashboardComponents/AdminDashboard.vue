@@ -8,8 +8,19 @@
                 <h3>Available Job Postings</h3>
                 <div id="all-jobs">
                     <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
-                        <h4>{{ job.job_title }}</h4>
-                        <p>{{ job.description.slice(0, 120) }}...</p>
+                        <div class="credential-header"></div>
+
+                        <div class="credential-details">
+                            <h4>Active Job</h4>
+                            <h3>{{ job.job_title }}</h3>
+
+                            <p>Description {{ job.description.slice(0, 100) }}</p>
+                            <p>Expire Date: {{ job.date_expired.slice(0, 10) }}</p>
+
+                            <div class="remove-credential-container">
+                                <button class="remove-credential-button" @click="removeCertification(certification.id)">View Job</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -107,14 +118,59 @@ export default {
 }
 
 #all-jobs {
-    height: 70%;
+    height: 95%;
     width: 100%;
-    margin-top: 3%;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 1%;
     padding: 2%;
-    border-radius: 15px;
-    box-shadow: 2px 2px 2px 2px #AEAEAE;
-    background-color: white;
     overflow-y: scroll;
+}
+
+.job {
+    height: 400px;
+    width: 30%;
+    background-color: white;
+    margin: 1%;
+    border-radius: 15px;
+    box-shadow: 2px 2px 2px 2px #DFDFDF;
+
+    .credential-header {
+        height: 3%;
+        width: 100%;
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px;
+        background-color: #2c3e50;
+    }
+
+    .credential-details {
+        padding: 5%;
+    }
+
+    .remove-credential-container {
+        width: 100%;
+        margin-top: 20%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .remove-credential-button {
+        width: 60%;
+        background-color: #DE3636;
+        color: white;
+        border: 1px solid transparent;
+        border-radius: 15px;
+        transition: .4s;
+    }
+
+    .remove-credential-button:hover {
+        border: 1px solid #DE3636;
+        background-color: transparent;
+        color: #DE3636;
+    }
 }
 
 #notifications {

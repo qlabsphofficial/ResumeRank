@@ -69,7 +69,8 @@
 
                             <p>{{ experience.company }}</p>
                             <p>Employment Duration:</p>
-                            <p>{{ experience.tenure_start }} to {{ experience.tenure_end }}</p>
+                            <p v-if="experience.tenure_end">{{ experience.tenure_start }} to {{ experience.tenure_end }}</p>
+                            <p v-else>{{ experience.tenure_start }} - Current</p>
 
                             <div class="remove-credential-container">
                                 <button class="remove-credential-button" @click="removeWorkExperience(experience.id)">Remove Experience</button>
@@ -669,10 +670,10 @@ button:hover {
 }
 
 .buttons {
-    width: 80%;
+    width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-evenly;
     margin-top: 5%;
 
     button {

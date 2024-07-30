@@ -94,19 +94,28 @@ async def add_certification(cert_info: CertModel, db: Session = Depends(get_data
 @router.post('/add_experience')
 async def add_experience(exp_info: ExpModel, db: Session = Depends(get_database)):
     try:
-    
-        existing_experience = db.query(Experience).filter(
-            Experience.job_title == exp_info.job_title, 
-            Experience.company == exp_info.company,
-            Experience.tenure_start == datetime.strptime(exp_info.tenure_start, '%Y-%m-%d'), 
-            Experience.tenure_end == datetime.strptime(exp_info.tenure_end, '%Y-%m-%d')).first()
+        if exp_info.tenure_end != '':
+            existing_experience = db.query(Experience).filter(
+                Experience.job_title == exp_info.job_title, 
+                Experience.company == exp_info.company,
+                Experience.tenure_start == datetime.strptime(exp_info.tenure_start, '%Y-%m-%d'),
+                Experience.tenure_end == datetime.strptime(exp_info.tenure_end, '%Y-%m-%d')).first()
+        else:
+            existing_experience = db.query(Experience).filter(
+                Experience.job_title == exp_info.job_title, 
+                Experience.company == exp_info.company,
+                Experience.tenure_start == datetime.strptime(exp_info.tenure_start, '%Y-%m-%d')).first()
+
 
         if not existing_experience:
             new_experience = Experience()
             new_experience.job_title=exp_info.job_title
             new_experience.company=exp_info.company
             new_experience.tenure_start= datetime.strptime(exp_info.tenure_start, '%Y-%m-%d')
-            new_experience.tenure_end= datetime.strptime(exp_info.tenure_end, '%Y-%m-%d')
+            
+            if exp_info.tenure_end != '':
+                new_experience.tenure_end= datetime.strptime(exp_info.tenure_end, '%Y-%m-%d')
+                
             new_experience.resume_id=exp_info.id
             db.add(new_experience)
 
