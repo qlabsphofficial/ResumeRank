@@ -11,14 +11,13 @@
     <div id="container" class="fade-in-top">
         <div id="main-job">
             <div id="job-image">
-                <img :src="job_picture" alt="Job Picture">
+                <img :src="job_picture" alt="Job Picture" height="100%" width="100%" style="border-radius: 15px;">
             </div>
 
-            <h2>{{ page_title }}</h2>
-            <p>{{ job.date_posted.replace('T', ' ') }}</p>
-
-
             <div id="job-info">
+                <h2>{{ page_title }}</h2>
+                <p>{{ job.date_posted.replace('T', ' ') }}</p>
+
                 <div id="job-description-container">
                     <h3>Overview</h3>
                     <p id="description">{{ job.description }}</p>
@@ -37,17 +36,17 @@
                         with a range of luxurious amenities and sustainable design practices.
                     </p>
                 </div>
-            </div>
 
-            <div id="actions">
-                <button @click="apply()">Apply Now</button>
+                <div id="actions">
+                    <button @click="apply()">Apply Now</button>
+                </div>
             </div>
         </div>
 
         <div id="all-jobs">
             <h3>Active Jobs</h3>
 
-            <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
+            <div class="job" v-for="job in all_jobs" :key="job">
                 <h4>{{ job.job_title }}</h4>
                 <h5>{{ job.date_posted.slice(0, 10) }}</h5>
                 <p class="description">{{ job.description.slice(0, 40) }}...</p>
@@ -188,32 +187,36 @@ export default {
 
 #container {
     height: 100%;
-    text-align: left;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
-#main-job {
-    height: 100%;
-    width: 70%;
-    margin-right: 5%;
+    padding-top: 5%;
     text-align: left;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow-y: scroll;
+}
+
+#main-job {
+    height: 100%;
+    width: 100%;
+    margin-bottom: 5%;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 #job-image {
-    height: 15vh;
-    width: 100%;
+    height: 100%;
+    width: 40%;
     background-color: #3B6EA5;
     border-radius: 15px;
 }
 
 #job-info {
-    height: 40vh;
-    overflow-y: scroll;
+    height: 100%;
+    width: 55%;
+    display: flex;
+    flex-direction: column;
 }
 
 #job-description-container {
@@ -225,8 +228,12 @@ export default {
 }
 
 #all-jobs {
-    height: 96%;
-    width: 20%;
+    height: 40%;
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    overflow-x: scroll;
+    overflow-y: hidden;
     padding: 2%;
     background-color: white;
     border-radius: 15px;

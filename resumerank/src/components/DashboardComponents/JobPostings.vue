@@ -142,6 +142,9 @@ export default {
             }
             
             // UPLOADING IMAGE FOR JOB POSTING
+            console.log(this.image);
+            console.log(job_id);
+            
             if (this.image != null && job_id != null){
                 try {
                     const formData = new FormData();

@@ -33,9 +33,9 @@
 
         <h2>Top Applicants</h2>
         <div id="top-applicants">
-            <h3 v-if="this.top_applicants.length == 0 || this.top_applicants == null">No top applicants.</h3>
+            <!-- <h3 v-if="top_applicants.length === 0 || top_applicants == null">No top applicants.</h3> -->
             
-            <div v-else id="all-top-applicants">
+            <div id="all-top-applicants">
                 <div v-for="top_applicant in top_applicants" :key="top_applicant" class="applicant">
                     <h3>{{ top_applicant.applicant.firstname }} {{ top_applicant.applicant.middlename }} {{ top_applicant.applicant.lastname }}</h3>
                     <p class="contact-info">{{ top_applicant.applicant.email }} - {{ top_applicant.applicant.contact_no }}</p>
@@ -68,7 +68,9 @@
 
         <h2>Applicants</h2>
         <div id="applicants">
-            <div v-for="applicant in applicants" :key="applicant" class="applicant">
+            <h3 v-if="applicants.length === 0 || top_applicants == null">No top applicants.</h3>
+            
+            <div v-for="applicant in applicants" :key="applicant.applicant.id" class="applicant">
                 <h3>{{ applicant.applicant.firstname }} {{ applicant.applicant.middlename }} {{ applicant.applicant.lastname }}</h3>
                 <p class="contact-info">{{ applicant.applicant.email }} - {{ applicant.applicant.contact_no }}</p>
 
@@ -82,12 +84,12 @@
 
                     <h5>Certifications</h5>
                     <div class="info">
-                        <li v-for="certification in applicant.certifications" :key="certification">{{ certification.title }}</li>
+                        <li v-for="certification in applicant.certifications" :key="certification.id">{{ certification.title }}</li>
                     </div>
 
                     <h5>Experience</h5>
                     <div class="info">
-                        <li v-for="experience in applicant.experiences" :key="experience">
+                        <li v-for="experience in applicant.experiences" :key="experience.id">
                             {{ experience.job_title }} ({{ experience.tenure_start }} to {{ experience.tenure_end }})
                         </li>
                     </div>
@@ -96,6 +98,7 @@
                 <button class="contact-applicant-btn" @click="notifyApplicant(applicant.applicant.id)">Contact Applicant</button>
             </div>
         </div>
+
     </div>
 </template>
 
