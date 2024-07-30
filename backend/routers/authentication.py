@@ -74,7 +74,7 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             msg = EmailMessage()
             msg['Subject'] = "Registration Confirmation"
             msg['From'] = email_address
-            msg['To'] = user.address
+            msg['To'] = user.email
             msg.set_content(
             f"""\
             Dear {user.firstname} {user.lastname},
@@ -86,7 +86,7 @@ async def register(user: UserModel, db: Session = Depends(get_database)):
             Username: {user.username}
             Password: {user.password}
 
-            You can log in to your account at the following URL: {https://resumerank-fe.onrender.com/confirm_account?user_id=new_user.id}
+            You can log in to your account at the following URL: https://resumerank-fe.onrender.com/confirm_account?user_id={new_user.id}
 
             This is an automated message—please do not reply.
 
