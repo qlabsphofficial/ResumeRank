@@ -33,7 +33,7 @@
 
         <h2>Top Applicants</h2>
         <div id="top-applicants">
-            <!-- <h3 v-if="top_applicants.length === 0 || top_applicants == null">No top applicants.</h3> -->
+            <h3 v-if="!top_applicants|| top_applicants.length === 0">No top applicants.</h3>
             
             <div id="all-top-applicants">
                 <div v-for="top_applicant in top_applicants" :key="top_applicant" class="applicant">
@@ -68,7 +68,7 @@
 
         <h2>Applicants</h2>
         <div id="applicants">
-            <!-- <h3 v-if="applicants.length === 0 || top_applicants == null">No top applicants.</h3> -->
+            <h3 v-if="!top_applicants|| top_applicants.length === 0">No top applicants.</h3>
             
             <div v-for="applicant in applicants" :key="applicant.applicant.id" class="applicant">
                 <h3>{{ applicant.applicant.firstname }} {{ applicant.applicant.middlename }} {{ applicant.applicant.lastname }}</h3>
