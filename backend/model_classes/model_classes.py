@@ -13,7 +13,7 @@ class UserModel(BaseModel):
     address : str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ProfileModel(BaseModel):
@@ -45,10 +45,10 @@ class ExperienceModel(BaseModel):
     job_title: str
     company: str
     tenure_start: str
-    tenure_end: str
+    tenure_end: Optional[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         
 
 class ExpModel(BaseModel):
@@ -66,7 +66,7 @@ class CertificationModel(BaseModel):
     attachment : Optional[UploadFile] = Form(None)
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         
 
 class CertModel(BaseModel):
@@ -88,7 +88,7 @@ class ResumeModel(BaseModel):
     ref_3: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class JobPostingID(BaseModel):
