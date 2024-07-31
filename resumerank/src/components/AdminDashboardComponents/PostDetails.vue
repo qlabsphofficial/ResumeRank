@@ -175,7 +175,7 @@ export default {
             }
         },
 
-        setJobInactive(id){
+        async setJobInactive(id){
             const response = await fetch(`${current_address}/set_job_inactive`, {
                 method: 'POST',
                 headers: {
