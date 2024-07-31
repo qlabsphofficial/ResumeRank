@@ -30,7 +30,7 @@ class JobPosting(Base):
     job_title = Column(String)
     description = Column(String)
     date_posted = Column(DateTime, server_default=func.now())
-    post_status = Column(Boolean)
+    post_status = Column(Boolean, default=True)
     date_expired = Column(DateTime)
     picture = Column(String)
     

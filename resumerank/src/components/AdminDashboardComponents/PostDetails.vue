@@ -22,9 +22,8 @@
         </div>
 
         <div id="post-middle-section">
-            <button>Update Job</button>
-            <button @click="deleteJob()">Delete Job</button>
-            <button>Close Job</button>
+            <button @click="deleteJob(this.job.id)">Delete Job</button>
+            <button @click="setJobInactive(this.job.id)">Close Job</button>
         </div>
 
         <div id="post-bottom-section">
@@ -164,9 +163,35 @@ export default {
             })
 
             const data = await response.json();
-            console.log(data.response);
+            
+            if (data.response == 'job deleted'){
+                this.modal_header = 'Job Deleted';
+                this.modal_message = 'This job has been successfully deleted.';
+                this.delete_post = true;
+                
+                setTimeout(() => {
+                    this.$router.push('/admin');
+                }, 2000)
+            }
+        },
 
-            this.$router.push('/admin');
+        setJobInactive(id){
+            const response = await fetch(`${current_address}/set_job_inactive`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'id': id
+                }),
+            })
+
+            const data = await response.json();
+            
+            if (data.response == 'job deleted'){
+                this.modal_header = 'Job Closed';
+                this.modal_message = 'This job has been successfully rendered inactive.';
+            }
         }
     },
     data (){
@@ -177,7 +202,8 @@ export default {
             modal_header: '',
             modal_message: '',
             modal_visible: false,
-            delete_post: false
+            delete_post: false,
+            buttons_visible: true
         }
     },
     mounted(){

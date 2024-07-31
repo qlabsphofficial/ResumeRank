@@ -68,6 +68,20 @@ async def delete_job_posting(job: JobPostingID, db: Session = Depends(get_databa
             return { 'response': 'job deleted', 'status_code': 200 }
     except:
         return { 'response': 'Error deleting data.', 'status_code': 400 }
+    
+
+@router.post('/set_job_inactive')
+async def set_job_inactive(job: JobPostingID, db: Session = Depends(get_database)):
+    try:
+        job_exists = db.query(JobPosting).filter(JobPosting.id == job.id).first()
+        
+        if job_exists:
+            job_exists.post_status = False
+            db.commit()
+            
+            return { 'response': 'job deleted', 'status_code': 200 }
+    except:
+        return { 'response': 'Error deleting data.', 'status_code': 400 }
         
 
 # UPLOADING JOB PICTURE
@@ -158,7 +172,24 @@ async def show_jobs(db: Session = Depends(get_database)):
         return { 'response': 'jobs retrieved', 'jobs': all_jobs, 'status_code': 200 }
     except:
         return { 'response': 'User Retrieval Failed', 'status_code': 200 }
+
+
+@router.get('/show_active_jobs')
+async def show_active_jobs(db: Session = Depends(get_database)):
+    try:
+        active_jobs = db.query(JobPosting).filter(JobPosting.post_status == True).all()
+        return { 'response': 'active_jobs retrieved', 'active_jobs': active_jobs, 'status_code': 200 }
+    except:
+        return { 'response': 'Active Job Retrieval Failed', 'status_code': 200 }
     
+
+@router.get('/show_inactive_jobs')
+async def show_inactive_jobs(db: Session = Depends(get_database)):
+    try:
+        inactive_jobs = db.query(JobPosting).filter(JobPosting.post_status == False).all()
+        return { 'response': 'inactive_jobs retrieved', 'inactive_jobs': inactive_jobs, 'status_code': 200 }
+    except:
+        return { 'response': 'Inactive Job Retrieval Failed', 'status_code': 200 }
 
 
 @router.get('/retrieve_job_qualifications')
@@ -223,8 +254,11 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
 
                 experience_analysis += f'{experience.job_title}'
                 # experience_analysis += f'{experience.company}'
-
-                difference_in_years = (experience.tenure_end - experience.tenure_start).days // 365
+                
+                if experience.tenure_end is not None:
+                    difference_in_years = (experience.tenure_end - experience.tenure_start).days // 365
+                else:
+                    difference_in_years = (datetime.now() - experience.tenure_start).days // 365
 
                 experience_text = experience_analysis.split()
                 common_words = set(job_desc) & set(experience_text)

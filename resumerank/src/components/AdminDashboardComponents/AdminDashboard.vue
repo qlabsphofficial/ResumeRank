@@ -5,17 +5,36 @@
 
         <div id="dashboard-news">
             <div id="jobs">
-                <h3>Available Job Postings</h3>
-                <div id="all-jobs">
-                    <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
+                <h3>Active Job Postings</h3>
+                <div class="all-jobs">
+                    <div class="job" v-for="active_job in active_jobs" :key="active_job" @click="sendDataToParent(active_job)">
                         <div class="credential-header"></div>
 
                         <div class="credential-details">
                             <h4>Active Job</h4>
-                            <h3>{{ job.job_title }}</h3>
+                            <h3>{{ active_job.job_title }}</h3>
 
-                            <p>Description {{ job.description.slice(0, 100) }}</p>
-                            <p>Expire Date: {{ job.date_expired.slice(0, 10) }}</p>
+                            <p>Description {{ active_job.description.slice(0, 100) }}</p>
+                            <p>Expire Date: {{ active_job.date_expired.slice(0, 10) }}</p>
+
+                            <div class="remove-credential-container">
+                                <button class="remove-credential-button" @click="removeCertification(certification.id)">View Job</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Inactive Job Postings</h3>
+                <div class="all-jobs">
+                    <div class="job" v-for="inactive_job in inactive_jobs" :key="inactive_job" @click="sendDataToParent(inactive_job)">
+                        <div class="credential-header"></div>
+
+                        <div class="credential-details">
+                            <h4>Inactive Job</h4>
+                            <h3>{{ inactive_job.job_title }}</h3>
+
+                            <p>Description {{ inactive_job.description.slice(0, 100) }}</p>
+                            <p>Expire Date: {{ inactive_job.date_expired.slice(0, 10) }}</p>
 
                             <div class="remove-credential-container">
                                 <button class="remove-credential-button" @click="removeCertification(certification.id)">View Job</button>
@@ -34,29 +53,42 @@ import current_address from '@/address';
 export default {
     name: 'DashboardContent',
     methods: {
-        async retrieve_data(){
-            const response = await fetch(`${current_address}/show_jobs`);
-            const data = await response.json();
+        async retrieve_dashboard_data(){
+            const active_response = await fetch(`${current_address}/show_active_jobs`);
+            const active_data = await active_response.json();
 
-            if (!response.ok){
+            if (!active_response.ok){
                 console.log('Failed.');
             }
             else{
-                console.log(data.jobs);
-                this.all_jobs = data.jobs;
-            }            
+                console.log(active_data.active_jobs);
+                this.active_jobs = active_data.active_jobs;
+            }     
+            
+            const inactive_response = await fetch(`${current_address}/show_inactive_jobs`);
+            const inactive_data = await inactive_response.json();
+
+            if (!inactive_response.ok){
+                console.log('Failed.');
+            }
+            else{
+                console.log(inactive_data.inactive_jobs);
+                this.inactive_jobs = inactive_data.inactive_jobs;
+            }   
         },
+
         sendDataToParent(job){
             this.$emit('send-job-data', { job_data: job });
         }
     },
     data (){
         return {
-            all_jobs: []
+            active_jobs: [],
+            inactive_jobs: []
         }
     },
     mounted() {
-        this.retrieve_data();
+        this.retrieve_dashboard_data();
     },
 }
 </script>
@@ -106,10 +138,11 @@ export default {
 }
 
 #dashboard-news {
-    height: 80%;
+    height: 100%;
     width: 100%;
     display: flex;
     flex-direction: row;
+    overflow-y: scroll;
 }
 
 #jobs {
@@ -117,9 +150,7 @@ export default {
     width: 100%;
 }
 
-#all-jobs {
-    height: 95%;
-    width: 100%;
+.all-jobs {
     display: flex;
     justify-content: center;
     flex-direction: row;

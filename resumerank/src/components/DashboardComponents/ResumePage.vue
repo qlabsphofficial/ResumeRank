@@ -139,16 +139,16 @@
             <h1>Add Work Experience</h1>
 
             <h5>Job Title</h5>
-            <input type="text" placeholder="Enter certification name..." id="cert-title" v-model="jobTitle">
+            <input type="text" placeholder="Enter job title..." id="cert-title" v-model="jobTitle">
 
             <h5>Company Name</h5>
-            <input type="text" placeholder="Enter training center name..." id="cert-title" v-model="jobCompany">
+            <input type="text" placeholder="Enter company name..." id="cert-title" v-model="jobCompany">
 
             <h5>Start of Service</h5>
             <input type="date" placeholder="Enter start date..." id="cert-title" v-model="jobYears" :max="getCurrentDate()">
 
             <h5>End of Service</h5>
-            <input type="date" placeholder="Enter end date..." id="cert-title" v-model="jobYearEnd" :max="getCurrentDate()">
+            <input type="date" placeholder="Enter end date..." id="cert-title" v-model="jobYearEnd" :min="jobYears" :max="getCurrentDate()">
 
             <div class="buttons">
                 <button @click="submit_experience()">Add Work Experience</button>
