@@ -79,7 +79,7 @@ export default {
 
         sendDataToParent(job){
             this.$emit('send-job-data', { job_data: job });
-        }
+        },
     },
     data (){
         return {

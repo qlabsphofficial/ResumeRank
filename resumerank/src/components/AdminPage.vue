@@ -13,6 +13,16 @@
                 </div>
 
                 <div class="link">
+                    <img src="@/assets/icons/icons8-home-24.png" height="30px" width="30px">
+                    <a @click="changeComponent('AdminDashboard')" class="nav-link">Users</a>
+                </div>
+
+                <div class="link">
+                    <img src="@/assets/icons/icons8-home-24.png" height="30px" width="30px">
+                    <a @click="changeComponent('AdminDashboard')" class="nav-link">Reports</a>
+                </div>
+
+                <div class="link">
                     <img src="@/assets/icons/icons8-briefcase-48.png" height="30px" width="30px">
                     <a @click="changeComponent('JobPostings')" class="nav-link">Job Postings</a>
                 </div>
