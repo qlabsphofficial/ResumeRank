@@ -14,7 +14,7 @@
 
                 <div class="link">
                     <img src="@/assets/icons/icons8-home-24.png" height="30px" width="30px">
-                    <a @click="changeComponent('AdminDashboard')" class="nav-link">Users</a>
+                    <a @click="changeComponent('UserReports')" class="nav-link">Users</a>
                 </div>
 
                 <div class="link">
@@ -43,14 +43,15 @@
 import AdminDashboard from './AdminDashboardComponents/AdminDashboard.vue';
 import JobPostings from './DashboardComponents/JobPostings.vue';
 import PostDetails from './AdminDashboardComponents/PostDetails.vue';
-
+import UserReports from './AdminDashboardComponents/UserReports.vue';
 
 export default {
     name: 'DashboardPage',
     components: {
         AdminDashboard,
         JobPostings,
-        PostDetails
+        PostDetails,
+        UserReports
     },
     methods: {
         changeComponent(componentName){

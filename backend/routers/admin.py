@@ -21,6 +21,61 @@ JOB_UPLOAD_DIRECTORY = Path("./uploads/job_pictures")
 JOB_UPLOAD_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 
+@router.get('/show_users')
+async def show_users(db: Session = Depends(get_database)):
+    try:
+        all_users = db.query(User).all()
+        return { 'response': 'User Retrieval Success', 'users': all_users, 'status_code': 200 }
+    except:
+        return { 'response': 'User Retrieval Failed', 'status_code': 200 }
+
+
+@router.get('/delete_user')
+async def delete_user(user_id: int, db: Session = Depends(get_database)):
+    try:
+        entry = db.query(User).filter(User.id == user_id).first()
+
+        if entry:
+            db.delete(entry)
+            db.commit()
+
+        return { 'response': 'Data Deleted', 'status_code': 200 }
+    except:
+        return { 'response': 'Error deleting data.', 'status_code': 400 }
+
+
+# @router.post('/update_user')
+# async def update_user(user: RegisterModel, db: Session = Depends(get_database)):
+#     try:
+#         existing_user = db.query(User).filter(User.id == user).first()
+
+#         if not existing_user:
+#             new_resume = Resume()
+#             new_resume.resume_owner = resume.resume_owner
+#             new_resume.ed_1 = resume.ed_1
+#             new_resume.ed_2 = resume.ed_2
+#             new_resume.ed_3 = resume.ed_3
+#             new_resume.summary = resume.summary
+#             new_resume.ref_1 = resume.ref_1
+#             new_resume.ref_2 = resume.ref_2
+#             new_resume.ref_3 = resume.ref_3
+#             db.add(new_resume)
+#             db.commit()
+
+#         else:
+#             existing_user.username = resume.resume_owner
+#             existing_user.password = resume.ed_1
+#             existing_user.first_name = resume.ed_2
+#             existing_user.last_name = resume.ed_3
+#             existing_user.contact = resume.summary
+#             existing_user.email = resume.ref_1
+#             db.commit()
+
+#         return { 'response': 'resume submitted', 'status_code': 200 }
+#     except:
+#         return { 'response': 'Error retrieving data.', 'status_code': 400 }
+
+
 @router.post('/create_job_posting')
 async def create_job_posting(job: JobPostingModel, db: Session = Depends(get_database)):
     try:
