@@ -267,7 +267,7 @@ async def show_applications(db: Session = Depends(get_database)):
 
 @router.get('/analyze_resumes')
 async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
-    # try:
+    try:
         job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
         all_applications = db.query(JobApplication).join(Experience, JobApplication.resume == Experience.resume_id) \
             .filter(JobApplication.job == job_id) \
@@ -313,7 +313,7 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
                 if experience.tenure_end is not None:
                     difference_in_years = (experience.tenure_end - experience.tenure_start).days // 365
                 else:
-                    difference_in_years = (datetime.now() - experience.tenure_start).days // 365
+                    difference_in_years = (datetime.now().date() - experience.tenure_start).days // 365
 
                 experience_text = experience_analysis.split()
                 common_words = set(job_desc) & set(experience_text)
@@ -379,8 +379,5 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
         else:
             return { 'response': 'no applicants', 'job': job, 'status_code': 200 }
         
-    # except:
-    #     return { 'response': 'applications Retrieval Failed', 'status_code': 200 }
-
-
-
+    except:
+        return { 'response': 'applications Retrieval Failed', 'status_code': 200 }

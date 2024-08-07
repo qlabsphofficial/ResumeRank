@@ -18,7 +18,7 @@
                             <p>Expire Date: {{ active_job.date_expired.slice(0, 10) }}</p>
 
                             <div class="remove-credential-container">
-                                <button class="remove-credential-button" @click="removeCertification(certification.id)">View Job</button>
+                                <button class="remove-credential-button" >View Job</button>
                             </div>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                             <p>Expire Date: {{ inactive_job.date_expired.slice(0, 10) }}</p>
 
                             <div class="remove-credential-container">
-                                <button class="remove-credential-button" @click="removeCertification(certification.id)">View Job</button>
+                                <button class="remove-credential-button" >View Job</button>
                             </div>
                         </div>
                     </div>
