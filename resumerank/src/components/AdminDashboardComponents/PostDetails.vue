@@ -22,8 +22,8 @@
         </div>
 
         <div id="post-middle-section">
-            <button @click="deleteJob(this.job.id)">Delete Job</button>
-            <button @click="setJobInactive(this.job.id)">Close Job</button>
+            <button v-if="job.post_status == false" @click="setJobInactive(this.job.id)">Restore</button>
+            <button v-else @click="setJobInactive(this.job.id)">Archive</button>
         </div>
 
         <div id="post-bottom-section">

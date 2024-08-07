@@ -81,6 +81,10 @@ export default {
             }
         },
 
+        async readNotifications(){
+            await fetch(`${ current_address }/read_notifications?id=${ this.$route.params.user_id }`);
+        },
+
         async showNotifInfo(job_title) {
             this.modal_visible = true;
             this.job_title = job_title;
@@ -105,6 +109,7 @@ export default {
     },
     mounted() {
         this.getNotifications();
+        this.readNotifications();
     }
 }
 </script>

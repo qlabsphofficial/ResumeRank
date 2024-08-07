@@ -26,12 +26,12 @@ async def create_notification(applicant_id: int, job_title: str, db: Session = D
     except:
         return { 'response': 'Error retrieving data.', 'status_code': 400 }
     
+
     
-    
-@router.get('/get_notification_count/{id}')
+@router.get('/get_notification_count')
 async def get_notification_count(id: int, db: Session = Depends(get_database)):
     try:
-        notif_count = db.query(Notification).filter(Notification.sent_to == id).count()
+        notif_count = db.query(Notification).filter(Notification.sent_to == id, Notification.is_read == False).count()
 
         return {'response': 'retrieval complete.', 'notif_count': notif_count}
     except:
@@ -62,3 +62,14 @@ async def delete_notifications(notification_id: int, db: Session = Depends(get_d
         return { 'response': 'notification deleted.'}
     except:
         return {'response': 'failed to delete notification.'}
+    
+    
+@router.get('/read_notifications')
+async def read_notifications(id: int, db: Session = Depends(get_database)):
+    try:
+        db.query(Notification).filter(Notification.sent_to == id, Notification.is_read == False).update({Notification.is_read: True}, synchronize_session='fetch')
+        db.commit()
+
+        return {'response': 'notifs read.'}
+    except:
+        return {'response': 'failed to read notifs'}

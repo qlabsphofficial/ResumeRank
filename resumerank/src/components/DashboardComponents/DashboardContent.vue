@@ -65,8 +65,6 @@ export default {
             const notifs_response = await fetch(`${ current_address }/show_notifications?id=${ this.$route.params.user_id }`);
             const notifs_data = await notifs_response.json();
 
-            console.log(notifs_data);
-
             if (notifs_response.ok) {
                 this.notifications = notifs_data.notifications;
             }

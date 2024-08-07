@@ -70,7 +70,7 @@
                             <p>{{ experience.company }}</p>
                             <p>Employment Duration:</p>
                             <p v-if="experience.tenure_end">{{ experience.tenure_start }} to {{ experience.tenure_end }}</p>
-                            <p v-else>{{ experience.tenure_start }} - Current</p>
+                            <p v-else>{{ experience.tenure_start }} - Present</p>
 
                             <div class="remove-credential-container">
                                 <button class="remove-credential-button" @click="removeWorkExperience(experience.id)">Remove Experience</button>

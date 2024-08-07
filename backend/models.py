@@ -115,6 +115,7 @@ class Notification(Base):
     job_title = Column(String)
     message = Column(String)
     sent_to = Column(Integer, ForeignKey('users.id'))
+    is_read = Column(Boolean, default=False)
 
     notif_owner = relationship('User', back_populates='owner_notifs')
 

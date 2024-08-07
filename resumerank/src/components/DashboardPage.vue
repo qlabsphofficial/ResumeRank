@@ -15,6 +15,7 @@
                 <div class="link">
                     <img src="@/assets/icons/icons8-notification-48.png" height="30px" width="30px">
                     <a @click="changeComponent('NotificationPage')" class="nav-link">Notifications</a>
+                    <div id="notification-bubble">{{ this.notifications }}</div>
                 </div>
 
                 <div class="link">
@@ -83,6 +84,18 @@ export default {
             }            
         },
 
+        async retrieve_notifications(){
+            const response = await fetch(`${current_address}/get_notification_count?id=${this.user_id}`);
+            const data = await response.json();
+
+            if (!response.ok){
+                console.log('Failed.');
+            }
+            else{
+                this.notifications = data.notif_count;
+            } 
+        },
+
         handleJobData(data){
             this.childData = data.job_data;
             console.log(this.childData);
@@ -93,12 +106,24 @@ export default {
         return {
             currentComponent: ProfilePage,
             user_data: [],
-            childData: {}
+            childData: {},
+            notifications: 0,
+            notificationIntervalId: null
         }
     },
     mounted(){
         this.changeComponent('DashboardContent');
+        this.retrieve_notifications();
         this.retrieve_dashboard_data();
+        
+        this.notificationIntervalId = setInterval(() => {
+            this.retrieve_notifications();
+        }, 15000);
+    },
+    beforeUnmount() {
+        if (this.intervalId) {
+            clearInterval(this.notificationIntervalId);
+        }
     }
 }
 </script>
@@ -161,6 +186,18 @@ export default {
 
     img {
         margin-right: 5%;
+    }
+
+    #notification-bubble {
+        height: 30px;
+        width: 30px;
+        margin-left: 5%;
+        border-radius: 120px;
+        background-color: white;
+        color: #2984CE;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 }
 
