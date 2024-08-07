@@ -27,6 +27,18 @@ async def create_notification(applicant_id: int, job_title: str, db: Session = D
         return { 'response': 'Error retrieving data.', 'status_code': 400 }
     
     
+    
+@router.get('/get_notification_count/{id}')
+async def get_notification_count(id: int, db: Session = Depends(get_database)):
+    try:
+        notif_count = db.query(Notification).filter(Notification.sent_to == id).count()
+
+        return {'response': 'retrieval complete.', 'notif_count': notif_count}
+    except:
+        return {'response': 'retrieval failed.'}
+    
+    
+    
 @router.get('/show_notifications')
 async def get_notifications(id: int, db: Session = Depends(get_database)):
     try:
