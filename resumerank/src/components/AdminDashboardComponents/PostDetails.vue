@@ -126,7 +126,7 @@ export default {
 
         async notifyApplicant(id){
             const response = await fetch(`${current_address}/create_notification?applicant_id=${id}&job_title=${this.job.job_title}`, {
-                method: 'POST',
+                method: 'POST', 
                 headers: {
                     'Content-Type': 'application/json',
                 }
@@ -184,12 +184,36 @@ export default {
             })
 
             const data = await response.json();
+
+            this.job_activate_notification(id);
             
             if (data.response == 'job deleted'){
                 this.modal_header = 'Job Closed';
                 this.modal_message = 'This job has been successfully rendered active.';
                 this.modal_visible = false;
             }
+            
+        },
+
+        async job_activate_notification(id){
+            const response = await fetch(`${current_address}/job_activate_notification?id=${id}&job_title=${this.job.job_title}`, {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.ok){
+                this.modal_header = 'Applicant Notified';
+                this.modal_message = 'A notification has been sent to this applicant.';
+                this.modal_visible = false;
+            }
+            else
+            {
+                this.modal_header = 'Failed to Notify Applicant';
+                this.modal_message = 'The notification could not be sent. Contact your administrator for details.';
+                this.modal_visible = false;
+            } 
         },
 
         async setJobActive(){

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from datetime import datetime
 
-from models import Notification
+from models import Notification, JobApplication
 from database import get_database
 
 
@@ -27,6 +27,23 @@ async def create_notification(applicant_id: int, job_title: str, db: Session = D
         return { 'response': 'Error retrieving data.', 'status_code': 400 }
     
 
+@router.post('/job_activate_notification')
+async def job_activate_notification(id: int, job_title: str, db: Session = Depends(get_database)):
+    try:
+        number_of_applicants = db.query(JobApplication).filter(JobApplication.job == id).all()
+        for applicant in number_of_applicants:
+            new_notification = Notification()
+            new_notification.message = f'Job Posting of {job_title} is open'
+            new_notification.job_title = job_title
+            new_notification.sent_to = applicant.resume
+            
+            db.add(new_notification)
+            db.commit()
+            
+        return { 'response': 'notification created', 'status_code': number_of_applicants }
+    except:
+        return { 'response': 'Error retrieving data.', 'status_code': 400 }
+    
     
 @router.get('/get_notification_count')
 async def get_notification_count(id: int, db: Session = Depends(get_database)):
