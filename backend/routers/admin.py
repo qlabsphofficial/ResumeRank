@@ -137,7 +137,36 @@ async def set_job_inactive(job: JobPostingID, db: Session = Depends(get_database
             return { 'response': 'job deleted', 'status_code': 200 }
     except:
         return { 'response': 'Error deleting data.', 'status_code': 400 }
+    
+    
+    
+@router.post('/archive_user')
+async def archive_user(user_id: JobPostingID, db: Session = Depends(get_database)):
+    try:
+        user_exists = db.query(User).filter(User.id == user_id.id).first()
         
+        if user_exists:
+            user_exists.is_active = False
+            db.commit()
+            
+            return { 'response': 'User Archived', 'status_code': 200 }
+    except:
+        return { 'response': 'Error archiving data.', 'status_code': 400 }
+
+
+@router.post('/restore_user')
+async def restore_user(user_id: JobPostingID, db: Session = Depends(get_database)):
+    try:
+        user_exists = db.query(User).filter(User.id == user_id.id).first()
+        
+        if user_exists:
+            user_exists.is_active = True
+            db.commit()
+            
+            return { 'response': 'User Restored', 'status_code': 200 }
+    except:
+        return { 'response': 'Error restoring data.', 'status_code': 400 }
+
 
 # UPLOADING JOB PICTURE
 @router.post('/upload_job_picture')

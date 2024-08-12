@@ -1,13 +1,4 @@
 <template>
-    <div id="message-modal-container" v-if="message_modal_visible">
-        <div id="message-modal">
-            <h1>{{ this.message_modal_header }}</h1>
-            <p>{{ this.message_modal_text}}</p>
-
-            <button @click="closeMessageModal()">Close</button>
-        </div>
-    </div>
-
     <div id="user-modal-container" v-if="user_modal_visible">
         <div id="user-modal">
            <div id="user-modal-content">
@@ -22,24 +13,10 @@
                     </div>
 
                     <div v-if="!editing_state">
-                        <h2>{{ this.first_name }} {{ this.middle_name }} {{ this.last_name }}</h2>
-
-                        <h3 v-if="this.username">Username: {{ this.username }}</h3>
-                        <h3 v-else>Username: None Provided</h3>
-
-                        <h3 v-if="this.contact">Contact Number: {{ this.contact }}</h3>
-                        <h3 v-else>Contact Number: None Provided</h3>
-
-                        <h3 v-if="this.email">Email: {{ this.email }}</h3>
-                        <h3 v-else>Email: None Provided</h3>
-
-                        <h3 v-if="this.address">Address: {{ this.address }}</h3>
-                        <h3 v-else>Address: None Provided</h3>
-
-                        <h3>Active: {{ this.active }}</h3>
-
-                        <button v-if="this.active" @click="archive_user(this.user_id)">Archive User</button>
-                        <button v-else @click="restore_user(this.user_id)">Restore User</button>
+                        <h2></h2>
+                        <h3>Contact Number: </h3>
+                        <h3>Email: </h3>
+                        <h3>Address: </h3>
                     </div>
 
                     <div v-if="editing_state">
@@ -84,33 +61,11 @@
     </div>
 
     <div id="container">
-        <h1>Users</h1>
+        <h1>Analytics</h1>
         <hr>
 
         <div id="users-container">
-            <table>
-                <tr>
-                    <th>Username</th>
-                    <th>First Name</th>
-                    <th>Middle Name</th>
-                    <th>Last Name</th>
-                    <th>Contact Number</th>
-                    <th>E-mail</th>
-                    <th>Active</th>
-                    <th></th>
-                </tr>
-
-                <tr v-for="user in users" :key="user">
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.firstname }}</td>
-                    <td>{{ user.middlename }}</td>
-                    <td>{{ user.lastname }}</td>
-                    <td>{{ user.contact_no }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.is_active }}</td>
-                    <td><button @click="viewUserProfile(user)">View</button></td>
-                </tr>
-            </table>
+            
         </div>
     </div>
 </template>
@@ -119,7 +74,7 @@
 import current_address from '@/address';
 
 export default {
-    name: 'UserReports',
+    name: 'AnalyticsPage',
     props: {
         user_data: {}
     },
@@ -138,88 +93,19 @@ export default {
             }
         },
 
-        async archive_user(id){
-            const response = await fetch(`${current_address}/archive_user`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    'id': id
-                }),
-            })
-
-            const data = await response.json();
-
-            if (data.response == 'User Archived'){
-                this.closeUserProfileModal();
-                this.message_modal_header = 'User Archived';
-                this.message_modal_text = 'You have successfully archived this user, and the account will be rendered inactive.';
-                this.message_modal_visible = true;
-            }
-            else{
-                this.closeUserProfileModal();
-                this.message_modal_header = 'Failed to Archive User';
-                this.message_modal_text = 'Archiving process has failed. Please try again.';
-                this.message_modal_visible = true;
-            }
-
-            this.retrieve_users();
-        },
-
-        async restore_user(id){
-            const response = await fetch(`${current_address}/restore_user`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    'id': id
-                }),
-            })
-
-            const data = await response.json();
-
-            if (data.response == 'User Restored'){
-                this.closeUserProfileModal();
-                this.message_modal_header = 'User Restored';
-                this.message_modal_text = 'You have successfully restored this user, and the account will be rendered active.';
-                this.message_modal_visible = true;
-            }
-            else{
-                this.closeUserProfileModal();
-                this.message_modal_header = 'Failed to Restore User';
-                this.message_modal_text = 'Restoring process has failed. Please try again.';
-                this.message_modal_visible = true;
-            }
-
-            this.retrieve_users();
-        },
-
         async viewUserProfile(user){
-            this.clearData();
-            this.user_id = user.id;
             this.user_modal_visible = true;
             this.first_name = user.firstname;
             this.middle_name = user.middlename;
             this.last_name = user.lastname;
-            this.username = user.username;
             this.email = user.email;
             this.contact = user.contact_no;
             this.address = user.address;
-            this.active = user.is_active;
         },
 
         closeUserProfileModal(){
             this.user_modal_visible = false;
-            this.editing_state = false;
             this.clearData();
-        },
-
-        closeMessageModal(){
-            this.message_modal_visible = false;
-            this.message_modal_header = '';
-            this.message_modal_text = '';
         },
 
         modifyValues(){
@@ -246,29 +132,7 @@ export default {
     },
     data (){
         return {
-            users: [],
 
-            modal_header: '',
-            modal_message: '',
-            modal_visible: '',
-
-            message_modal_visible: false,
-            message_modal_header: '',
-            message_modal_text: '',
-            user_id: null,
-            
-            user_modal_visible: false,
-            editing_state: false,
-            editing_text: 'Edit',
-
-            first_name: '',
-            middle_name: '',
-            last_name: '',
-            username: '',
-            email: '',
-            contact: '',
-            address: '',
-            active: ''
         }
     },
     mounted() {
@@ -278,7 +142,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#user-modal-container, #message-modal-container {
+#user-modal-container {
     height: 100vh;
     width: 100vw;
     position: absolute;
@@ -289,17 +153,6 @@ export default {
     justify-content: center;
     background-color: rgba(0, 0, 0, .4);
     z-index: 3;
-}
-
-#message-modal {
-    height: 40vh;
-    width: 50vw;
-    border-radius: 15px;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
 #user-modal {
@@ -328,13 +181,6 @@ export default {
         input {
             width: 60%;
         }
-    }
-
-    #user-info {
-        height: 75%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
     }
 
     #user-modal-buttons {
