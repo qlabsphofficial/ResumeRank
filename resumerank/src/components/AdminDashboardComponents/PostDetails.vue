@@ -4,12 +4,13 @@
             <h1>{{ modal_header }}</h1>
             <p>{{ modal_message }}</p>
             
-            <div id="modal-btn" v-if="this.delete_post">
-                <button @click="confirmDelete(job.id)">Confirm</button>
+            <div id="modal-btn" v-if="this.set_post_inactive">
+                <button @click="confirmJobInactive(job.id)">Confirm</button>
                 <button @click="() => { this.modal_visible = false }">Close</button>
             </div>
 
-            <div id="modal-btn-else" v-else>
+            <div id="modal-btn" v-else>
+                <button @click="confirmJobActive(job.id)">Confirm</button>
                 <button @click="() => { this.modal_visible = false }">Close</button>
             </div>
         </div>
@@ -22,8 +23,8 @@
         </div>
 
         <div id="post-middle-section">
-            <button v-if="job.post_status == false" @click="setJobInactive(this.job.id)">Restore</button>
-            <button v-else @click="setJobInactive(this.job.id)">Archive</button>
+            <button v-if="job.post_status == false" @click="setJobActive()">Restore</button>
+            <button v-else @click="setJobInactive()">Archive</button>
         </div>
 
         <div id="post-bottom-section">
@@ -151,31 +152,7 @@ export default {
             this.delete_post = true;
         },
 
-         async confirmDelete(id) {
-            const response = await fetch(`${current_address}/delete_job_posting`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    'id': id
-                }),
-            })
-
-            const data = await response.json();
-            
-            if (data.response == 'job deleted'){
-                this.modal_header = 'Job Deleted';
-                this.modal_message = 'This job has been successfully deleted.';
-                this.delete_post = true;
-                
-                setTimeout(() => {
-                    this.$router.push('/admin');
-                }, 2000)
-            }
-        },
-
-        async setJobInactive(id){
+         async confirmJobInactive(id) {
             const response = await fetch(`${current_address}/set_job_inactive`, {
                 method: 'POST',
                 headers: {
@@ -191,7 +168,41 @@ export default {
             if (data.response == 'job deleted'){
                 this.modal_header = 'Job Closed';
                 this.modal_message = 'This job has been successfully rendered inactive.';
+                this.modal_visible = false;
             }
+        },
+
+        async confirmJobActive(id) {
+            const response = await fetch(`${current_address}/set_job_active`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'id': id
+                }),
+            })
+
+            const data = await response.json();
+            
+            if (data.response == 'job deleted'){
+                this.modal_header = 'Job Closed';
+                this.modal_message = 'This job has been successfully rendered active.';
+                this.modal_visible = false;
+            }
+        },
+
+        async setJobActive(){
+            this.modal_visible = true;
+            this.modal_header = 'Confirm Action';
+            this.modal_message = 'Are you sure you want to restore this job posting?';
+        },
+
+        async setJobInactive(){
+            this.modal_visible = true;
+            this.modal_header = 'Confirm Action';
+            this.modal_message = 'Are you sure you want to archive this job posting?';
+            this.set_post_inactive = true;
         }
     },
     data (){
@@ -202,7 +213,7 @@ export default {
             modal_header: '',
             modal_message: '',
             modal_visible: false,
-            delete_post: false,
+            set_post_inactive: false,
             buttons_visible: true
         }
     },
