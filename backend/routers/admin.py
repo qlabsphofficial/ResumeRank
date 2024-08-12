@@ -181,6 +181,30 @@ async def restore_user(user_id: JobPostingID, db: Session = Depends(get_database
         return { 'response': 'Error restoring data.', 'status_code': 400 }
 
 
+@router.get('/analytics')
+async def analytics(db: Session = Depends(get_database)):
+    try:
+        active_users = db.query(User).filter(User.is_active == True).all()
+        inactive_users = db.query(User).filter(User.is_active == False).all()
+        
+        active_jobs = db.query(JobPosting).filter(JobPosting.post_status == True).all()
+        inactive_jobs = db.query(JobPosting).filter(JobPosting.post_status == False).all()
+        
+        total_applicants = db.query(JobApplication).count()
+        
+        
+        return { 
+            'response': 'User Retrieval Success', 
+            'active_users': active_users,
+            'inactive_users': inactive_users,
+            'active_jobs': active_jobs,
+            'inactive_jobs': inactive_jobs,
+            'total_applicants': total_applicants,
+            'status_code': 200 
+        }
+    except:
+        return { 'response': 'User Retrieval Failed', 'status_code': 200 }
+
 
 # UPLOADING JOB PICTURE
 @router.post('/upload_job_picture')
