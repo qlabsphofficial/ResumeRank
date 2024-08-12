@@ -137,6 +137,20 @@ async def set_job_inactive(job: JobPostingID, db: Session = Depends(get_database
             return { 'response': 'job deleted', 'status_code': 200 }
     except:
         return { 'response': 'Error deleting data.', 'status_code': 400 }
+    
+    
+@router.post('/set_job_active')
+async def set_job_active(job: JobPostingID, db: Session = Depends(get_database)):
+    try:
+        job_exists = db.query(JobPosting).filter(JobPosting.id == job.id).first()
+        
+        if job_exists:
+            job_exists.post_status = True
+            db.commit()
+            
+            return { 'response': 'job deleted', 'status_code': 200 }
+    except:
+        return { 'response': 'Error deleting data.', 'status_code': 400 }
         
 
 # UPLOADING JOB PICTURE
