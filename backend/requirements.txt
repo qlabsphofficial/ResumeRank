@@ -2,3 +2,4 @@ fastapi[all]
 sqlalchemy
 docxtpl
 docx2pdf
+aspose-words
