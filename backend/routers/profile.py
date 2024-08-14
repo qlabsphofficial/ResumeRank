@@ -24,7 +24,7 @@ from pathlib import Path
 import os
 import tempfile
 import shutil
-
+import subprocess
 
 router = APIRouter()
 
@@ -204,14 +204,20 @@ async def export_resume_to_word(user_id: int, db: Session = Depends(get_database
         tmp_file_path = tmp_file.name
 
     # Convert the DOCX file to PDF
-    pdf_path = tmp_file_path.replace('.docx', '.pdf')
-    convert(tmp_file_path, pdf_path)
+    try:
+        subprocess.run(['libreoffice', '--headless', '--convert-to', 'pdf', tmp_file_path], check=True)
+        print(f"Successfully converted {tmp_file_path} to PDF.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error during conversion: {e}")
+        
+    # pdf_path = tmp_file_path.replace('.docx', '.pdf')
+    # convert(tmp_file_path, pdf_path)
 
     # Remove the temporary DOCX file
     os.remove(tmp_file_path)
 
     # Return the generated PDF file as a downloadable attachment
-    return FileResponse(pdf_path, filename=f"Resume_{user.firstname}_{user.lastname}.pdf", media_type='application/pdf')
+    return FileResponse(tmp_file_path, filename=f"Resume_{user.firstname}_{user.lastname}.pdf", media_type='application/pdf')
 
 
 # UPLOADING PROFILE PICTURE

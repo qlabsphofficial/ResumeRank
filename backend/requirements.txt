@@ -2,3 +2,4 @@ fastapi[all]
 sqlalchemy
 docxtpl
 docx2pdf
+apt-get update && apt-get install -y libreoffice
