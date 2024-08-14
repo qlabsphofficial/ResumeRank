@@ -100,8 +100,8 @@ export default {
                 console.log('Failed.');
             }
             else{
-                console.log(data.jobs);
-                this.all_jobs = data.jobs;
+                console.log(data.active_jobs);
+                this.all_jobs = data.active_jobs;
             }            
         },
 
