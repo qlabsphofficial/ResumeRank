@@ -166,8 +166,8 @@ async def show_resumes(db: Session = Depends(get_database)):
 async def retrieve_resume_data(user_id: int, db: Session = Depends(get_database)):
     try:
         resume = db.query(Resume).filter(Resume.resume_owner == user_id).first()
-        experiences = db.query(Experience).filter(Experience.resume_id == resume.id).all()
-        certifications = db.query(Certification).filter(Certification.resume_id == resume.id).all()
+        experiences = db.query(Experience).filter(Experience.resume_id == user_id).all()
+        certifications = db.query(Certification).filter(Certification.resume_id == user_id).all()
 
         return { 
             'response': 'resume retrieved', 
