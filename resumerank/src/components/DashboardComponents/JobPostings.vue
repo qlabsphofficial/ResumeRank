@@ -93,7 +93,7 @@ export default {
     name: 'JobPostings',
     methods: {
         async retrieve_data(){
-            const response = await fetch(`${current_address}/show_jobs`);
+            const response = await fetch(`${current_address}/show_active_jobs`);
             const data = await response.json();
 
             if (!response.ok){
