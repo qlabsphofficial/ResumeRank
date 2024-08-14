@@ -432,6 +432,8 @@ export default {
     },
     created() {
         this.retrieve_resume_data();
+        this.retrieve_certification_data();
+        this.retrieve_experience_data();
     },
 }
 </script>
