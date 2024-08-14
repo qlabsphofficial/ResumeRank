@@ -398,6 +398,8 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
 
                 experience_text = experience_analysis.split()
                 common_words = set(job_desc) & set(experience_text)
+                
+                print(f'Experience commonalities: {common_words}')
 
                 if len(common_words) > 0:
                     current_points += difference_in_years * 50
@@ -417,6 +419,8 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
 
                 certification_text = certification_analysis.split()
                 common_words = set(job_desc) & set(certification_text)
+                
+                print(f'Certification commonalities: {common_words}')
 
                 if len(common_words) > 0:
                     current_points += 50
