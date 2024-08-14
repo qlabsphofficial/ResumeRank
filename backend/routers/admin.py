@@ -403,7 +403,7 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
                 print(f'Experience commonalities: {common_words}')
 
                 if len(common_words) > 0:
-                    current_points += difference_in_years * 50
+                    current_points += difference_in_years * 75
                 else:
                     current_points += difference_in_years * 20
 
