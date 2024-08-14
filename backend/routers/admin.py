@@ -296,6 +296,19 @@ async def show_jobs(db: Session = Depends(get_database)):
         return { 'response': 'User Retrieval Failed', 'status_code': 200 }
 
 
+@router.post('/edit_posting_desc')
+async def edit_posting_desc(id: int, desc: str, db: Session = Depends(get_database)):
+    try:
+        job = db.query(JobPosting).filter(JobPosting.id == id).first()
+        
+        job.description = desc
+        db.commit()
+        
+        return { 'response': 'job description modified', 'status_code': 200 }
+    except:
+        return { 'response': 'job description modification failed', 'status_code': 200 }
+
+
 @router.get('/show_active_jobs')
 async def show_active_jobs(db: Session = Depends(get_database)):
     try:
