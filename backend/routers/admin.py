@@ -372,6 +372,7 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
             elif resume.ed_1 or resume.ed_2 or resume.ed_3:
                 current_points += 10
 
+            print(f'Current Points (Educ Section): {current_points}')
             resume_analysis += f'{resume.summary}'
 
             resume_text = resume_analysis.split()
@@ -403,6 +404,7 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
                 else:
                     current_points += difference_in_years * 20
 
+            print(f'Current points (Exp Section): {current_points}')
             
             # RATE APPLICANT BASED ON CERTIFICATIONS / ACHIEVEMENTS
             certifications = db.query(Certification).filter(Certification.resume_id == resume.resume_owner).all()
@@ -424,12 +426,14 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
                 if certification.attachment:
                     current_points += 10
 
+            print(f'Current Points (Cert Section): {current_points}')
+            
             # CHECK IF APPLICANT IS A TOP APPLICANT
             applicant = db.query(User).filter(User.id == resume.resume_owner).first()
             
             print(f'Points for Applicant {applicant.username} is: {current_points}')
             
-            if current_points >= 300:    
+            if current_points >= 250:    
                 top_applicants.append({
                     'applicant': applicant, 
                     'applicant_resume': resume, 
