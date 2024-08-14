@@ -354,6 +354,7 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
             .join(Certification, JobApplication.resume == Certification.resume_id).all()
         
         job_desc = job.description.split()
+        job_desc_lower = [word.lower() for word in job_desc]
         
         applicants = []
         top_applicants = []
@@ -396,8 +397,8 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
                 else:
                     difference_in_years = (datetime.now().date() - experience.tenure_start).days // 365
 
-                experience_text = experience_analysis.split()
-                common_words = set(job_desc) & set(experience_text)
+                experience_text = experience_analysis.lower().split()
+                common_words = set(job_desc_lower) & set(experience_text)
                 
                 print(f'Experience commonalities: {common_words}')
 
@@ -417,8 +418,8 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
                 certification_analysis += f'{certification.title}'
                 # certification_analysis += f'{certification.training_center}'
 
-                certification_text = certification_analysis.split()
-                common_words = set(job_desc) & set(certification_text)
+                certification_text = certification_analysis.lower().split()
+                common_words = set(job_desc_lower) & set(certification_text)
                 
                 print(f'Certification commonalities: {common_words}')
 
