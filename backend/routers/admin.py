@@ -427,7 +427,9 @@ async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
             # CHECK IF APPLICANT IS A TOP APPLICANT
             applicant = db.query(User).filter(User.id == resume.resume_owner).first()
             
-            if current_points > 350:    
+            print(f'Points for Applicant {applicant.username} is: {current_points}')
+            
+            if current_points >= 300:    
                 top_applicants.append({
                     'applicant': applicant, 
                     'applicant_resume': resume, 
