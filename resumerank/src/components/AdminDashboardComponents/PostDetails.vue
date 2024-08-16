@@ -56,7 +56,8 @@
                         <h5>Experience</h5>
                         <div class="info">
                             <li v-for="experience in top_applicant.experiences" :key="experience">
-                                {{ experience.job_title }} ({{ experience.tenure_start }} to {{ experience.tenure_end }})
+                                {{ experience.job_title }} ({{ experience.tenure_start }} to 
+                                {{ experience.tenure_end ? experience.tenure_end : 'Present' }})
                             </li>
                         </div>
                     </div>
