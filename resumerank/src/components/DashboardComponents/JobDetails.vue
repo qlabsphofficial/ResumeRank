@@ -205,6 +205,7 @@ export default {
     width: 55%;
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
 }
 
 #job-description-container {

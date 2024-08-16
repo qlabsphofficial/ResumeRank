@@ -270,6 +270,9 @@ export default {
         closeCertModal(){
             this.certModalOpen = false;
             this.modalOpen = false;
+            this.certTitle = '';
+            this.certLocation = '';
+            this.certIssuedDate = '';
         },
 
         closeInfoModal(){
@@ -307,7 +310,7 @@ export default {
                     this.modal_message = 'Certification has been successfully updated.';
                     
                     this.retrieve_certification_data();
-                    this.closeCertModal()
+                    this.closeCertModal();
                 }
                 else {
                     console.log('Failed');
@@ -398,6 +401,10 @@ export default {
         closeWorkModal(){
             this.workModalOpen = false;
             this.modalOpen = false;
+            this.jobTitle = '';
+            this.jobCompany = '';
+            this.jobYears = '';
+            this.jobYearEnd = '';
         },
     },
     data (){

@@ -44,37 +44,6 @@ async def delete_user(user_id: int, db: Session = Depends(get_database)):
         return { 'response': 'Error deleting data.', 'status_code': 400 }
 
 
-# @router.post('/update_user')
-# async def update_user(user: RegisterModel, db: Session = Depends(get_database)):
-#     try:
-#         existing_user = db.query(User).filter(User.id == user).first()
-
-#         if not existing_user:
-#             new_resume = Resume()
-#             new_resume.resume_owner = resume.resume_owner
-#             new_resume.ed_1 = resume.ed_1
-#             new_resume.ed_2 = resume.ed_2
-#             new_resume.ed_3 = resume.ed_3
-#             new_resume.summary = resume.summary
-#             new_resume.ref_1 = resume.ref_1
-#             new_resume.ref_2 = resume.ref_2
-#             new_resume.ref_3 = resume.ref_3
-#             db.add(new_resume)
-#             db.commit()
-
-#         else:
-#             existing_user.username = resume.resume_owner
-#             existing_user.password = resume.ed_1
-#             existing_user.first_name = resume.ed_2
-#             existing_user.last_name = resume.ed_3
-#             existing_user.contact = resume.summary
-#             existing_user.email = resume.ref_1
-#             db.commit()
-
-#         return { 'response': 'resume submitted', 'status_code': 200 }
-#     except:
-#         return { 'response': 'Error retrieving data.', 'status_code': 400 }
-
 
 @router.post('/create_job_posting')
 async def create_job_posting(job: JobPostingModel, db: Session = Depends(get_database)):
@@ -349,15 +318,15 @@ async def show_applications(db: Session = Depends(get_database)):
 async def analyze_resumes(job_id: int, db: Session = Depends(get_database)):
     try:
         job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
-        all_applications = db.query(JobApplication).join(Experience, JobApplication.resume == Experience.resume_id) \
-            .filter(JobApplication.job == job_id) \
-            .join(Certification, JobApplication.resume == Certification.resume_id).all()
+        all_applications = db.query(JobApplication).filter(JobApplication.job == job_id).all()
         
         job_desc = job.description.split()
         job_desc_lower = [word.lower() for word in job_desc]
         
         applicants = []
         top_applicants = []
+        
+        print(all_applications)
         
         for application in all_applications:
             resume = db.query(Resume).join(User).filter(Resume.id == application.resume).filter(User.id == Resume.resume_owner).first()
