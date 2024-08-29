@@ -3,7 +3,12 @@
         <h1>Dashboard</h1>
 
         <div id="dashboard-info-container">
-            <h2>Recently Applied Job Postings</h2>
+            
+            <div class="section-header">
+                <img src="@/assets/icons/icons8-apply-50.png" alt="" height="24px" width="24px">
+                <h2>Recently Applied Job Postings</h2>
+            </div>
+
             <div class="applied-job" v-for="applied_job in applied_jobs" :key="applied_job">
                 <h4>{{ applied_job.job_title }}</h4>
                 <p>{{ applied_job.date_posted.slice(0, 10) }}</p>
@@ -13,7 +18,10 @@
 
         <div id="dashboard-news">
             <div id="jobs">
-                <h2>Available Job Postings</h2>
+                <div class="section-header">
+                    <img src="@/assets/icons/icons8-check-mark-50.png" alt="" height="24px" width="24px">
+                    <h2>Available Job Postings</h2>
+                </div>        
 
                 <div id="all-jobs">
                     <div class="job" v-for="job in all_jobs" :key="job" @click="sendDataToParent(job)">
@@ -27,7 +35,10 @@
             </div>
 
             <div id="notifications">
-                <h2>Recent Notifications</h2>
+                <div class="section-header">
+                    <img src="@/assets/icons/icons8-notification-50.png" alt="" height="24px" width="24px">
+                    <h2>Recent Notifications</h2>
+                </div>  
 
                 <div id="all-notifs">
                     <h3 v-if="notifications.length === 0">No notifications.</h3>
@@ -138,6 +149,16 @@ export default {
     }
 }
 
+.section-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    h2 {
+        margin-left: 1%;
+    }
+}
+
 .applied-job {
     width: 90%;
     background-color: white;
@@ -162,20 +183,19 @@ export default {
 #dashboard-news {
     height: 60%;
     width: 100%;
-    margin-top: 1%;
+    margin-top: 3%;
     display: flex;
     flex-direction: row;
 }
 
 #jobs {
     height: 100%;
-    width: 65%;
+    width: 60%;
 }
 
 #all-jobs {
     height: 70%;
     width: 100%;
-    margin-top: 3%;
     padding: 2%;
     overflow-y: scroll;
 }

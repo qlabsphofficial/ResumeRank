@@ -44,7 +44,7 @@
             <h3 v-if="all_notifs.length == 0">No Notifications.</h3>
 
             <div id="all-notifs" v-else>
-                <div v-for="notif in all_notifs" :key="notif" class="notif" @click="showNotifInfo(notif.job_title)">
+                <div v-for="notif in all_notifs" :key="notif" class="notif" @click="showNotifInfo(notif.job_title, notif.message)">
                     <h3>{{ notif.message }}</h3>
 
                     <div class="notif-info">
@@ -85,10 +85,11 @@ export default {
             await fetch(`${ current_address }/read_notifications?id=${ this.$route.params.user_id }`);
         },
 
-        async showNotifInfo(job_title) {
-            this.modal_visible = true;
-            this.job_title = job_title;
-
+        async showNotifInfo(job_title, notif_message) {
+            if (notif_message == "Application Reviewed"){
+                this.modal_visible = true;
+                this.job_title = job_title;
+            }
         },
 
         closeInfoModal() {

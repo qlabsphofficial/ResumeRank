@@ -254,7 +254,7 @@ export default {
 }
 
 #jobs {
-    height: 80%;
+    height: 75%;
     width: 96%;
     margin-top: 1%;
     padding: 2%;

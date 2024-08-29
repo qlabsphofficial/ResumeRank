@@ -82,7 +82,7 @@
             </div>
 
             <h3>About</h3>
-            <textarea rows="20" cols="130" placeholder="Tell us about yourself..." v-model="this.summary"></textarea>
+            <textarea rows="20" cols="160" placeholder="Tell us about yourself..." v-model="this.summary"></textarea>
 
             <h3>Reference</h3>
             <div class="user-info-form">
@@ -635,6 +635,7 @@ export default {
 
 textarea {
     border: 1px solid #CBCBCB;
+    border-radius: 10px;
     outline: none;
     padding: 2%;
     resize: none;

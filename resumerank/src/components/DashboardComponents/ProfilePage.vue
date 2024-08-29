@@ -1,73 +1,109 @@
 <template>
+    <div id="edit-container" v-if="this.profile_edit_permission">
+        <div id="edit-modal">
+            <h3>Edit Profile Information</h3>
+
+            <div id="profile-info">
+                <label for="">First Name</label>
+                <input type="text" v-model="this.firstname" placeholder="First name...">
+    
+                <label for="">Middle Name</label>
+                <input type="text" v-model="this.middlename" placeholder="Middle name...">
+    
+                <label for="">Last Name</label>
+                <input type="text" v-model="this.lastname" placeholder="Last name...">
+    
+                <label for="">Email</label>
+                <input type="email" v-model="this.email" placeholder="Email...">
+    
+                <label for="">Password</label>
+                <input type="password" v-model="this.password" placeholder="Password...">
+            </div>
+    
+            <div id="edit-profile-buttons">
+                <button @click="saveNewInfo()">Save</button>
+                <button @click="stopModification()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div id="container" class="fade-in-top">
         <h1>Profile</h1>
         <p>General User Information / Resume Data</p>
 
         <div id="profile-container">
-            <div id="left-panel">
-                <div id="profile-main-details">
-                    <div id="profile-edit">
-                        <div id="profile-pic" @click="triggerFileInput()">
-                            <img v-if="profilePicture" :src="profilePicture" alt="Profile Picture" id="profile-image"/>
-                            <input type="file" ref="fileInput" @change="handleFileChange" accept="image/*" style="display: none;" />
-                        </div>
-                    </div>
-
-                    <div id="profile-main-text">
-                        <h2>{{ this.fn }} {{ this.mn }} {{ this.ln }}</h2>
-                        <p>{{ this.user_email }}</p>
-
-
-                        <button @click="modifyUserInfo()" v-if="this.profile_edit_permission">Edit Profile</button>
+            <div id="profile-main-details">
+                <div id="profile-edit">
+                    <div id="profile-pic" @click="triggerFileInput()">
+                        <img v-if="profilePicture" :src="profilePicture" alt="Profile Picture" id="profile-image"/>
+                        <input type="file" ref="fileInput" @change="handleFileChange" accept="image/*" style="display: none;" />
                     </div>
                 </div>
 
-                <div id="profile-info">
-                    <label for="">First Name</label>
-                    <input type="text" v-model="this.firstname" placeholder="First name..." :disabled="this.profile_edit_permission">
+                <div id="profile-main-text">
+                    <h2>{{ this.fn }} {{ this.mn }} {{ this.ln }}</h2>
+                    <p>{{ this.user_email }}</p>
 
-                    <label for="">Middle Name</label>
-                    <input type="text" v-model="this.middlename" placeholder="Middle name..." :disabled="this.profile_edit_permission">
-
-                    <label for="">Last Name</label>
-                    <input type="text" v-model="this.lastname" placeholder="Last name..." :disabled="this.profile_edit_permission">
-
-                    <label for="">Email</label>
-                    <input type="email" v-model="this.email" placeholder="Email..." :disabled="this.profile_edit_permission">
-
-                    <label for="">Password</label>
-                    <input type="password" v-model="this.password" placeholder="Password..." :disabled="this.profile_edit_permission">
-                </div>
-
-                <div id="edit-profile-buttons" v-if="!this.profile_edit_permission">
-                    <button @click="saveNewInfo()">Save</button>
-                    <button @click="stopModification()">Cancel</button>
+                    <div id="profile-edit-buttons">
+                        <button @click="modifyUserInfo()">Edit Profile</button>
+                        <button @click="export_resume_to_word()">Export to PDF</button>
+                    </div>
                 </div>
             </div>
 
-            <div id="right-panel">
-                <h4>My Information</h4>
-                <div id="all-info">
-                    <h5>Education</h5>
-                    <div class="info">
-                        <p>Primary - {{ this.ed1 }}</p>
-                        <p>Secondary - {{ this.ed2 }}</p>
-                        <p>College / University - {{ this.ed3 }}</p>
-                    </div>
+            <div class="section-header" style="margin-top: 1.5%;">           
+                <img src="@/assets/icons/icons8-summary-58.png" height="24px" width="24px">  
+                <h3>Summary</h3>
+            </div>
+            <p>{{ this.summary }}</p>
 
-                    <h5>Certifications</h5>
-                    <div class="info">
-                        <li v-for="certification of certifications" :key="certification">{{ certification.title }}</li>
-                    </div>
+            <div class="section-header" style="margin-top: 3%;">           
+                <img src="@/assets/icons/icons8-education-24.png" height="24px" width="24px">  
+                <h3>Education</h3>
+            </div>
 
-                    <h5>Experiences</h5>
-                    <div class="info">
-                        <li v-for="experience of experiences" :key="experience">{{ experience.job_title }}</li>
-                    </div>
-                </div>
+            <div class="education">
+                <h4>Primary</h4>
+                <p>{{ this.ed1 }}</p>
 
-                <div id="export-to-word">
-                    <button @click="export_resume_to_word()">Export to PDF</button>
+                <h4>Secondary</h4>
+                <p>{{ this.ed2 }}</p>
+
+                <h4>College / University</h4>
+                <p>{{ this.ed3 }}</p>
+            </div>
+
+            <div class="section-header" style="margin-top: 3%;">
+                <img src="@/assets/icons/icons8-certificate-50.png" height="24px" width="24px">  
+                <h3>Trainings and Certifications</h3>
+            </div>
+            
+            <div class="info">
+                <table>
+                    <tr>
+                        <th>Certification</th>
+                        <th>Certifier / Training Center</th>
+                        <th>Date Issued</th>
+                    </tr>
+
+                    <tr v-for="certification of certifications" :key="certification">
+                        <td>{{ certification.title }}</td>
+                        <td>{{ certification.training_center }}</td>
+                        <td>{{ certification.date }}</td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <div class="section-header" style="margin-top: 3%;">
+                <img src="@/assets/icons/icons8-work-50.png" height="24px" width="24px">  
+                <h3>Work Experience</h3>
+            </div>
+
+            <div class="info">
+                <div v-for="experience of experiences" :key="experience" class="experience">
+                    <h4>{{ experience.job_title }}</h4>
+                    <p>{{ experience.company }}</p>
                 </div>
             </div>
         </div>
@@ -100,6 +136,7 @@ export default {
             const data = await response.json();
 
             if (response.ok){
+                this.summary = data.resume.summary;
                 this.ed1 = data.resume.ed_1;
                 this.ed2 = data.resume.ed_2;
                 this.ed3 = data.resume.ed_3;
@@ -134,7 +171,7 @@ export default {
         },
 
         modifyUserInfo(){
-            this.profile_edit_permission = false;
+            this.profile_edit_permission = true;
         },
 
         async saveNewInfo(){
@@ -172,7 +209,7 @@ export default {
         },
 
         stopModification(){
-            this.profile_edit_permission = true;
+            this.profile_edit_permission = false;
         },
 
         // PROFILE PICTURE UPLOADING
@@ -247,13 +284,14 @@ export default {
             firstname: '',
             middlename: '',
             lastname: '',
+            summary: '',
             ed1: '',
             ed2: '',
             ed3: '',
             tr1: '',
             tr2: '',
             tr3: '',
-            profile_edit_permission: true,
+            profile_edit_permission: false,
             certifications: [],
             experiences: []
         }
@@ -269,6 +307,52 @@ export default {
 <style scoped lang="scss">
 @import '@/assets/global/styles.scss';
 
+#edit-container {
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba($color: #000000, $alpha: .6);
+    z-index: 10;
+}
+
+#edit-modal {
+    height: 70%;
+    width: 40%;
+    padding: 2%;
+    background-color: white;
+    border-radius: 15px;
+    text-align: left;
+
+    #profile-info {
+        display: flex;
+        flex-direction: column;
+        height: 70%;
+        width: 100%;
+        margin-top: 5%;
+
+        label {
+            font-weight: bold;
+        }
+    
+        input {
+            margin-top: 1%;
+            margin-bottom: 3%;
+            height: 4vh;
+            width: 90%;
+            border: none;
+            border-radius: 15px;
+            background-color: #DCE5EA;
+            padding: 2%;
+            box-sizing: border-box; /* Ensure consistent box sizing */
+        }
+    }
+}
+
 #container {
     height: 100%;
     width: 100%;
@@ -276,11 +360,13 @@ export default {
 }
 
 #profile-container {
-    height: 85%;
-    width: 100%;
+    height: 81%;
+    width: 96%;
+    padding: 2%;
     margin-top: 3%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    overflow-y: scroll;
 }
 
 #profile-main-details {
@@ -288,7 +374,7 @@ export default {
     flex-direction: row;
     align-items: center;
     height: 60%;
-    width: 100%;
+    width: 40%;
     margin-bottom: 5%;
 }
 
@@ -312,46 +398,70 @@ export default {
 }
 
 #profile-main-text {
-    margin-left: 15%;
+    margin-left: 12.5%;
     height: 100%;
     width: 80%;
-}
 
-#profile-info {
-    display: flex;
-    flex-direction: column;
-    height: 80%;
-    width: 100%;
+    h2 {
+        line-height: 0;
+    }
 
-    input {
-        margin-top: 1%;
-        margin-bottom: 3%;
-        height: 4vh;
-        width: 90%;
-        border: none;
-        border-radius: 15px;
-        background-color: #DCE5EA;
-        padding: 2%;
-        box-sizing: border-box; /* Ensure consistent box sizing */
+    #profile-edit-buttons {
+        width: 70%;
+        margin-top: 3%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        button {
+            width: 45%;
+        }
     }
 }
 
 #edit-profile-buttons {
     display: flex;
     justify-content: space-evenly;
-    margin-top: 5%;
+    margin-top: 10%;
 }
 
-#left-panel {
-    height: 100%;
-    width: 40%;
+.section-header {
+    height: 9%;
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+
+    h3 {
+        margin-left: 2.5%;
+    }
 }
 
-#right-panel {
-    height: 100%;
-    width: 60%;
+table {
+    width: 100%;
+
+    th, td {
+        padding: 1%;
+    }
+}
+
+.education {
+    h4 {
+        line-height: 0;
+    }
+
+    p {
+        margin-bottom: 3%;
+    }
+}
+
+.experience {
+    margin-bottom: 3%;
+
+    h4 {
+        line-height: 0;
+    }
 }
 
 #profile-pic {
@@ -372,26 +482,21 @@ export default {
     object-fit: cover;
 }
 
-#all-info {
-    height: 80%;
-    overflow-y: scroll;
-}
-
 #export-to-word {
     height: 10%;
-    margin-top: 5%;
+    margin-top: 2%;
     display: flex;
     flex-direction: row-reverse;
 }
 
-#all-info::-webkit-scrollbar {
+#profile-container::-webkit-scrollbar {
     width: 8px;
     border-radius: 15px;
     background-color: #EEE;
     scroll-behavior: smooth;
 }
 
-#all-info::-webkit-scrollbar-thumb {
+#profile-container::-webkit-scrollbar-thumb {
     background-color: #2984CE;
     border-radius: 15px;
 }
