@@ -100,10 +100,19 @@
                 <h3>Work Experience</h3>
             </div>
 
-            <div class="info">
+            <div style="margin-top: 3%;">
                 <div v-for="experience of experiences" :key="experience" class="experience">
-                    <h4>{{ experience.job_title }}</h4>
-                    <p>{{ experience.company }}</p>
+                    <div class="exp-left">
+                        <p>{{ experience.tenure_start }}</p>
+                        <div class="divider"></div>
+                        <p v-if="experience.tenure_end">{{ experience.tenure_end }}</p>
+                        <p v-else>Current</p>
+                    </div>
+
+                    <div class="exp-right">
+                        <h4>{{ experience.job_title }}</h4>
+                        <p>{{ experience.company }}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -457,10 +466,48 @@ table {
 }
 
 .experience {
+    height: 15%;
+    display: flex;
+    flex-direction: row;
     margin-bottom: 3%;
 
     h4 {
         line-height: 0;
+    }
+
+    .exp-left {
+        height: 100%;
+        width: 10%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        p {
+            line-height: 0;
+        }
+
+        .divider {
+            height: 75px;
+            width: 5px;
+            background-color: rgba($color: #000000, $alpha: .1);
+        }
+    }
+
+    .exp-right {
+        height: 100%;
+        width: 60%;
+        margin-left: 3%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        h4 {
+            line-height: 0;
+        }
+
+        p {
+            line-height: 0;
+        }
     }
 }
 

@@ -11,7 +11,12 @@
     <div id="container" class="fade-in-top">
         <div id="main-job">
             <div id="job-image">
-                <img :src="job_picture" alt="Job Picture" height="100%" width="100%" style="border-radius: 15px;">
+                <img 
+                    :src="job_picture ? job_picture : require('@/assets/icons/ResumeRankLogo3.png')" 
+                    alt="Job Image" 
+                    :class="{'full-size': job_picture, 'small-size': !job_picture}" 
+                    style="border-radius: 15px;"
+                >
             </div>
 
             <div id="job-info">
@@ -196,9 +201,25 @@ export default {
 #job-image {
     height: 100%;
     width: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: #3B6EA5;
     border-radius: 15px;
 }
+
+#job-image img.full-size {
+    height: 100%;
+    width: 100%;
+}
+
+#job-image img.small-size {
+    height: 50%; /* Adjust as needed */
+    width: 50%;  /* Adjust as needed */
+    margin: auto;
+    display: block;
+}
+
 
 #job-info {
     height: 100%;
